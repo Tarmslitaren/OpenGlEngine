@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Macros">
+      <UniqueIdentifier>{67c98247-2d08-4e2c-90d1-f675366ea883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Precompiled">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Data Structures">
+      <UniqueIdentifier>{10dbe25d-ee7d-48c2-bd17-22d4239c7504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{f5424840-6797-4347-a3d9-017c13cd3259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MemCheck">
+      <UniqueIdentifier>{d30d76a8-966f-4830-98b3-2b0b39498cac}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommonMacros.h">
+      <Filter>Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="LoopMacros.h">
+      <Filter>Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="Randomizer.h">
+      <Filter>Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="GrowingArray.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="HybridArray.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticArray.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="CU_Matrix.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="CU_Vector.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="CU_VectorMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix34.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Transformations.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shoot Em Up\Wall2D.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MemCheck.h">
+      <Filter>MemCheck</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Precompiled</Filter>
+    </ClCompile>
+    <ClCompile Include="MemCheck.cpp">
+      <Filter>MemCheck</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
