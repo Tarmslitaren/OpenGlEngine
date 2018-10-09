@@ -14,14 +14,35 @@ Primitive::~Primitive()
 	glDeleteBuffers(1, &m_vertexBufferObjectHandle);
 }
 
-void GLEN::Primitive::Render()
+void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 {
 	// ..:: Drawing code (in render loop) :: ..
 	// 4. draw the object
 	m_shaderProgram.use();
 
-	
-	glBindTexture(GL_TEXTURE_2D, m_textureHandle); //need check if has texture?
+	//todo: obviously move
+	CU::Matrix44f model;
+	model.SetIdentity();
+	model = CU::Matrix44f::RotateX(glfwGetTime() * 50 * 0.5);
+	model *= CU::Matrix44f::RotateY(glfwGetTime() * 50);
+	model.SetPosition(m_position);
+
+	m_shaderProgram.setMatrix("transform", model * view * projection);
+	m_shaderProgram.setMatrix("model", model);
+	m_shaderProgram.setMatrix("view", view);
+	m_shaderProgram.setMatrix("projection", projection);
+
+
+	//for (unsigned int i = 0; i < m_textureHandles.size();i++)
+	{
+		//glActiveTexture(GL_TEXTURE0+i); // activate the texture unit first before binding texture. 
+		//glBindTexture(GL_TEXTURE_2D, m_textureHandles[i]); //does this need check if has texture?
+	}
+	//todo: loop de loop
+	glActiveTexture(GL_TEXTURE0); 
+	glBindTexture(GL_TEXTURE_2D, m_textureHandles[0]);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_textureHandles[1]);
 
 	glBindVertexArray(m_vertexArrayObjectHandle);
 
@@ -60,6 +81,12 @@ void GLEN::Primitive::SetVerticeData(float data[], int size, const VertexLayout&
 	m_vertexLayout = vertexLayout;
 	m_vertices.clear();
 	m_vertices.insert(m_vertices.begin(), &data[0], &data[size]);
+}
+
+void GLEN::Primitive::SetIndexData(unsigned int data[], int size)
+{
+	m_indexes.clear();
+	m_indexes.insert(m_indexes.begin(), &data[0], &data[size]);
 }
 
 void GLEN::Primitive::AddTriangleIndexes(const CU::Vector3i indexes)

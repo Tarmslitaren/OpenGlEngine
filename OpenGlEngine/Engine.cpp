@@ -15,6 +15,9 @@ m_input(m_window.GetWindow())
 	int nrAttributes;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+
+	//enable z-ordering
+	glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -41,6 +44,7 @@ void GLEN::Engine::RenderScene()
 	//clear color for test
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Engine::Destroy()

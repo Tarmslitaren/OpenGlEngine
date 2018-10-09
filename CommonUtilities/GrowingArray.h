@@ -1,9 +1,10 @@
-#ifndef COMMONUTILITIES_GROWINGARRAY_HEADER
-#define COMMONUTILITIES_GROWINGARRAY_HEADER
+#ifndef CUSTOM_GROWINGARRAY_HEADER
+#define CUSTOM_GROWINGARRAY_HEADER
 
 #include "LoopMacros.h"
 #include "CommonMacros.h"
 #include "assert.h"
+#include <iostream>
 
 namespace CommonUtilities
 {
@@ -17,14 +18,14 @@ namespace CommonUtilities
 		~GrowingArray();
 
 		GrowingArray& operator=(const GrowingArray& aGrowingArray);
-		
-		
+
+
 		void Init(int aNrOfRecomendedItems,int aItemIncreaseSize,bool aUseSafeModeFlag=true);
 		void ReInit(int aNrOfRecomendedItems,int aItemIncreaseSize,bool aUseSafeModeFlag=true);
 
 		inline Type& operator[](const int& aIndex) const;
 		inline Type& operator[](const int& aIndex);
-		inline Type& GetLast();
+		inline Type& GetLast() const;
 		inline void UnsafeAdd();
 
 		inline void Add(const Type& aObject);
@@ -95,14 +96,14 @@ namespace CommonUtilities
 			ReInit(aGrowingArray.myMaxNrOfItems,aGrowingArray.myItemIncreaseSize,aGrowingArray.myUseSafeModeFlag);
 		}
 
-		if(myUseSafeModeFlag==true)
-		{
-			for(int i=0;i<aGrowingArray.Count();i++)
-			{
-				myItemList[i]=aGrowingArray[i];
-			}
-		}
-		else
+ 		if(myUseSafeModeFlag==true)
+ 		{
+ 			for(int i=0;i<aGrowingArray.Count();i++)
+ 			{
+ 				myItemList[i] = aGrowingArray[i];
+ 			}
+ 		}
+ 		else
 		{
 			memcpy(myItemList,&aGrowingArray[0],aGrowingArray.Count()*sizeof(Type));
 		}
@@ -123,7 +124,7 @@ namespace CommonUtilities
 			delete [] myItemList;
 		}
 		myItemList=NULL;
-		
+
 	}
 
 
@@ -197,13 +198,14 @@ namespace CommonUtilities
 				return;
 			}
 		}
-		
+
 	}
 
 	template <class Type,class CountType>
 	void GrowingArray<Type,CountType>::DeleteCyclicAtIndex(int aItemNumber)
 	{
 		delete(myItemList[aItemNumber]);
+		myItemList[aItemNumber] = NULL;
 		myItemList[aItemNumber]=myItemList[myCurNrOfItems-1];
 		myCurNrOfItems--;
 		myLast = &myItemList[myCurNrOfItems];
@@ -235,7 +237,10 @@ namespace CommonUtilities
 	template <class Type,class CountType>
 	void GrowingArray<Type,CountType>::Insert(int aIndex,Type& aObject)
 	{
-		if(myCurNrOfItems==myMaxNrOfItems) ReSize(myMaxNrOfItems+myItemIncreaseSize);
+		if(myCurNrOfItems==myMaxNrOfItems) 
+		{
+			ReSize(myMaxNrOfItems+myItemIncreaseSize);
+		}
 		for(int i=myCurNrOfItems-1;i>=aIndex;i--)
 		{
 			myItemList[i+1]=myItemList[i];
@@ -262,7 +267,7 @@ namespace CommonUtilities
 		}
 		myCurNrOfItems=0;
 		myLast = myItemList;
-		
+
 	}
 
 	template <class Type,class CountType>
@@ -274,34 +279,35 @@ namespace CommonUtilities
 	template <class Type,class CountType>
 	int GrowingArray<Type,CountType>::Count() const
 	{
+
 		return(myCurNrOfItems);
 	}
 
 	template <class Type,class CountType>
 	void GrowingArray<Type,CountType>::ReSize(int aNewSize)
 	{
-			assert(aNewSize != 0 && "NEW SIZE IS ZERO");
-
-			Type* tempList=new Type [aNewSize] ();
-			if(myUseSafeModeFlag==true)
+		assert(aNewSize != 0 && "NEW SIZE IS ZERO");
+		assert(myMaxNrOfItems < aNewSize);
+		Type* tempList=new Type [aNewSize] ();
+		if(myUseSafeModeFlag==true)
+		{
+			for(int i=0;i<static_cast<int>(myCurNrOfItems);i++)
 			{
-				for(int i=0;i<static_cast<int>(myCurNrOfItems);i++)
-				{
-					tempList[i]=myItemList[i];
-				}
+				tempList[i]=myItemList[i];
 			}
-			else
-			{
-				memcpy(tempList,myItemList,myCurNrOfItems*sizeof(Type*));
-			}
-			delete [] (myItemList);
-			myMaxNrOfItems=static_cast<CountType>(aNewSize);
-			myItemList=tempList;
-			myLast = &myItemList[myCurNrOfItems];
+		}
+		else
+		{
+			memcpy(tempList,myItemList,myCurNrOfItems*sizeof(Type*));
+		}
+		delete [] (myItemList);
+		myMaxNrOfItems=static_cast<CountType>(aNewSize);
+		myItemList=tempList;
+		myLast = &myItemList[myCurNrOfItems];
 	}
 
 	template <class Type,class CountType>
-	Type& GrowingArray<Type,CountType>::GetLast()
+	Type& GrowingArray<Type,CountType>::GetLast() const
 	{
 		return myItemList[myCurNrOfItems-1];
 	}
@@ -316,6 +322,7 @@ namespace CommonUtilities
 
 }
 
-namespace CU = CommonUtilities;
+namespace CU = CommonUtilities;	
+
 
 #endif

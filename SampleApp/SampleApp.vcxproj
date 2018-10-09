@@ -131,28 +131,13 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonUtilities\CommonUtilities.vcxproj">
-      <Project>{d0c7251a-4a6b-407b-bba9-a899dfd01b4a}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\OpenGlEngine\OpenGlEngine.vcxproj">
       <Project>{021471dd-e328-4eec-a61d-716c304c85d2}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\OpenGlEngine\shader.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-    </Content>
-    <Content Include="..\OpenGlEngine\shader.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\OpenGlEngine\shader.frag" />
-    <None Include="..\OpenGlEngine\shader.vert" />
+    <None Include="..\Debug\shader.frag" />
+    <None Include="..\Debug\shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

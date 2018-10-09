@@ -2,7 +2,6 @@
 #define COMMON_UTILITIES_STATICARRAY_HEADER
 
 #include "LoopMacros.h"
-#include "assert.h"
 
 namespace CommonUtilities
 {
@@ -13,10 +12,9 @@ namespace CommonUtilities
 		StaticArray();
 		~StaticArray();
 
-		StaticArray& operator=(const StaticArray& aGrowingArray);
+		//StaticArray& operator=(const StaticArray& aGrowingArray);
 
 		inline Type& operator[](const int& aIndex);
-		inline const Type& operator[](const int& aIndex) const;
 
 	// Utility functions 
 
@@ -38,27 +36,21 @@ namespace CommonUtilities
 	{
 	}
 
-	template <class Type,int Size>
+	/*template <class Type,int Size>
 	StaticArray<Type,Size>& StaticArray<Type,Size>::operator=(const StaticArray<Type,Size>& aGrowingArray)
 	{
-		For_Count_i(Size)
-		{
-			myArray[i]=aGrowingArray[i];
-		}
-		return (*this);
-	}
+		
+		memcpy(myArray,&aGrowingArray,Size*sizeof(Type));
+
+		return *this;
+	}*/
 
 	template <class Type,int Size>
 	Type& StaticArray<Type,Size>::operator[](const int& aIndex)
 	{
-		assert((aIndex>=0) && (aIndex<static_cast<int>(Size)) && "OUT OF BOUNDS ERROR");
-		return(myArray[aIndex]);
-	}
+		assert(aIndex >= 0 && "out of bondage!");
+		assert(aIndex < Size && "out of bondage!");
 
-	template <class Type,int Size>
-	const  Type& StaticArray<Type,Size>::operator[](const int& aIndex) const
-	{
-		assert((aIndex>=0) && (aIndex<static_cast<int>(Size)) && "OUT OF BOUNDS ERROR");
 		return(myArray[aIndex]);
 	}
 
@@ -66,8 +58,6 @@ namespace CommonUtilities
 	template <class Type,int Size>
 	void StaticArray<Type,Size>::Insert(int aIndex,Type& aObject)
 	{
-		assert(aIndex<Size && "ERROR IN INSERTION TRYING TO INSERT AFTER THE LAST ELEMMENT");
-		
 		for(i=__min(myCurNrOfItems-1,Size-1);i>=aIndex;i--)
 		{
 			myItemList[i+1]=myItemList[i];
@@ -86,7 +76,5 @@ namespace CommonUtilities
 
 	}
 };
-
-namespace CU = CommonUtilities;
 
 #endif

@@ -1,10 +1,14 @@
 #ifndef COMMONUTILITIES_VECTOR_HEADER
 #define COMMONUTILITIES_VECTOR_HEADER
 
+#include "assert.h"
 #include <math.h>
 
 namespace CommonUtilities
 {
+	template <class TYPE>
+	class Vector3;
+
 	template <class TYPE>
 	class Vector2
 	{
@@ -23,6 +27,10 @@ namespace CommonUtilities
 		Vector2& operator*=(const TYPE& aType);
 		Vector2& operator/=(const TYPE& aType);
 
+		inline TYPE& operator[](const int& aIndex) const;
+		inline TYPE& operator[](const int& aIndex);
+
+
 
 		Vector2& operator=(const Vector2& aVector);
 
@@ -31,6 +39,9 @@ namespace CommonUtilities
 		TYPE Length() const;
 		TYPE Length2() const;
 		Vector2<TYPE>& Normalize();
+
+		float Dot(const Vector2& aVector);
+		float DotPerd(const Vector2& aVector);
 
 		union
 		{
@@ -49,7 +60,6 @@ namespace CommonUtilities
 	};
 
 
-
 	template <class TYPE>
 	Vector2<TYPE> operator+(const Vector2<TYPE>& aLeftSideVector,const Vector2<TYPE>& aRightSideVector)
 	{
@@ -57,6 +67,7 @@ namespace CommonUtilities
 		returnValue+=aRightSideVector;
 		return(returnValue);
 	}
+
 	template <class TYPE>
 	Vector2<TYPE> operator-(const Vector2<TYPE>& aLeftSideVector,const Vector2<TYPE>& aRightSideVector)
 	{
@@ -100,6 +111,7 @@ namespace CommonUtilities
 	template <class TYPE>
 	Vector2<TYPE>::Vector2()
 	{
+
 	}
 
 	template <class TYPE>
@@ -194,6 +206,18 @@ namespace CommonUtilities
 	}
 
 	template <class TYPE>
+	float Vector2<TYPE>::Dot(const Vector2& aVector)
+	{
+		return(aVector.x*myX+aVector.y*myY);
+	}
+
+	template <class TYPE>
+	float Vector2<TYPE>::DotPerd(const Vector2& aVector)
+	{
+		return(myX*aVector.myY - myY*aVector.myX);
+	}
+
+	template <class TYPE>
 	TYPE Vector2<TYPE>::Length() const 
 	{
 		return(sqrt(myX*myX+myY*myY));
@@ -230,17 +254,23 @@ namespace CommonUtilities
 		Vector3& operator*=(const TYPE& aType);
 		Vector3& operator/=(const TYPE& aType);
 
+		inline TYPE& operator[](const int& aIndex) const;
+		inline TYPE& operator[](const int& aIndex);
+
 		float Dot(const Vector3& aVector);
-		Vector3 Cross(const Vector3& aVector);
-	
+		float DotPerp(const Vector3& aVector);
+		static Vector3<TYPE> Cross(const Vector3<TYPE>& aLeftSideVector,const Vector3<TYPE>& aRightSideVector); //Cross Product
+		Vector3<TYPE> Cross(const Vector3 &aVector);
 
 		Vector3& operator=(const Vector3& aVector);
 
 		bool operator==(const Vector3& aVector) const;
+		bool operator!=(const Vector3& aVector) const;
 
 		TYPE Length() const;
 		TYPE Length2() const;
 		Vector3<TYPE>& Normalize();
+		Vector3<TYPE> GetNormalized();
 
 		union
 		{
@@ -271,14 +301,14 @@ namespace CommonUtilities
 		return(aVector.x*x+aVector.y*y+aVector.z*z);
 	}
 
-	template <class TYPE>
+
+	template <typename TYPE>
 	Vector3<TYPE> Vector3<TYPE>::Cross(const Vector3& aVector)
 	{
-		Vector3<TYPE> returnNormal;
-		returnNormal.myX = (this->myY * aVector.myZ) - (this->myZ * aVector.myY);
-		returnNormal.myY = -((aVector.myZ * this->myX) - (aVector.myX * this->myZ));
-		returnNormal.myZ = (this->myX * aVector.myY) - (this->myY * aVector.myX);
-		return returnNormal;
+		return Vector3<TYPE>(
+			myY*aVector.myZ - myZ*aVector.myY,
+			myZ*aVector.myX - myX*aVector.myZ,
+			myX*aVector.myY - myY*aVector.myX);
 	}
 
 	template <class TYPE>
@@ -326,11 +356,21 @@ namespace CommonUtilities
 	}
 
 
-
-
 	template <class TYPE>
 	Vector3<TYPE>::Vector3()
 	{
+		
+
+	}
+
+	template <class TYPE>
+	Vector3<TYPE> Vector3<TYPE>::Cross(const Vector3<TYPE>& aLeftSideVector,const Vector3<TYPE>& aRightSideVector)
+	{
+		Vector3<TYPE> returnValue;
+		returnValue.myX = (aLeftSideVector.myY*aRightSideVector.myZ)-(aLeftSideVector.myZ*aRightSideVector.myY);
+		returnValue.myY = -((aLeftSideVector.myX*aRightSideVector.myZ)-(aLeftSideVector.myZ*aRightSideVector.myX));
+		returnValue.myZ = (aLeftSideVector.myX*aRightSideVector.myY)-(aLeftSideVector.myY*aRightSideVector.myX);
+		return(returnValue);
 	}
 
 	template <class TYPE>
@@ -426,15 +466,43 @@ namespace CommonUtilities
 		return(true);
 	}
 
+	template <class TYPE>
+	bool Vector3<TYPE>::operator!=(const Vector3<TYPE>& aRightSideVector) const 
+	{
+		if(myX==aRightSideVector.myX && myY==aRightSideVector.myY && myZ==aRightSideVector.myZ)
+		{
+			return(false);
+		}
+		return(true);
+	}
+
 
 	template <class TYPE>
 	Vector3<TYPE>& Vector3<TYPE>::Normalize()
 	{
+		
 		float length=Length();
-		myX/=length;
-		myY/=length;
-		myZ/=length;
+		if (length > 0.0f)
+		{
+			myX/=length;
+			myY/=length;
+			myZ/=length;
+		}
+	
 		return *this;
+	}
+
+	template <class TYPE>
+	Vector3<TYPE> Vector3<TYPE>::GetNormalized()
+	{
+		
+		float length=Length();
+		if (length > 0.0f)
+		{
+			return CU::Vector3f(myX/length,myY/length,myZ/length);
+		}
+	
+		return CU::Vector3f(0,0,0);
 	}
 
 	template <class TYPE>
@@ -471,6 +539,9 @@ namespace CommonUtilities
 
 		Vector4& operator*=(const TYPE& aType);
 		Vector4& operator/=(const TYPE& aType);
+		
+		inline TYPE& operator[](const int& aIndex) const;
+		inline TYPE& operator[](const int& aIndex);
 
 		float Dot(const Vector4& aVector);
 	
@@ -508,10 +579,10 @@ namespace CommonUtilities
 			TYPE myW;
 			TYPE w;
 			TYPE myAlpha;
+			TYPE a;
 
 		};
 	};
-
 
 	template <class TYPE>
 	float Vector4<TYPE>::Dot(const Vector4& aVector)
@@ -703,6 +774,7 @@ namespace CommonUtilities
 	typedef Vector4<int> Vector4i;
 
 };
+
 namespace CU = CommonUtilities;
 
 #endif

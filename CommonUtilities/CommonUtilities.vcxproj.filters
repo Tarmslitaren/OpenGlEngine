@@ -2,20 +2,29 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Macros">
-      <UniqueIdentifier>{67c98247-2d08-4e2c-90d1-f675366ea883}</UniqueIdentifier>
+      <UniqueIdentifier>{a26c3205-d846-42eb-a0bc-91e2bd4c2037}</UniqueIdentifier>
     </Filter>
     <Filter Include="Precompiled">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Data Structures">
-      <UniqueIdentifier>{10dbe25d-ee7d-48c2-bd17-22d4239c7504}</UniqueIdentifier>
+      <UniqueIdentifier>{984494c4-5ae4-4f57-a532-ced2ca83693d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Math">
-      <UniqueIdentifier>{f5424840-6797-4347-a3d9-017c13cd3259}</UniqueIdentifier>
+      <UniqueIdentifier>{ec4b2994-b8f9-4dbc-8404-6f2b6c3d6cdb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MemCheck">
-      <UniqueIdentifier>{d30d76a8-966f-4830-98b3-2b0b39498cac}</UniqueIdentifier>
+    <Filter Include="Intersection">
+      <UniqueIdentifier>{64aa085b-a69a-44de-b5a4-31de269388d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NavMesh">
+      <UniqueIdentifier>{838a731a-3c9f-4516-aa69-91abe6b715f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Astar">
+      <UniqueIdentifier>{6d63ed6a-5ae8-42f5-a302-664059b90bba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UseFulFunctions">
+      <UniqueIdentifier>{87c8dd0c-c5da-4bed-892d-819246f57da7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -25,19 +34,28 @@
     <ClInclude Include="LoopMacros.h">
       <Filter>Macros</Filter>
     </ClInclude>
-    <ClInclude Include="Randomizer.h">
-      <Filter>Macros</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
     <ClInclude Include="GrowingArray.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
+    <ClInclude Include="Heap.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
     <ClInclude Include="HybridArray.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="OctTree.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="OctTreeNode.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="StaticArray.h">
@@ -49,31 +67,76 @@
     <ClInclude Include="CU_Vector.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="CU_VectorMath.h">
+    <ClInclude Include="VectorMath.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="Geometry.h">
-      <Filter>Math</Filter>
+    <ClInclude Include="Intersections.h">
+      <Filter>Intersection</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix34.h">
-      <Filter>Math</Filter>
+    <ClInclude Include="Edge.h">
+      <Filter>NavMesh</Filter>
     </ClInclude>
-    <ClInclude Include="Transformations.h">
-      <Filter>Math</Filter>
+    <ClInclude Include="NavMesh.h">
+      <Filter>NavMesh</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shoot Em Up\Wall2D.h">
-      <Filter>Math</Filter>
+    <ClInclude Include="Triangle.h">
+      <Filter>NavMesh</Filter>
     </ClInclude>
-    <ClInclude Include="MemCheck.h">
-      <Filter>MemCheck</Filter>
+    <ClInclude Include="AstarGraph.h">
+      <Filter>Astar</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
+      <Filter>Astar</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Astar</Filter>
+    </ClInclude>
+    <ClInclude Include="Converters.h">
+      <Filter>UseFulFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>UseFulFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPointer.h">
+      <Filter>UseFulFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsFuncs.h">
+      <Filter>UseFulFunctions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
-    <ClCompile Include="MemCheck.cpp">
-      <Filter>MemCheck</Filter>
+    <ClCompile Include="Intersections.cpp">
+      <Filter>Intersection</Filter>
+    </ClCompile>
+    <ClCompile Include="Edge.cpp">
+      <Filter>NavMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="NavMesh.cpp">
+      <Filter>NavMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>NavMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="AstarGraph.cpp">
+      <Filter>Astar</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Astar</Filter>
+    </ClCompile>
+    <ClCompile Include="Node.cpp">
+      <Filter>Astar</Filter>
+    </ClCompile>
+    <ClCompile Include="Converters.cpp">
+      <Filter>UseFulFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>UseFulFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsFuncs.cpp">
+      <Filter>UseFulFunctions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

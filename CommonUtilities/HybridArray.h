@@ -2,11 +2,11 @@
 #define COMMONUTILITIES_HYBRIDGARRAY_HEADER
 
 #include "LoopMacros.h"
-#include "assert.h"
+#include "DL_Assert.h"
 
 namespace CommonUtilities
 {
-	template <class Type,class CountType =unsigned short,int MaxSize=1, int ItemIncreaseSize=10,bool UseSafeModeFlag=true>
+	template <class Type,class CountType =unsigned short,int MaxSize=0, int ItemIncreaseSize=0,bool UseSafeModeFlag=true>
 	class HybridArray
 	{
 	public:
@@ -16,8 +16,7 @@ namespace CommonUtilities
 
 		HybridArray& operator=(const HybridArray& aHybridArray);
 	
-		inline Type& operator[](const int& aIndex);
-		inline const Type& operator[](const int& aIndex) const;
+		inline Type& operator[](const int& aIndex) const;
 
 		inline void Add(const Type& aObject);
 		inline void Insert(int aIndex,Type& aObject);
@@ -54,9 +53,9 @@ namespace CommonUtilities
 			if(myItemList!=NULL) delete [] myItemList;
 			myItemList=new Type [myMaxNrOfItems] ();
 		}
-		if(myUseSafeModeFlag==true)
+		if(mySafeModeFlag==true)
 		{
-			For_Count_i(aHybridArray.myCurNrOfItems)
+			For_Count_i(myCurNrOfItems)
 			{
 				myItemList[i]=aHybridArray.myItemList[i];
 			}
@@ -71,7 +70,7 @@ namespace CommonUtilities
 		myMaxNrOfItems=aHybridArray.myMaxNrOfItems;
 		myItemIncreaseSize=aHybridArray.myItemIncreaseSize;
 		myUseSafeModeFlag=aHybridArray.myUseSafeModeFlag;	
-		return (*this);
+		
 	}
 
 	template <class Type,class CountType,int MaxSize, int ItemIncreaseSize,bool UseSafeModeFlag>
@@ -103,14 +102,7 @@ namespace CommonUtilities
 
 
 	template <class Type,class CountType,int MaxSize, int ItemIncreaseSize,bool UseSafeModeFlag>
-	const Type& HybridArray<Type,CountType,MaxSize, ItemIncreaseSize,UseSafeModeFlag>::operator[](const int& aIndex) const 
-	{
-		assert((aIndex>=0) && (aIndex<myMaxNrOfItems) && "OUT OF BOUNDS ERROR");
-		return(myItemList[aIndex]);
-	}
-
-	template <class Type,class CountType,int MaxSize, int ItemIncreaseSize,bool UseSafeModeFlag>
-	Type& HybridArray<Type,CountType,MaxSize, ItemIncreaseSize,UseSafeModeFlag>::operator[](const int& aIndex)
+	Type& HybridArray<Type,CountType,MaxSize, ItemIncreaseSize,UseSafeModeFlag>::operator[](const int& aIndex) const 
 	{
 		assert((aIndex>=0) && (aIndex<myMaxNrOfItems) && "OUT OF BOUNDS ERROR");
 		return(myItemList[aIndex]);
@@ -215,9 +207,10 @@ namespace CommonUtilities
 	template <class Type,class CountType,int MaxSize, int ItemIncreaseSize,bool UseSafeModeFlag>
 	void HybridArray<Type,CountType,MaxSize, ItemIncreaseSize,UseSafeModeFlag>::ReSize(int aNewSize)
 	{
+			assert(((aNewSize)>myMaxNrOfItems) && "ERROR IN GROWTH");
 
-			Type* tempList=new Type [aNewSize] ();
-			if(myUseSafeModeFlag==true)
+			Type tempList=new Type* [aNewSize] ();
+			if(mySafeModeFlag==true)
 			{
 				For_Count_i(myCurNrOfItems)
 				{
@@ -238,6 +231,8 @@ namespace CommonUtilities
 
 }
 
-namespace CU = CommonUtilities;
+
+		
+
 
 #endif

@@ -8,7 +8,7 @@ namespace GLEN
 	public:
 		Scene();
 		~Scene();
-		void Render();
+		void Render(CU::Matrix44f view, CU::Matrix44f projection);
 		void Update(float deltaTime);
 		void AddPrimitive(Primitive* primitive) { m_primitives.push_back(primitive); }
 	private:

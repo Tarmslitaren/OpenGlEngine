@@ -13,10 +13,10 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\OpenGlEngine\shader.frag">
+    <None Include="..\Debug\shader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\OpenGlEngine\shader.vert">
+    <None Include="..\Debug\shader.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

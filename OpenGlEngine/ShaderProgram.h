@@ -1,5 +1,6 @@
 #pragma once
 #include "enums.h"
+#include "CU_Matrix.h"
 namespace GLEN
 {
 	class ShaderProgram
@@ -17,6 +18,7 @@ namespace GLEN
 		void setBool(const std::string &name, bool value) const;
 		void setInt(const std::string &name, int value) const;
 		void setFloat(const std::string &name, float value) const;
+		void setMatrix(const std::string &name, CU::Matrix44f matrix) const;
 	private:
 		bool AddShader(const char* path, int& handle, ShaderType shaderType);
 		int m_vertexShaderHandle;
