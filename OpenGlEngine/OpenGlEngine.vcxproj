@@ -134,27 +134,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="glad\glad.c" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="MouseListener.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ShaderContainer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureContainer.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="glad\glad.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="KHR\khrplatform.h" />
+    <ClInclude Include="MouseListener.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ShaderContainer.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureContainer.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

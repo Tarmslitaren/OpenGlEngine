@@ -11,6 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="InputController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Debug\shader.frag">
@@ -19,5 +20,8 @@
     <None Include="..\Debug\shader.vert">
       <Filter>Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="InputController.h" />
   </ItemGroup>
 </Project>

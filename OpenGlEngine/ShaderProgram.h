@@ -1,18 +1,20 @@
 #pragma once
 #include "enums.h"
 #include "CU_Matrix.h"
+#include <string>
 namespace GLEN
 {
 	class ShaderProgram
 	{
 	public:
 		ShaderProgram();
-		ShaderProgram(const char* vertexPath, const char* fragmentPath);
+		ShaderProgram(std::string id, std::string vertexPath, std::string fragmentPath);
 		~ShaderProgram();
 		bool AddVertexShader(const char* source);
 		bool AddFragmentShader(const char* source);
 		int Finalize(); //returns the handle
 		int GetHandle() { return m_shaderProgramHandle; }
+		std::string GetId() { return m_id; }
 		void use();
 		// utility uniform functions
 		void setBool(const std::string &name, bool value) const;
@@ -24,6 +26,7 @@ namespace GLEN
 		int m_vertexShaderHandle;
 		int m_fragmentShaderHandle;
 		int m_shaderProgramHandle;
+		std::string m_id;
 	};
 }
 

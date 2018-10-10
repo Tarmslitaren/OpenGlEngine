@@ -8,72 +8,10 @@
 #include "CU_Matrix.h"
 #include "CU_Vector.h"
 #include "VectorMath.h"
-#include "CommonMacros.h"
+//#include "CommonMacros.h"
 #include <math.h>
+#include "InputController.h"
 
-// compute screen coordinates first
-void gluPerspective(
-	const float &angleOfView,
-	const float &imageAspectRatio,
-	const float &n, const float &f,
-	float &b, float &t, float &l, float &r)
-{
-	float scale = tan(angleOfView * 0.5 * CU::PI / 180) * n;
-	r = imageAspectRatio * scale;
-	l = -r;
-	t = scale;
-	b = -t;
-}
-
-// set the OpenGL perspective projection matrix
-void glFrustum(
-	const float &b, const float &t, const float &l, const float &r,
-	const float &n, const float &f,
-	CU::Matrix44f &M)
-{
-	// set OpenGL perspective projection matrix
-
-	M.myMatrix[0][0] = 2 * n / (r - l);
-	M.myMatrix[0][1] = 0;
-	M.myMatrix[0][2] = 0;
-	M.myMatrix[0][3] = 0;
-
-	M.myMatrix[1][0] = 0;
-	M.myMatrix[1][1] = 2 * n / (t - b);
-	M.myMatrix[1][2] = 0;
-	M.myMatrix[1][3] = 0;
-
-	M.myMatrix[2][0] = (r + l) / (r - l);
-	M.myMatrix[2][1] = (t + b) / (t - b);
-	M.myMatrix[2][2] = -(f + n) / (f - n);
-	M.myMatrix[2][3] = -1;
-
-	M.myMatrix[3][0] = 0;
-	M.myMatrix[3][1] = 0;
-	M.myMatrix[3][2] = -2 * f * n / (f - n);
-	M.myMatrix[3][3] = 0;
-
-
-	/*M.myMatrix[0][0] = 2 * n / (r - l);
-	M.myMatrix[1][0] = 0;
-	M.myMatrix[2][0] = 0;
-	M.myMatrix[3][0] = 0;
-
-	M.myMatrix[0][1] = 0;
-	M.myMatrix[1][1] = 2 * n / (t - b);
-	M.myMatrix[2][1] = 0;
-	M.myMatrix[3][1] = 0;
-
-	M.myMatrix[0][2] = (r + l) / (r - l);
-	M.myMatrix[1][2] = (t + b) / (t - b);
-	M.myMatrix[2][2] = -(f + n) / (f - n);
-	M.myMatrix[3][2] = -1;
-
-	M.myMatrix[0][3] = 0;
-	M.myMatrix[1][3] = 0;
-	M.myMatrix[2][3] = -2 * f * n / (f - n);
-	M.myMatrix[3][3] = 0;*/
-}
 
 int main()
 {
@@ -81,8 +19,8 @@ int main()
 
 	GLEN::SetupInfo info;
 	
-	GLEN::Engine* engine = GLEN::Engine::Create(info); 
-
+	GLEN::Engine::Create(info); 
+	GLEN::Engine& engine = *GLEN::Engine::GetInstance();
 	//triangle test
 	GLEN::Scene scene;
 	
@@ -165,14 +103,10 @@ int main()
 	layout.texCoordOffset = 3;
 	layout.stride = 5;
 
-	GLEN::Texture texture;
-	texture.LoadTexture("container.jpg");
-	GLEN::Texture texture2;
-	texture2.LoadTexture("awesomeface.png");
+	GLEN::Texture texture = *engine.GetTextureContainer().GetTexture("container.jpg");
+	GLEN::Texture texture2 = *engine.GetTextureContainer().GetTexture("awesomeface.png");;
 
-	//todo: make pool of shaders and shader programs and keep in container in engine.
-	GLEN::ShaderProgram shaderProgram("shader.vert", "shader.frag");
-	
+	GLEN::ShaderProgram shaderProgram = *engine.GetShaderContainer().CreateShaderProgram("baseShader", "shader.vert", "shader.frag");
 
 
 	std::vector<GLEN::Primitive> primitives;
@@ -196,48 +130,50 @@ int main()
 
 
 
+	engine.GetCamera().SetProjection(45, info.m_resolution.width / info.m_resolution.height);
 
-	//it's math time!!
+	float deltaTime = 0.0f;	// Time between current frame and last frame
+	float lastFrame = 0.0f; // Time of last frame
 
-	CU::Matrix44f model;
-	model.SetIdentity();
-	CU::Matrix44f view;
-	view = CU::Matrix44f::Identity();
-	view.Translate(CU::Vector3f(0, 0, -3));// = CU::Matrix44f::Translate({ 0,0,-3 }); //can't go over 1 unless using a projectoin matrix
 	
-	CU::Matrix44f projection = CU::Matrix44f::Identity();
-	float angleOfView = 45; //degrees
-	float aspectRatio = info.m_resolution.width/info.m_resolution.height;
-	float nearPlane = 0.1f;
-	float farPlane = 100.f;
-	float b, t, l, r; //result
-	gluPerspective(angleOfView, aspectRatio, nearPlane, farPlane, b, t, l, r);
-	glFrustum(b, t, l, r, nearPlane, farPlane, projection);
 
-	while (engine->Update()) {
-		//main loop
-		if (engine->GetInput().GetKeyPressed(GLEN::KEY_ESC)) {
+	InputController inputController;
+
+	//main loop
+	while (engine.Update(deltaTime)) {
+		
+		if (engine.GetInput().GetKeyPressed(GLEN::KEY_ESC)) {
 			break;
 		}
+
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		inputController.Update(deltaTime);
+
+		float radius = 10.0f;
+		float camX = sin(glfwGetTime()) * radius;
+		float camZ = cos(glfwGetTime()) * radius;
+		auto cameraPos = CU::Vector3f(camX, 0, camZ);
+
+
+		auto cameraTarget = CU::Vector3f(camX, 0.f, camZ);
+		auto view = engine.GetCamera().getView();//engine.GetCamera().UpdateView(); 
+
+		//view = engine.GetCamera().LookAt(cameraTarget);
 		
 		//compared to opengl the x axis is reversed. this is fine, as now positive rotation over x axis is clockwize and not flipped.
 		//also the order of matrix multiplication is reversed, now read from left to right instead of right to left...
 
-		model = CU::Matrix44f::RotateX(glfwGetTime() * 50 * 0.5);
-		model *= CU::Matrix44f::RotateY(glfwGetTime() * 50 );
-		shaderProgram.setMatrix("transform", model * view * projection);
-		shaderProgram.setMatrix("model", model);
-		shaderProgram.setMatrix("view", view);
-		shaderProgram.setMatrix("projection", projection);
+		engine.RenderScene();
 
-		shaderProgram.setFloat("hOffset", glfwGetTime());
-
-		engine->RenderScene();
-		scene.Render(view, projection);
+		auto projection = engine.GetCamera().getProjection();
+		scene.Render(view, projection); //send in the camera here, or let the scene own the camera?
 		
 	}
 
-	engine->Destroy();
+	engine.Destroy();
 
 	return 0;
 }

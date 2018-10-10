@@ -508,7 +508,7 @@ namespace CommonUtilities
 	template <class TYPE>
 	TYPE Vector3<TYPE>::Length() const 
 	{
-		return(sqrt(myX*myX+myY*myY+myZ*myZ));
+		return(sqrtf(myX*myX+myY*myY+myZ*myZ));
 	}
 
 	template <class TYPE>

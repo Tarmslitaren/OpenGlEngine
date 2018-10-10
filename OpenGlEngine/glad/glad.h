@@ -18,13 +18,14 @@
     Online:
         http://glad.dav1d.de/#profile=core&language=c&specification=gl&loader=on&api=gl%3D4.6
 */
+#pragma once
 
 
 #ifndef __glad_h_
 #define __glad_h_
 
 #ifdef __gl_h_
-#error OpenGL header already included, remove this include, glad already provides it
+//#error OpenGL header already included, remove this include, glad already provides it
 #endif
 #define __gl_h_
 

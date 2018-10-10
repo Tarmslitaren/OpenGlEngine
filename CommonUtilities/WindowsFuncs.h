@@ -1,3 +1,4 @@
+#pragma once
 #ifndef WINDOWS_FUNCS_HEADER
 #define WINDOWS_FUNCS_HEADER
 

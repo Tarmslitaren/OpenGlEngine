@@ -28,6 +28,10 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="TextureContainer.h" />
+    <ClInclude Include="ShaderContainer.h" />
+    <ClInclude Include="MouseListener.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp" />
@@ -41,5 +45,9 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="TextureContainer.cpp" />
+    <ClCompile Include="ShaderContainer.cpp" />
+    <ClCompile Include="MouseListener.cpp" />
   </ItemGroup>
 </Project>

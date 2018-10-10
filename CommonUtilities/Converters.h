@@ -1,3 +1,6 @@
+#pragma once
+#ifndef CONVERTERS_HEADER
+#define CONVERTERS_HEADER
 #include <sstream>
 #include <string>
 #include "CU_Vector.h"
@@ -26,6 +29,9 @@ namespace Convert
 	float ConvertToPercentFW(float aCurrentValue, float aMaxValue);
 	void WholePathToFilename(std::string &aPath);
 	void GetFileName(std::string &aPath);
+	float DegreeToRadian(float aDegree);
+	float RadianToDegree(float aRadian);
 	
 }
+#endif
 

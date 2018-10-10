@@ -23,8 +23,8 @@ void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 	//todo: obviously move
 	CU::Matrix44f model;
 	model.SetIdentity();
-	model = CU::Matrix44f::RotateX(glfwGetTime() * 50 * 0.5);
-	model *= CU::Matrix44f::RotateY(glfwGetTime() * 50);
+	//model = CU::Matrix44f::RotateX(glfwGetTime() * 50 * 0.5);
+	//model *= CU::Matrix44f::RotateY(glfwGetTime() * 50);
 	model.SetPosition(m_position);
 
 	m_shaderProgram.setMatrix("transform", model * view * projection);

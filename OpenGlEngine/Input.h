@@ -1,4 +1,7 @@
 #pragma once
+#include "CU_Vector.h"
+#include <vector>
+#include "MouseListener.h"
 struct GLFWwindow;
 namespace GLEN
 {
@@ -135,14 +138,23 @@ namespace GLEN
 		//todo, add others
 	};
 
+
+	//todo: read and impement this: http ://p-nand-q.com/programming/cplusplus/using_member_functions_with_c_function_pointers.html
 	class Input
 	{
 	public:
 		Input(GLFWwindow& window);
 		~Input();
 		bool GetKeyPressed(int keyId);
+		void CaptureMouseAndDisablePointer();
+		void Update(float deltaTime);
+		void AddListener(MouseListener* listener) { m_mouseListeners.push_back(listener); }
+		std::vector<MouseListener*>& GetListeners() { return m_mouseListeners; }
+		
 	private:
 		GLFWwindow& m_window;
+		std::vector<MouseListener*> m_mouseListeners;
+		
 
 	};
 }

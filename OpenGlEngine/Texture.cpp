@@ -15,8 +15,10 @@ Texture::~Texture()
 {
 }
 
-void GLEN::Texture::LoadTexture(std::string path, bool flipY)
+bool GLEN::Texture::LoadTexture(std::string path, bool flipY)
 {
+	m_path = path;
+
 	glGenTextures(1, &m_handle);
 	glBindTexture(GL_TEXTURE_2D, m_handle);
 	// set the texture wrapping/filtering options (on the currently bound texture object)
@@ -45,10 +47,12 @@ void GLEN::Texture::LoadTexture(std::string path, bool flipY)
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(data);
+		return true;
 	}
 	else
 	{
 		std::cout << "Failed to load texture: " << path.c_str() << std::endl;
+		return false;
 	}
 
 }

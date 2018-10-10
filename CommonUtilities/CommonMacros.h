@@ -1,3 +1,4 @@
+#pragma once
 #ifndef COMMONMACROS_HEADER
 #define COMMONMACROS_HEADER
 #include <sstream>
@@ -23,16 +24,6 @@ namespace CommonUtilities
 
 
 	};
-
-	float DegreeToRadian(float aDegree)
-	{
-		return aDegree / 180.f * PI;
-	}
-
-	float RadianToDegree(float aRadian)
-	{
-		return aRadian * (180 / PI);
-	}
 
 	constexpr int     MaxInt = (std::numeric_limits<int>::max)();
 	constexpr double  MaxDouble = (std::numeric_limits<double>::max)();

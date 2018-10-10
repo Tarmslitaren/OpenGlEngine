@@ -177,3 +177,13 @@ void Convert::GetFileName( std::string &aPath )
 	}
 	aPath = complete;
 }
+
+float Convert::DegreeToRadian(float aDegree)
+{
+	return (aDegree * 3.14159265f) / 180;
+}
+
+float Convert::RadianToDegree(float aRadian)
+{
+	return aRadian * (180 / 3.14159265f);
+}

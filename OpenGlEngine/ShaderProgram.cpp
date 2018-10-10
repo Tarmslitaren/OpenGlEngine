@@ -15,8 +15,9 @@ GLEN::ShaderProgram::ShaderProgram()
 }
 
 
-GLEN::ShaderProgram::ShaderProgram(const char * vertexPath, const char * fragmentPath)
+GLEN::ShaderProgram::ShaderProgram(std::string id, std::string vertexPath, std::string fragmentPath)
 {
+	m_id = id;
 	ShaderProgram::ShaderProgram();
 
 	// 1. retrieve the vertex/fragment source code from filePath

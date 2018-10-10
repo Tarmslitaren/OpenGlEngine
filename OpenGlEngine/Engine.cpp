@@ -52,7 +52,8 @@ void Engine::Destroy()
 	m_window.Destroy();
 }
 
-bool GLEN::Engine::Update()
+bool GLEN::Engine::Update(float deltaTime)
 {
+	m_input.Update(deltaTime);
 	return m_window.Update();
 }
