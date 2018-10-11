@@ -32,6 +32,9 @@
     <ClInclude Include="TextureContainer.h" />
     <ClInclude Include="ShaderContainer.h" />
     <ClInclude Include="MouseListener.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="ModelInstance.h" />
+    <ClInclude Include="ModelContainer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp" />
@@ -49,5 +52,8 @@
     <ClCompile Include="TextureContainer.cpp" />
     <ClCompile Include="ShaderContainer.cpp" />
     <ClCompile Include="MouseListener.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="ModelInstance.cpp" />
+    <ClCompile Include="ModelContainer.cpp" />
   </ItemGroup>
 </Project>

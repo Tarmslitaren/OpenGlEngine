@@ -11,6 +11,8 @@
 //#include "CommonMacros.h"
 #include <math.h>
 #include "InputController.h"
+#include "ModelInstance.h"
+#include "ModelContainer.h"
 
 
 int main()
@@ -18,12 +20,12 @@ int main()
 
 
 	GLEN::SetupInfo info;
-	
-	GLEN::Engine::Create(info); 
+
+	GLEN::Engine::Create(info);
 	GLEN::Engine& engine = *GLEN::Engine::GetInstance();
 	//triangle test
 	GLEN::Scene scene;
-	
+
 	//GLEN::Primitive primitive;
 	// a plane
 	float vertices[] = {
@@ -156,45 +158,27 @@ int main()
 	GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
 
 
+	engine.GetModelContainer().CreatePrimitive("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, { (int)texture.getHandle() , (int)texture2.getHandle() });
+
 	std::vector<GLEN::Primitive> primitives;
 	for (int i = 0; i < 1; i++)
 	{
-		GLEN::Primitive* primitive = new GLEN::Primitive();
-		primitive->SetVerticeData(vertices3, sizeof(vertices3) / sizeof(float), layout);
-		primitive->addTexture(texture.getHandle());
-		primitive->addTexture(texture2.getHandle());
-		primitive->Finalize(GLEN::STATIC_DRAW);
-		scene.AddPrimitive(primitive);
-		primitive->SetShaderProgram(lightShader);
-		primitive->setPosition(cubePositions[i]);
+		GLEN::ModelInstance* instance = new GLEN::ModelInstance("cube", "lightShader");
+		instance->SetPosition(cubePositions[i]);
+		scene.AddModel(instance);
+		
 	}
 
-	lightShader.use();
-	lightShader.setVector("viewPos", engine.GetCamera().GetPosition());
-	//lightShader.setInt("texture1", 0);
-	//lightShader.setInt("texture2", 1);
-	lightShader.setVector("objectColor", { 1.0f, 0.5f, 0.31f });
-	lightShader.setVector("lightColor", { 1.0f, 1.0f, 1.0f });
 
-
-	auto lightPos = CU::Vector3f(1.2f, 1.0f, 2.0f);
-	lightShader.setVector("lightPos", lightPos);
-
-	//lamp cube rep
-	GLEN::Primitive* lampCube = new GLEN::Primitive();
-	lampCube->SetVerticeData(vertices3, sizeof(vertices3) / sizeof(float), layout);
-	lampCube->Finalize(GLEN::STATIC_DRAW);
-	scene.AddPrimitive(lampCube);
 	GLEN::ShaderProgram lampShader = *engine.GetShaderContainer().CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
-	lampCube->SetShaderProgram(lampShader);
-	lampCube->setPosition(lightPos);
-	lampCube->m_model.Scale(0.2f);
+	GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("cube", "lampShader");
+	GLEN::Light* light = new GLEN::Light(lampCube);
+	auto lightPos = CU::Vector3f(1.2f, 1.0f, 2.0f);
+	lampCube->SetPosition(lightPos);
+	lampCube->SetPosition(lightPos);
+	lampCube->SetScale(0.2f);
 
-
-
-	//primitive.SetIndexData(indices, sizeof(indices) / sizeof(int));
-
-
+	scene.AddLight(light);
 
 	engine.GetCamera().SetProjection(45, info.m_resolution.width / info.m_resolution.height);
 
@@ -222,7 +206,7 @@ int main()
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
 		lightPos = CU::Vector3f(camX, 0, camZ);
-		lampCube->setPosition(lightPos);
+		lampCube->SetPosition(lightPos);
 
 
 		//auto cameraTarget = CU::Vector3f(camX, 0.f, camZ);
@@ -241,11 +225,19 @@ int main()
 
 		auto projection = engine.GetCamera().getProjection();
 
-		lightShader.use();
-		lightShader.setVector("viewPos", engine.GetCamera().GetPosition());
-		lightShader.setVector("lightPos", lightPos);
+		light->SetPosition(lightPos);
 
-		scene.Render(view, projection); //send in the camera here, or let the scene own the camera?
+		CU::Vector3f lightColor;
+		lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 1.3f);
+		CU::Vector3f diffuseColor = lightColor * 0.5f; // decrease the influence
+		CU::Vector3f ambientColor = diffuseColor * 0.2f; // low influence
+
+		light->SetAmbient(ambientColor);
+		light->SetDiffuse(diffuseColor);
+
+		scene.Render(); //send in the camera here, or let the scene own the camera?
 		
 	}
 

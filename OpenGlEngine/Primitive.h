@@ -51,21 +51,20 @@ namespace GLEN
 		Primitive();
 		~Primitive();
 		void Render(CU::Matrix44f view, CU::Matrix44f projection);
-		void AddVertice(const CU::Vector3f& vertice);
+		void AddVertice(const CU::Vector3f& vertice);//remove
 		void SetVerticeData(float data[], int size);
 		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);
 		void SetIndexData(unsigned int data[], int size);
-		void AddTriangleIndexes(const CU::Vector3i indexes);
-		void Finalize(DrawFrequency frequency);
-		void SetShaderProgram(const ShaderProgram& program); //todo: put shaders in a pool, and set only id of shader to run for each primitive, and make it optional, if we don't need special shaders.
-		void setPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
-		void addTexture(int aTextureHandle) { m_textureHandles.push_back(aTextureHandle); }
+		void AddTriangleIndexes(const CU::Vector3i indexes);//remove?
+		int Finalize(DrawFrequency frequency, std::string id );
+		void SetPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
+		void AddTexture(int aTextureHandle) { m_textureHandles.push_back(aTextureHandle); }
 
-		//todo: create instance class for this:
-		void setPosition(CU::Vector3f aPosition) { m_model.Translate(aPosition); }
-		CU::Matrix44f m_model;
+		std::string GetId() { return m_id; }
+		int GetHandle() { return m_vertexArrayObjectHandle;  } //reuse this as id (could maybe be hash of id string istead but meh.)
+
 	private:
-		
+		std::string m_id;
 
 		std::vector<float> m_vertices;
 		std::vector<int> m_indexes;

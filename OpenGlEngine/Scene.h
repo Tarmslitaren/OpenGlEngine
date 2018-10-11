@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include "Primitive.h"
+#include "Light.h"
+#include "ModelInstance.h"
 namespace GLEN
 {
 	class Scene
@@ -8,11 +10,13 @@ namespace GLEN
 	public:
 		Scene();
 		~Scene();
-		void Render(CU::Matrix44f view, CU::Matrix44f projection);
+		void Render();
 		void Update(float deltaTime);
-		void AddPrimitive(Primitive* primitive) { m_primitives.push_back(primitive); }
+		void AddModel(ModelInstance* instance) { m_models.push_back(instance); }
+		void AddLight(Light* light) { m_lights.push_back(light); }
 	private:
-		std::vector<Primitive*> m_primitives; //todo: in future abstract to instance that can be any type of model or primitive
+		std::vector<ModelInstance*> m_models;
+		std::vector<Light*> m_lights;
 	};
 }
 

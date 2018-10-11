@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "TextureContainer.h"
 #include "ShaderContainer.h"
+#include "ModelContainer.h"
 namespace GLEN
 {
 
@@ -24,21 +25,20 @@ namespace GLEN
 		TextureContainer& GetTextureContainer() { return m_textureContainer; }
 		ShaderContainer& GetShaderContainer() { return m_shaderContainer; }
 		//EffectInput& GetEffectInput() { return myEffectInput; }
-		//ModelContainer& GetModelContainer() { return myModelContainer; }
+		ModelContainer& GetModelContainer() { return m_modelContainer; }
 
 
 	private:
-		//bool D3DViewPortSetup();
-		//bool ZBufferSetup();
 		Engine();
 		virtual ~Engine();
 		Engine(const SetupInfo & infoArgument);
 		static Engine* s_instance;
 		Window m_window;
 		Input m_input;
-		Camera m_camera; //todo: allow for several cameras
+		Camera m_camera; //todo: allow for several cameras (let scene own camwera)
 		TextureContainer m_textureContainer;
 		ShaderContainer m_shaderContainer;
+		ModelContainer m_modelContainer;
 
 
 	};

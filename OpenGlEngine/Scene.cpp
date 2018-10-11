@@ -12,11 +12,16 @@ Scene::~Scene()
 {
 }
 
-void GLEN::Scene::Render(CU::Matrix44f view, CU::Matrix44f projection)
+void GLEN::Scene::Render()
 {
-	for (Primitive* primitive : m_primitives)
+	for (Light* light : m_lights)
 	{
-		primitive->Render(view, projection);
+		light->RenderObject();//for debug use only
+
+		for (ModelInstance* model : m_models)
+		{
+			model->Render(light); //yeah currently this wont work for several lights , as there is no additive blending sceme in place
+		}
 	}
 }
 

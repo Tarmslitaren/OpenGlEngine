@@ -5,8 +5,6 @@ using namespace GLEN;
 Primitive::Primitive()
 {
 	m_polygonMode = GL_FILL;
-
-	m_model.SetIdentity();
 }
 
 
@@ -20,18 +18,6 @@ void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 {
 	// ..:: Drawing code (in render loop) :: ..
 	// 4. draw the object
-	m_shaderProgram.use();
-
-
-	//m_shaderProgram.setMatrix("transform", m_model * view * projection);
-		//invert x for open gl:
-	auto model = m_model;
-	auto pos = model.GetPosition();
-	pos.x = -pos.x;
-	model.SetPosition(pos);
-	m_shaderProgram.setMatrix("model", m_model);
-	m_shaderProgram.setMatrix("view", view);
-	m_shaderProgram.setMatrix("projection", projection);
 
 
 	for (unsigned int i = 0; i < m_textureHandles.size();i++)
@@ -93,8 +79,10 @@ void GLEN::Primitive::AddTriangleIndexes(const CU::Vector3i indexes)
 	m_indexes.push_back(indexes.z);
 }
 
-void GLEN::Primitive::Finalize(DrawFrequency frequency)
+int GLEN::Primitive::Finalize(DrawFrequency frequency, std::string id)
 {
+	m_id = id;
+
 	glGenBuffers(1, &m_vertexBufferObjectHandle);
 
 	glGenBuffers(1, &m_elementBufferObject);
@@ -144,9 +132,6 @@ void GLEN::Primitive::Finalize(DrawFrequency frequency)
 		glVertexAttribPointer(m_vertexLayout.normalsAttribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.normalOffset * sizeof(float)));
 		glEnableVertexAttribArray(m_vertexLayout.normalsAttribute);
 	}
-}
 
-void GLEN::Primitive::SetShaderProgram(const ShaderProgram & program)
-{
-	m_shaderProgram = program;
+	return m_vertexArrayObjectHandle;
 }
