@@ -15,13 +15,14 @@ GLEN::Camera::~Camera()
 {
 }
 
+//the view matrix is somehow wrong
 const CU::Matrix44f& GLEN::Camera::LookAt(const CU::Vector3f & target)
 {
 	auto target2 = m_position + target;
-	m_backDirection = CU::Vector3f(m_position - target2).GetNormalized();
+	m_backDirection = CU::Vector3f(m_position - target2).GetNormalized(); //zaxis
 	auto upDirection = CU::Vector3f(0.0f, 1.0f, 0.0f); //world up
-	m_rightDirection = upDirection.Cross(m_backDirection).GetNormalized();
-	m_upDirection = m_backDirection.Cross(m_rightDirection);
+	m_rightDirection = upDirection.Cross(m_backDirection).GetNormalized(); //xaxis
+	m_upDirection = m_backDirection.Cross(m_rightDirection); //yaxis
 
 	m_view.Set(m_rightDirection.x, m_rightDirection.y, m_rightDirection.z, 0, //right
 		m_upDirection.x, m_upDirection.y, m_upDirection.z, 0, //up
@@ -32,14 +33,74 @@ const CU::Matrix44f& GLEN::Camera::LookAt(const CU::Vector3f & target)
 	//m_view.Translate({ -m_position.x, -m_position.y, -m_position.z });
 	CU::Matrix44f pos;
 	pos.SetIdentity();
-	CU::Vector3f invertPos = { -m_position.x, -m_position.y, -m_position.z }; //why invert?
+	CU::Vector3f invertPos = { -m_position.x, -m_position.y, -m_position.z }; //why invert? because the view matrix is the camera model matrix inversed.
 	pos.Translate(invertPos);
-	//m_view = m_view * pos; //check the mult order here prolly wrong
+	m_view = pos * m_view; //the mult order should here be reversed as  the matrix is inverted
 
 	//m_view.Translate({ -m_position.x, -m_position.y, -m_position.z });
 	return m_view;
 
 	//return UpdatePos();
+	/*
+	    vec3 zaxis = normal(eye - target);    // The "forward" vector.
+    vec3 xaxis = normal(cross(up, zaxis));// The "right" vector.
+    vec3 yaxis = cross(zaxis, xaxis);     // The "up" vector.
+ 
+    // Create a 4x4 orientation matrix from the right, up, and forward vectors
+    // This is transposed which is equivalent to performing an inverse 
+    // if the matrix is orthonormalized (in this case, it is).
+    mat4 orientation = {
+       vec4( xaxis.x, yaxis.x, zaxis.x, 0 ),
+       vec4( xaxis.y, yaxis.y, zaxis.y, 0 ),
+       vec4( xaxis.z, yaxis.z, zaxis.z, 0 ),
+       vec4(   0,       0,       0,     1 )
+    };
+     
+    // Create a 4x4 translation matrix.
+    // The eye position is negated which is equivalent
+    // to the inverse of the translation matrix. 
+    // T(v)^-1 == T(-v)
+    mat4 translation = {
+        vec4(   1,      0,      0,   0 ),
+        vec4(   0,      1,      0,   0 ), 
+        vec4(   0,      0,      1,   0 ),
+        vec4(-eye.x, -eye.y, -eye.z, 1 )
+    };
+ 
+    // Combine the orientation and translation to compute 
+    // the final view matrix. Note that the order of 
+    // multiplication is reversed because the matrices
+    // are already inverted.
+    return ( orientation * translation );*/
+
+	/*
+	    // 1. Position = known
+    // 2. Calculate cameraDirection
+    glm::vec3 zaxis = glm::normalize(position - target);
+    // 3. Get positive right axis vector
+    glm::vec3 xaxis = glm::normalize(glm::cross(glm::normalize(worldUp), zaxis));
+    // 4. Calculate camera up vector
+    glm::vec3 yaxis = glm::cross(zaxis, xaxis);
+
+    // Create translation and rotation matrix
+    // In glm we access elements as mat[col][row] due to column-major layout
+    glm::mat4 translation; // Identity matrix by default
+    translation[3][0] = -position.x; // Third column, first row
+    translation[3][1] = -position.y;
+    translation[3][2] = -position.z;
+    glm::mat4 rotation;
+    rotation[0][0] = xaxis.x; // First column, first row
+    rotation[1][0] = xaxis.y;
+    rotation[2][0] = xaxis.z;
+    rotation[0][1] = yaxis.x; // First column, second row
+    rotation[1][1] = yaxis.y;
+    rotation[2][1] = yaxis.z;
+    rotation[0][2] = zaxis.x; // First column, third row
+    rotation[1][2] = zaxis.y;
+    rotation[2][2] = zaxis.z; 
+
+    // Return lookAt matrix as combination of translation and rotation matrix
+    return rotation * translation; // Remember to read from right to left (first translation then rotation)*/
 }
 
 void GLEN::Camera::LookForward()
@@ -94,27 +155,6 @@ void glFrustum(
 	M.myMatrix[3][1] = 0;
 	M.myMatrix[3][2] = -2 * f * n / (f - n);
 	M.myMatrix[3][3] = 0;
-
-
-	/*M.myMatrix[0][0] = 2 * n / (r - l);
-	M.myMatrix[1][0] = 0;
-	M.myMatrix[2][0] = 0;
-	M.myMatrix[3][0] = 0;
-
-	M.myMatrix[0][1] = 0;
-	M.myMatrix[1][1] = 2 * n / (t - b);
-	M.myMatrix[2][1] = 0;
-	M.myMatrix[3][1] = 0;
-
-	M.myMatrix[0][2] = (r + l) / (r - l);
-	M.myMatrix[1][2] = (t + b) / (t - b);
-	M.myMatrix[2][2] = -(f + n) / (f - n);
-	M.myMatrix[3][2] = -1;
-
-	M.myMatrix[0][3] = 0;
-	M.myMatrix[1][3] = 0;
-	M.myMatrix[2][3] = -2 * f * n / (f - n);
-	M.myMatrix[3][3] = 0;*/
 }
 
 void GLEN::Camera::SetProjection(float fov, float aspectRatio, float nearPlane, float farPlane)
@@ -146,15 +186,18 @@ void GLEN::Camera::SetFov(float fov)
 
 void GLEN::Camera::Pitch(float angle)
 {
+	//not coorect
 	m_view *= CU::Matrix44f::RotateX(angle);
 }
 
 void GLEN::Camera::Yaw(float angle)
 {
+	//not coorect
 	m_view *= CU::Matrix44f::RotateY(angle);
 }
 
 void GLEN::Camera::Roll(float angle)
 {
+	//not coorect
 	m_view *= CU::Matrix44f::RotateZ(angle);
 }

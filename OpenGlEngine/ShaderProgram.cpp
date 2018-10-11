@@ -140,6 +140,12 @@ void GLEN::ShaderProgram::setMatrix(const std::string & name, CU::Matrix44f matr
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, matrix.myMatrix[0]);
 }
 
+void GLEN::ShaderProgram::setVector(const std::string & name, CU::Vector3f vector) const
+{
+	unsigned int transformLoc = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
+	glUniform3f(transformLoc, vector.x, vector.y, vector.z);
+}
+
 bool GLEN::ShaderProgram::AddShader(const char * source, int& handle, ShaderType shaderType)
 {
 	handle = glCreateShader(shaderType);

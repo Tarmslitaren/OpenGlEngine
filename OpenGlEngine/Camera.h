@@ -20,6 +20,7 @@ namespace GLEN
 		void LookForward();
 		CU::Matrix44f& getView(){return m_view;}
 		CU::Matrix44f& getProjection() { return m_projection; }
+		CU::Vector3f GetPosition() { return m_position; }
 		void SetProjection(float fov, float aspectRatio, float near = 0.1f, float far = 100.f);
 		void SetProjection(ProjectionValues projectionValues);
 		float GetFov();

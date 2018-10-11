@@ -14,14 +14,20 @@
     <ClCompile Include="InputController.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Debug\shader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Debug\shader.vert">
-      <Filter>Shaders</Filter>
-    </None>
+    <ClInclude Include="InputController.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InputController.h" />
+    <None Include="..\Debug\lampShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Debug\lampShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Debug\lightingShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Debug\lightingShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

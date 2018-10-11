@@ -137,11 +137,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Debug\shader.frag" />
-    <None Include="..\Debug\shader.vert" />
+    <ClInclude Include="InputController.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InputController.h" />
+    <None Include="..\Debug\lampShader.frag" />
+    <None Include="..\Debug\lampShader.vert" />
+    <None Include="..\Debug\lightingShader.frag" />
+    <None Include="..\Debug\lightingShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

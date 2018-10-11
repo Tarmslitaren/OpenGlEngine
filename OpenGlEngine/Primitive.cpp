@@ -5,6 +5,8 @@ using namespace GLEN;
 Primitive::Primitive()
 {
 	m_polygonMode = GL_FILL;
+
+	m_model.SetIdentity();
 }
 
 
@@ -20,29 +22,24 @@ void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 	// 4. draw the object
 	m_shaderProgram.use();
 
-	//todo: obviously move
-	CU::Matrix44f model;
-	model.SetIdentity();
-	//model = CU::Matrix44f::RotateX(glfwGetTime() * 50 * 0.5);
-	//model *= CU::Matrix44f::RotateY(glfwGetTime() * 50);
-	model.SetPosition(m_position);
 
-	m_shaderProgram.setMatrix("transform", model * view * projection);
-	m_shaderProgram.setMatrix("model", model);
+	//m_shaderProgram.setMatrix("transform", m_model * view * projection);
+		//invert x for open gl:
+	auto model = m_model;
+	auto pos = model.GetPosition();
+	pos.x = -pos.x;
+	model.SetPosition(pos);
+	m_shaderProgram.setMatrix("model", m_model);
 	m_shaderProgram.setMatrix("view", view);
 	m_shaderProgram.setMatrix("projection", projection);
 
 
-	//for (unsigned int i = 0; i < m_textureHandles.size();i++)
+	for (unsigned int i = 0; i < m_textureHandles.size();i++)
 	{
-		//glActiveTexture(GL_TEXTURE0+i); // activate the texture unit first before binding texture. 
-		//glBindTexture(GL_TEXTURE_2D, m_textureHandles[i]); //does this need check if has texture?
+		glActiveTexture(GL_TEXTURE0+i);
+		glBindTexture(GL_TEXTURE_2D, m_textureHandles[i]);
 	}
-	//todo: loop de loop
-	glActiveTexture(GL_TEXTURE0); 
-	glBindTexture(GL_TEXTURE_2D, m_textureHandles[0]);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_textureHandles[1]);
+
 
 	glBindVertexArray(m_vertexArrayObjectHandle);
 
@@ -141,6 +138,11 @@ void GLEN::Primitive::Finalize(DrawFrequency frequency)
 	{
 		glVertexAttribPointer(m_vertexLayout.texCoordAttribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.texCoordOffset * sizeof(float)));
 		glEnableVertexAttribArray(m_vertexLayout.texCoordAttribute);
+	}
+	if (m_vertexLayout.hasNormals == true)
+	{
+		glVertexAttribPointer(m_vertexLayout.normalsAttribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.normalOffset * sizeof(float)));
+		glEnableVertexAttribArray(m_vertexLayout.normalsAttribute);
 	}
 }
 

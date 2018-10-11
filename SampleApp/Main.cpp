@@ -38,7 +38,7 @@ int main()
 	1, 2, 3  // second triangle
 	};
 
-	// a cube 
+	// a cube with texcords
 	float vertices2[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -83,6 +83,53 @@ int main()
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
+	//cube with normals
+	float vertices3[] = {
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	};
+
+
+
 
 
 	CU::Vector3f cubePositions[] = {
@@ -99,32 +146,51 @@ int main()
 	};
 
 	GLEN::VertexLayout layout;
-	layout.hasColor = false;
-	layout.texCoordOffset = 3;
-	layout.stride = 5;
+	layout.hasTexCoords = false;
+	//layout.texCoordOffset = 3;
+	//layout.stride = 6;
 
 	GLEN::Texture texture = *engine.GetTextureContainer().GetTexture("container.jpg");
 	GLEN::Texture texture2 = *engine.GetTextureContainer().GetTexture("awesomeface.png");;
 
-	GLEN::ShaderProgram shaderProgram = *engine.GetShaderContainer().CreateShaderProgram("baseShader", "shader.vert", "shader.frag");
+	GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
 
 
 	std::vector<GLEN::Primitive> primitives;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		GLEN::Primitive* primitive = new GLEN::Primitive();
-		primitive->SetVerticeData(vertices2, sizeof(vertices2) / sizeof(float), layout);
+		primitive->SetVerticeData(vertices3, sizeof(vertices3) / sizeof(float), layout);
 		primitive->addTexture(texture.getHandle());
 		primitive->addTexture(texture2.getHandle());
 		primitive->Finalize(GLEN::STATIC_DRAW);
 		scene.AddPrimitive(primitive);
-		primitive->SetShaderProgram(shaderProgram);
+		primitive->SetShaderProgram(lightShader);
 		primitive->setPosition(cubePositions[i]);
 	}
 
-	shaderProgram.use();
-	shaderProgram.setInt("texture1", 0);
-	shaderProgram.setInt("texture2", 1);
+	lightShader.use();
+	lightShader.setVector("viewPos", engine.GetCamera().GetPosition());
+	//lightShader.setInt("texture1", 0);
+	//lightShader.setInt("texture2", 1);
+	lightShader.setVector("objectColor", { 1.0f, 0.5f, 0.31f });
+	lightShader.setVector("lightColor", { 1.0f, 1.0f, 1.0f });
+
+
+	auto lightPos = CU::Vector3f(1.2f, 1.0f, 2.0f);
+	lightShader.setVector("lightPos", lightPos);
+
+	//lamp cube rep
+	GLEN::Primitive* lampCube = new GLEN::Primitive();
+	lampCube->SetVerticeData(vertices3, sizeof(vertices3) / sizeof(float), layout);
+	lampCube->Finalize(GLEN::STATIC_DRAW);
+	scene.AddPrimitive(lampCube);
+	GLEN::ShaderProgram lampShader = *engine.GetShaderContainer().CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
+	lampCube->SetShaderProgram(lampShader);
+	lampCube->setPosition(lightPos);
+	lampCube->m_model.Scale(0.2f);
+
+
 
 	//primitive.SetIndexData(indices, sizeof(indices) / sizeof(int));
 
@@ -155,11 +221,16 @@ int main()
 		float radius = 10.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
-		auto cameraPos = CU::Vector3f(camX, 0, camZ);
+		lightPos = CU::Vector3f(camX, 0, camZ);
+		lampCube->setPosition(lightPos);
 
 
-		auto cameraTarget = CU::Vector3f(camX, 0.f, camZ);
-		auto view = engine.GetCamera().getView();//engine.GetCamera().UpdateView(); 
+		//auto cameraTarget = CU::Vector3f(camX, 0.f, camZ);
+
+		auto view = engine.GetCamera().getView();
+		auto pos = view.GetPosition();
+		view.Translate(pos);
+	
 
 		//view = engine.GetCamera().LookAt(cameraTarget);
 		
@@ -169,6 +240,11 @@ int main()
 		engine.RenderScene();
 
 		auto projection = engine.GetCamera().getProjection();
+
+		lightShader.use();
+		lightShader.setVector("viewPos", engine.GetCamera().GetPosition());
+		lightShader.setVector("lightPos", lightPos);
+
 		scene.Render(view, projection); //send in the camera here, or let the scene own the camera?
 		
 	}

@@ -25,18 +25,22 @@ namespace GLEN
 		POLYGONMODE_POINT = GL_POINT
 	};
 
+	//todo: need to generalise this
 	struct VertexLayout {
 		VertexLayout() {};
 
 		int locationAtrribute = 0; //set in shader
 		int colorAtribute = 1; //set in shader
 		int texCoordAttribute = 2; //set in shader
-		int stride = 8;
+		int normalsAttribute = 1;
+		int stride = 6;
 		int texCoordOffset = 6;
 		int colorOffset = 3;
 		int vertexOffset = 0;
-		bool hasColor = true;
+		int normalOffset = 3;
+		bool hasColor = false;
 		bool hasTexCoords = true;
+		bool hasNormals = true;
 	};
 
 
@@ -57,9 +61,9 @@ namespace GLEN
 		void setPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
 		void addTexture(int aTextureHandle) { m_textureHandles.push_back(aTextureHandle); }
 
-		//todo: create base class for this:
-		void setPosition(CU::Vector3f aPosition) { m_position = aPosition; }
-		CU::Vector3f m_position;
+		//todo: create instance class for this:
+		void setPosition(CU::Vector3f aPosition) { m_model.Translate(aPosition); }
+		CU::Matrix44f m_model;
 	private:
 		
 

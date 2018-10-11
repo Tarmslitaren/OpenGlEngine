@@ -32,7 +32,6 @@ void InputController::PointerEvent(const CU::Vector2f & mousePosition)
 	yoffset *= sensitivity;
 
 	m_yaw += xoffset;
-	std::cout << m_yaw << std::endl;
 	m_pitch += yoffset;
 
 	if (m_pitch > 89.0f)
