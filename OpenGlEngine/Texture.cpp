@@ -15,8 +15,10 @@ Texture::~Texture()
 {
 }
 
+
 bool GLEN::Texture::LoadTexture(std::string path, bool flipY)
 {
+
 	m_path = path;
 
 	glGenTextures(1, &m_handle);
@@ -34,15 +36,17 @@ bool GLEN::Texture::LoadTexture(std::string path, bool flipY)
 	{
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		
-		int colorLayout = GL_RGB;
-		if (m_channels == 4) //very naiive check. only works for a subset of image types.
-		{
-			colorLayout = GL_RGBA;
-		}
+		int format = GL_RGB;
+		if (m_channels == 1)
+			format = GL_RED;
+		else if (m_channels == 3)
+			format = GL_RGB;
+		else if (m_channels == 4)//very naiive check. only works for a subset of image types.
+			format = GL_RGBA;
 
 
 		//todo: use stb lib to figure out type of texture and use corresponding GL type (eg: GL_RGB,GL_RGBA etc)
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, colorLayout, GL_UNSIGNED_BYTE, data); //todo: check for errors obv.
+		glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data); //todo: check for errors obv.
 
 
 		glGenerateMipmap(GL_TEXTURE_2D);

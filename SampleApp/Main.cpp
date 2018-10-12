@@ -86,7 +86,7 @@ int main()
 	};
 
 	//cube with normals
-	float vertices3[] = {
+	float vertices456[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -130,6 +130,52 @@ int main()
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 
+	//cube with normals and texture coords
+	float vertices3[] = {
+		// positions          // normals           // texture coords
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+	};
+
 
 
 
@@ -148,17 +194,26 @@ int main()
 	};
 
 	GLEN::VertexLayout layout;
-	layout.hasTexCoords = false;
-	//layout.texCoordOffset = 3;
-	//layout.stride = 6;
+	layout.hasTexCoords = true;
+	layout.hasNormals = true;
+	layout.normalOffset = 3;
+	layout.texCoordOffset = 6;
+	layout.texCoordAttribute = 2;
+	layout.stride = 8;
 
-	GLEN::Texture texture = *engine.GetTextureContainer().GetTexture("container.jpg");
-	GLEN::Texture texture2 = *engine.GetTextureContainer().GetTexture("awesomeface.png");;
+	//GLEN::Texture texture = *engine.GetTextureContainer().GetTexture("container.jpg");
+	//GLEN::Texture texture2 = *engine.GetTextureContainer().GetTexture("awesomeface.png");
+
+	GLEN::Texture diffuseMap = *engine.GetTextureContainer().GetTexture("container2.png");
+	GLEN::Texture specularMap = *engine.GetTextureContainer().GetTexture("container2_specular.png");
 
 	GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
 
+	lightShader.use();
+	lightShader.setInt("material.diffuse", 0);// diffuseMap.getHandle());
+	lightShader.setInt("material.specular", 1);// specularMap.getHandle());
 
-	engine.GetModelContainer().CreatePrimitive("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, { (int)texture.getHandle() , (int)texture2.getHandle() });
+	engine.GetModelContainer().CreatePrimitive("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, { (int)diffuseMap.getHandle(), (int)specularMap.getHandle() });
 
 	std::vector<GLEN::Primitive> primitives;
 	for (int i = 0; i < 1; i++)
@@ -175,7 +230,7 @@ int main()
 	GLEN::Light* light = new GLEN::Light(lampCube);
 	auto lightPos = CU::Vector3f(1.2f, 1.0f, 2.0f);
 	lampCube->SetPosition(lightPos);
-	lampCube->SetPosition(lightPos);
+	light->SetPosition(lightPos);
 	lampCube->SetScale(0.2f);
 
 	scene.AddLight(light);
@@ -234,8 +289,8 @@ int main()
 		CU::Vector3f diffuseColor = lightColor * 0.5f; // decrease the influence
 		CU::Vector3f ambientColor = diffuseColor * 0.2f; // low influence
 
-		light->SetAmbient(ambientColor);
-		light->SetDiffuse(diffuseColor);
+		//light->SetAmbient(ambientColor);
+		//light->SetDiffuse(diffuseColor);
 
 		scene.Render(); //send in the camera here, or let the scene own the camera?
 		

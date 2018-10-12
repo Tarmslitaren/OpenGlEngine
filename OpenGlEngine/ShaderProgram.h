@@ -17,11 +17,11 @@ namespace GLEN
 		std::string GetId() { return m_id; }
 		void use();
 		// utility uniform functions
-		void setBool(const std::string &name, bool value) const;
-		void setInt(const std::string &name, int value) const;
-		void setFloat(const std::string &name, float value) const;
-		void setMatrix(const std::string &name, CU::Matrix44f matrix) const;
-		void setVector(const std::string &name, CU::Vector3f matrix) const;
+		void setBool(const std::string &name, bool value);
+		void setInt(const std::string &name, int value);
+		void setFloat(const std::string &name, float value);
+		void setMatrix(const std::string &name, CU::Matrix44f matrix);
+		void setVector(const std::string &name, CU::Vector3f matrix);
 	private:
 		bool AddShader(const char* path, int& handle, ShaderType shaderType);
 		int m_vertexShaderHandle;

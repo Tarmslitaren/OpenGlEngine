@@ -20,6 +20,8 @@ void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 	// 4. draw the object
 
 
+
+	//todo: break out to material class owned by rpimitive (rename to model really..)
 	for (unsigned int i = 0; i < m_textureHandles.size();i++)
 	{
 		glActiveTexture(GL_TEXTURE0+i);

@@ -16,8 +16,8 @@ GLEN::ModelInstance::ModelInstance(std::string primitiveId, std::string shaderPr
 
 	//material: is this really the place? or does the primitive own the material and texture
 	shader.setVector("material.ambient", { 1.0f, 0.5f, 0.31f });
-	shader.setVector("material.diffuse", { 1.0f, 0.5f, 0.31f });
-	shader.setVector("material.specular", { 0.5f, 0.5f, 0.5f });
+	//shader.setVector("material.diffuse", { 1.0f, 0.5f, 0.31f });
+	//shader.setVector("material.specular", { 0.5f, 0.5f, 0.5f });
 	shader.setFloat("material.shininess", 32.0f);
 
 }
@@ -35,6 +35,9 @@ void GLEN::ModelInstance::Render(Light* light)
 		auto projection = cam.getProjection();
 		auto view = cam.getView();
 
+
+		//todo: issue: we are setting these vaiables without knowing if they exist in the current shader. 
+		//should add uniform signature to shader class?? shader instance?
 		ShaderProgram& shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(m_shaderId);
 		shader.use();
 		//m_shaderProgram.setMatrix("transform", m_model * view * projection);

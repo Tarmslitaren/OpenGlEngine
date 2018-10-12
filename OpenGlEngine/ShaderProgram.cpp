@@ -119,29 +119,34 @@ void GLEN::ShaderProgram::use()
 	}
 }
 
-void GLEN::ShaderProgram::setBool(const std::string & name, bool value) const
+void GLEN::ShaderProgram::setBool(const std::string & name, bool value)
 {
+	use();
 	glUniform1i(glGetUniformLocation(m_shaderProgramHandle, name.c_str()), (int)value);
 }
 
-void GLEN::ShaderProgram::setInt(const std::string & name, int value) const
+void GLEN::ShaderProgram::setInt(const std::string & name, int value)
 {
+	use();
 	glUniform1i(glGetUniformLocation(m_shaderProgramHandle, name.c_str()), value);
 }
 
-void GLEN::ShaderProgram::setFloat(const std::string & name, float value) const
+void GLEN::ShaderProgram::setFloat(const std::string & name, float value)
 {
+	use();
 	glUniform1f(glGetUniformLocation(m_shaderProgramHandle, name.c_str()), value);
 }
 
-void GLEN::ShaderProgram::setMatrix(const std::string & name, CU::Matrix44f matrix) const
+void GLEN::ShaderProgram::setMatrix(const std::string & name, CU::Matrix44f matrix)
 {
+	use();
 	unsigned int transformLoc = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, matrix.myMatrix[0]);
 }
 
-void GLEN::ShaderProgram::setVector(const std::string & name, CU::Vector3f vector) const
+void GLEN::ShaderProgram::setVector(const std::string & name, CU::Vector3f vector)
 {
+	use();
 	unsigned int transformLoc = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
 	glUniform3f(transformLoc, vector.x, vector.y, vector.z);
 }
