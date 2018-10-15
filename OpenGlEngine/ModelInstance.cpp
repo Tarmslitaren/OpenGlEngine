@@ -23,8 +23,8 @@ void GLEN::ModelInstance::Render(Light* light)
 	if (m_isToRender)
 	{
 		Camera cam = Engine::GetInstance()->GetCamera();
-		auto projection = cam.getProjection();
-		auto view = cam.getView();
+		auto projection = cam.GetProjection();
+		auto view = cam.GetView();
 
 
 		//todo: issue: we are setting these vaiables without knowing if they exist in the current shader. 

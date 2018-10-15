@@ -9,10 +9,11 @@ namespace CommonUtilities
 
 
 	template <class TYPE>
-	CU::Matrix33<TYPE> GenerateMatrix(CU::Vector3<TYPE> aDirection)
+	CU::Matrix33<TYPE> GenerateMatrix(const CU::Vector3<TYPE>& aDirection)
 	{
-		CU::Vector3<TYPE> zAxis(aDirection);
-		aDirection.Normalize();
+		CU::Vector3<TYPE> direction = aDirection;
+		CU::Vector3<TYPE> zAxis(direction);
+		direction.Normalize();
 
 		CU::Vector3<TYPE>  yAxis;
 
@@ -79,6 +80,18 @@ namespace CommonUtilities
 		returnValue.x = aVector.myX*aMatrix.myMatrix[0][0]+aVector.myY*aMatrix.myMatrix[1][0]+aVector.myZ*aMatrix.myMatrix[2][0];
 		returnValue.y = aVector.myX*aMatrix.myMatrix[0][1]+aVector.myY*aMatrix.myMatrix[1][1]+aVector.myZ*aMatrix.myMatrix[2][1];
 		returnValue.z = aVector.myX*aMatrix.myMatrix[0][2]+aVector.myY*aMatrix.myMatrix[1][2]+aVector.myZ*aMatrix.myMatrix[2][2];
+
+		return(returnValue);
+	}
+
+	template <class TYPE>
+	Vector3<TYPE> operator*(const Matrix44<TYPE>& aMatrix, const Vector3<TYPE>& aVector)
+	{
+		Vector3<TYPE> returnValue;
+
+		returnValue.x = aVector.myX*aMatrix.myMatrix[0][0] + aVector.myY*aMatrix.myMatrix[1][0] + aVector.myZ*aMatrix.myMatrix[2][0];
+		returnValue.y = aVector.myX*aMatrix.myMatrix[0][1] + aVector.myY*aMatrix.myMatrix[1][1] + aVector.myZ*aMatrix.myMatrix[2][1];
+		returnValue.z = aVector.myX*aMatrix.myMatrix[0][2] + aVector.myY*aMatrix.myMatrix[1][2] + aVector.myZ*aMatrix.myMatrix[2][2];
 
 		return(returnValue);
 	}

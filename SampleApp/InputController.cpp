@@ -44,7 +44,8 @@ void InputController::PointerEvent(const CU::Vector2f & mousePosition)
 	}
 
 	calculateFront();
-	GLEN::Engine::GetInstance()->GetCamera().LookAt(m_cameraFront); //something is fucked. the position of the camera gets wildly inappropriate
+	GLEN::Engine::GetInstance()->GetCamera().SetOrientation(m_cameraFront);
+	//GLEN::Engine::GetInstance()->GetCamera().LookAt(m_cameraFront); //something is fucked. the position of the camera gets wildly inappropriate
 
 		//GLEN::Engine::GetInstance()->GetCamera().Pitch(m_pitch*0.01);
 	//GLEN::Engine::GetInstance()->GetCamera().Yaw(m_yaw*0.01);

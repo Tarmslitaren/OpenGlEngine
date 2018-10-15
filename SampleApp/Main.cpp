@@ -239,13 +239,24 @@ int main()
 	//init light
 	GLEN::ShaderProgram lampShader = *engine.GetShaderContainer().CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
 	GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("cube", "lampShader");
-	GLEN::Light* light = new GLEN::Light(GLEN::DIRECTIONAL_LIGHT, lampCube);
+	GLEN::Light* light = new GLEN::Light(GLEN::DIRECTIONAL_LIGHT);
 	auto lightPos = CU::Vector3f(1.2f, 1.0f, 2.0f);
 	light->SetPosition(lightPos);
 	light->SetDirection({ -0.2f, -1.0f, -0.3f });
 
-	light->SetSpotlightRadius(4.5f);
+	light->SetSpotlightRadius(12.5f);
 	lampCube->SetScale(0.2f);
+
+
+
+
+	// light properties
+	// we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
+	// each environment and lighting type requires some tweaking to get the best out of your environment.
+	light->SetAmbient({ 0.1,0.1,0.1 });
+	light->SetDiffuse({ 0.8f, 0.8f, 0.8f });
+	light->SetSpecular({ 1.0f, 1.0f, 1.0f });
+	light->SetAttenuation(0.09f, 0.032f, 1);
 
 	scene.AddLight(light);
 
@@ -272,7 +283,7 @@ int main()
 		inputController.Update(deltaTime);
 
 		//move the light
-		float radius = 10.0f;
+		float radius = 5.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
 		lightPos = CU::Vector3f(camX, 0, camZ);
@@ -280,8 +291,8 @@ int main()
 		light->SetDirection(CU::Vector3f(0, 0, 0) - lightPos);
 
 		//move light with cammera (flashlight)
-		//light->SetPosition(engine.GetCamera().GetPosition());
-		//light->SetDirection(inputController.GetFront());
+		light->SetPosition(engine.GetCamera().GetPosition());
+		light->SetDirection(inputController.GetFront());
 
 		
 		//compared to opengl the x axis is reversed. this is fine, as now positive rotation over x axis is clockwize and not flipped.
@@ -300,7 +311,7 @@ int main()
 		//light->SetAmbient(ambientColor);
 		//light->SetDiffuse(diffuseColor);
 
-		scene.Render(); //send in the camera here, or let the scene own the camera?
+		scene.Render();
 		
 	}
 

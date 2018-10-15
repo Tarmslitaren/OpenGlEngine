@@ -40,7 +40,7 @@ void main()
 
 
 	//ambient
-	vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+	vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords)).rgb;
 	//vec3 ambient = light.ambient * material.ambient; //if not using texture
   
 
@@ -56,15 +56,15 @@ void main()
 
 		float diff = max(dot(norm, lightDir), 0.0);
 		//calc diffuse strength: the closer to surface normal the brighter
-		vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords)); 
+		vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords)).rgb; 
 
 		//specular: effect higher the smaller reverse angle from view.
 		//vec3 viewDir = normalize(viewPos - FragPos); //if calculating the angle in the vertex shader
 		//vec3 viewDir = normalize(-FragPos); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
-		vec3 viewDir = normalize(FragPos); // fragpos should be inverted here, but there is something off about my view matrix
+		vec3 viewDir = normalize(-FragPos); // fragpos should be inverted here, but there is something off about my view matrix
 		vec3 reflectDir = reflect(-lightDir, norm); 
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-		vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+		vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)).rgb;
 		//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
 
 		//calc attenuation (not for directional lights)
