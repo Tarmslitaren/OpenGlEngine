@@ -1,9 +1,10 @@
 #include "Light.h"
-
+#include "Engine.h"
 using namespace GLEN;
 
-Light::Light(ModelInstance* instance)
+Light::Light(LightType lightType, ModelInstance* instance)
 {
+	m_type = lightType;
 	m_debugRenderObject = instance;
 	m_ambient = { 0.2f, 0.2f, 0.2f }; //ambient should be low
 	m_diffuse = { 0.5f, 0.5f, 0.5f }; // darken the light a bit to fit the scene
@@ -23,4 +24,29 @@ void GLEN::Light::RenderObject()
 		Light light;
 		m_debugRenderObject->Render(&light);
 	}
+}
+
+void GLEN::Light::ApplytoShader(std::string shaderId)
+{
+
+	ShaderProgram& shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(shaderId);
+	shader.setVector("light.ambient", m_ambient);
+	shader.setVector("light.diffuse", m_diffuse); // darken the light a bit to fit the scene
+	shader.setVector("light.specular", m_specular);
+	shader.setVector("light.position", m_position);
+
+	//not for point lights
+	shader.setVector("light.direction", m_direction);
+
+	//not for dir lights
+	shader.setFloat("light.constant", 1.0f);
+	shader.setFloat("light.linear", 0.09f);
+	shader.setFloat("light.quadratic", 0.032f);
+}
+
+void Light::SetAttenuation(float linear, float quadratic, float constant)
+{
+	m_linear = linear;
+	m_quadratic = quadratic;
+	m_constant = constant;
 }

@@ -139,6 +139,7 @@
     <ClCompile Include="glad\glad.c" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="ModelContainer.cpp" />
     <ClCompile Include="ModelInstance.cpp" />
     <ClCompile Include="MouseListener.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="KHR\khrplatform.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="ModelContainer.h" />
     <ClInclude Include="ModelInstance.h" />
     <ClInclude Include="MouseListener.h" />

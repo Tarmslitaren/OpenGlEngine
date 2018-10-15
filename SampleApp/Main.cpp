@@ -13,6 +13,7 @@
 #include "InputController.h"
 #include "ModelInstance.h"
 #include "ModelContainer.h"
+#include "Material.h"
 
 
 int main()
@@ -201,36 +202,49 @@ int main()
 	layout.texCoordAttribute = 2;
 	layout.stride = 8;
 
-	//GLEN::Texture texture = *engine.GetTextureContainer().GetTexture("container.jpg");
-	//GLEN::Texture texture2 = *engine.GetTextureContainer().GetTexture("awesomeface.png");
-
-	GLEN::Texture diffuseMap = *engine.GetTextureContainer().GetTexture("container2.png");
-	GLEN::Texture specularMap = *engine.GetTextureContainer().GetTexture("container2_specular.png");
 
 	GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
 
-	lightShader.use();
-	lightShader.setInt("material.diffuse", 0);// diffuseMap.getHandle());
-	lightShader.setInt("material.specular", 1);// specularMap.getHandle());
 
-	engine.GetModelContainer().CreatePrimitive("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, { (int)diffuseMap.getHandle(), (int)specularMap.getHandle() });
+	GLEN::Material material;
+	material.SetDiffuseTexture("container2.png", 0);
+	material.SetSpecularTexture("container2_specular.png", 1);
+	material.SetShininess(32.f);
+	material.SetShader(lightShader.GetHandle());
+	material.InitShaderVariables();
+
+
+	engine.GetModelContainer().CreatePrimitive("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, material);
 
 	std::vector<GLEN::Primitive> primitives;
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 10; i++)
 	{
+
+			float angle = 20.0f * i;
+			//model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		
+
 		GLEN::ModelInstance* instance = new GLEN::ModelInstance("cube", "lightShader");
 		instance->SetPosition(cubePositions[i]);
+		CU::Matrix33f ori;
+		ori.SetIdentity();
+		ori.SetRotationX(angle);
+		ori.SetRotationY(0.3*angle);
+		ori.SetRotationZ(0.5*angle);
+		instance->SetOrientation(ori);
 		scene.AddModel(instance);
 		
 	}
 
-
+	//init light
 	GLEN::ShaderProgram lampShader = *engine.GetShaderContainer().CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
 	GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("cube", "lampShader");
-	GLEN::Light* light = new GLEN::Light(lampCube);
+	GLEN::Light* light = new GLEN::Light(GLEN::DIRECTIONAL_LIGHT, lampCube);
 	auto lightPos = CU::Vector3f(1.2f, 1.0f, 2.0f);
-	lampCube->SetPosition(lightPos);
 	light->SetPosition(lightPos);
+	light->SetDirection({ -0.2f, -1.0f, -0.3f });
+
+	light->SetSpotlightRadius(4.5f);
 	lampCube->SetScale(0.2f);
 
 	scene.AddLight(light);
@@ -257,38 +271,32 @@ int main()
 
 		inputController.Update(deltaTime);
 
+		//move the light
 		float radius = 10.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
 		lightPos = CU::Vector3f(camX, 0, camZ);
-		lampCube->SetPosition(lightPos);
+		light->SetPosition(lightPos);
+		light->SetDirection(CU::Vector3f(0, 0, 0) - lightPos);
 
+		//move light with cammera (flashlight)
+		//light->SetPosition(engine.GetCamera().GetPosition());
+		//light->SetDirection(inputController.GetFront());
 
-		//auto cameraTarget = CU::Vector3f(camX, 0.f, camZ);
-
-		auto view = engine.GetCamera().getView();
-		auto pos = view.GetPosition();
-		view.Translate(pos);
-	
-
-		//view = engine.GetCamera().LookAt(cameraTarget);
 		
 		//compared to opengl the x axis is reversed. this is fine, as now positive rotation over x axis is clockwize and not flipped.
 		//also the order of matrix multiplication is reversed, now read from left to right instead of right to left...
 
 		engine.RenderScene();
 
-		auto projection = engine.GetCamera().getProjection();
 
-		light->SetPosition(lightPos);
-
-		CU::Vector3f lightColor;
-		lightColor.x = sin(glfwGetTime() * 2.0f);
-		lightColor.y = sin(glfwGetTime() * 0.7f);
-		lightColor.z = sin(glfwGetTime() * 1.3f);
-		CU::Vector3f diffuseColor = lightColor * 0.5f; // decrease the influence
-		CU::Vector3f ambientColor = diffuseColor * 0.2f; // low influence
-
+		//change light color
+		//CU::Vector3f lightColor;
+		//lightColor.x = sin(glfwGetTime() * 2.0f);
+		//lightColor.y = sin(glfwGetTime() * 0.7f);
+		//lightColor.z = sin(glfwGetTime() * 1.3f);
+		//CU::Vector3f diffuseColor = lightColor * 0.5f; // decrease the influence
+		//CU::Vector3f ambientColor = diffuseColor * 0.2f; // low influence
 		//light->SetAmbient(ambientColor);
 		//light->SetDiffuse(diffuseColor);
 

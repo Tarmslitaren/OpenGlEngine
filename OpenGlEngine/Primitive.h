@@ -4,6 +4,7 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include "ShaderProgram.h"
+#include "Material.h"
 namespace GLEN
 {
 
@@ -58,11 +59,10 @@ namespace GLEN
 		void AddTriangleIndexes(const CU::Vector3i indexes);//remove?
 		int Finalize(DrawFrequency frequency, std::string id );
 		void SetPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
-		void AddTexture(int aTextureHandle) { m_textureHandles.push_back(aTextureHandle); }
 
 		std::string GetId() { return m_id; }
-		int GetHandle() { return m_vertexArrayObjectHandle;  } //reuse this as id (could maybe be hash of id string istead but meh.)
-
+		int GetHandle() { return m_vertexArrayObjectHandle;  } //reuse this as id (could maybe be hash of id string instead but meh.)
+		void SetMaterial(const Material& material) { m_material = material; }
 	private:
 		std::string m_id;
 
@@ -74,7 +74,7 @@ namespace GLEN
 		ShaderProgram m_shaderProgram;
 		unsigned int m_polygonMode;
 		VertexLayout m_vertexLayout;
-		std::vector<unsigned int> m_textureHandles;
+		Material m_material;
 	};
 }
 

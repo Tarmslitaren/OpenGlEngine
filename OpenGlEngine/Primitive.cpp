@@ -19,14 +19,7 @@ void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 	// ..:: Drawing code (in render loop) :: ..
 	// 4. draw the object
 
-
-
-	//todo: break out to material class owned by rpimitive (rename to model really..)
-	for (unsigned int i = 0; i < m_textureHandles.size();i++)
-	{
-		glActiveTexture(GL_TEXTURE0+i);
-		glBindTexture(GL_TEXTURE_2D, m_textureHandles[i]);
-	}
+	m_material.Render(); //maybe this is wrong. since this method should only be run from here and needs to be run from here.
 
 
 	glBindVertexArray(m_vertexArrayObjectHandle);

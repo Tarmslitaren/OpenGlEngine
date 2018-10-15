@@ -11,7 +11,7 @@ ModelContainer::~ModelContainer()
 {
 }
 
-int GLEN::ModelContainer::CreatePrimitive(std::string id, float * verticeData, int dataSize, VertexLayout vertexLayout, std::vector<int> textureHandles, DrawFrequency drawFrequency)
+int GLEN::ModelContainer::CreatePrimitive(std::string id, float * verticeData, int dataSize, VertexLayout vertexLayout, const Material& material, DrawFrequency drawFrequency)
 {
 	//sanity check
 	if (GetPrimitive(id) != nullptr)
@@ -21,10 +21,7 @@ int GLEN::ModelContainer::CreatePrimitive(std::string id, float * verticeData, i
 	}
 	GLEN::Primitive* primitive = new GLEN::Primitive();
 	primitive->SetVerticeData(verticeData, dataSize, vertexLayout);
-	for (int handle : textureHandles)
-	{
-		primitive->AddTexture(handle);
-	}
+	primitive->SetMaterial(material);
 	int handle = primitive->Finalize(drawFrequency, id);
 	m_primitives.push_back(primitive);
 	return handle;

@@ -35,7 +35,9 @@ const CU::Matrix44f& GLEN::Camera::LookAt(const CU::Vector3f & target)
 	pos.SetIdentity();
 	CU::Vector3f invertPos = { -m_position.x, -m_position.y, -m_position.z }; //why invert? because the view matrix is the camera model matrix inversed.
 	pos.Translate(invertPos);
+	
 	m_view = pos * m_view; //the mult order should here be reversed as  the matrix is inverted
+	//m_view.SetPosition(invertPos);
 
 	//m_view.Translate({ -m_position.x, -m_position.y, -m_position.z });
 	return m_view;

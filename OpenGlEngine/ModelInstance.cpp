@@ -10,15 +10,6 @@ GLEN::ModelInstance::ModelInstance(std::string primitiveId, std::string shaderPr
 	m_shaderId = shaderProgram;
 	m_primitive = Engine::GetInstance()->GetModelContainer().GetPrimitive(primitiveId);
 
-	ShaderProgram& shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(m_shaderId);
-	shader.use();
-	//shader.setVector("viewPos", engine.GetCamera().GetPosition());
-
-	//material: is this really the place? or does the primitive own the material and texture
-	shader.setVector("material.ambient", { 1.0f, 0.5f, 0.31f });
-	//shader.setVector("material.diffuse", { 1.0f, 0.5f, 0.31f });
-	//shader.setVector("material.specular", { 0.5f, 0.5f, 0.5f });
-	shader.setFloat("material.shininess", 32.0f);
 
 }
 
@@ -39,7 +30,6 @@ void GLEN::ModelInstance::Render(Light* light)
 		//todo: issue: we are setting these vaiables without knowing if they exist in the current shader. 
 		//should add uniform signature to shader class?? shader instance?
 		ShaderProgram& shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(m_shaderId);
-		shader.use();
 		//m_shaderProgram.setMatrix("transform", m_model * view * projection);
 		CU::Matrix44f matrix = CU::Matrix44f::Identity();
 		matrix = m_orientation;
@@ -50,12 +40,7 @@ void GLEN::ModelInstance::Render(Light* light)
 
 		shader.setVector("viewPos", cam.GetPosition());
 
-		//light
-		shader.setVector("light.ambient", light->GetAmbient());
-		shader.setVector("light.diffuse", light->GetDiffuse()); // darken the light a bit to fit the scene
-		shader.setVector("light.specular", light->GetSpecular());
-
-		shader.setVector("lightPos", light->GetPosition());
+		light->ApplytoShader(m_shaderId);
 
 
 		m_primitive->Render(view, projection);
