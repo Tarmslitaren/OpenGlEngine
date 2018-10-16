@@ -1,9 +1,11 @@
 #include "Light.h"
 #include "Engine.h"
+#include "Converters.h"
 using namespace GLEN;
 
-Light::Light(LightType lightType, ModelInstance* instance)
+Light::Light(LightType lightType, ModelInstance* instance, int index)
 {
+	m_index = index;
 	m_type = lightType;
 	m_debugRenderObject = instance;
 	m_ambient = { 0.1f, 0.1f, 0.1f }; //ambient should be low
@@ -28,22 +30,37 @@ void GLEN::Light::RenderObject()
 
 void GLEN::Light::ApplytoShader(std::string shaderId)
 {
-
+	//todo: question is if the shader bindings should be more generic and set/bound by external object
 	ShaderProgram& shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(shaderId);
-	shader.setVector("light.ambient", m_ambient);
-	shader.setVector("light.diffuse", m_diffuse); // darken the light a bit to fit the scene
-	shader.setVector("light.specular", m_specular);
-	shader.setVector("light.position", m_position);
+	std::string prefix;
+	if (m_type == DIRECTIONAL_LIGHT)
+	{
+		prefix = "dirLight.";
+		shader.setVector("dirLight.direction", m_direction);
+	}
+	else if (m_type == POINT_LIGHT)
+	{
+		prefix = "pointLights[" + Convert::IntToString(m_index) + "].";
 
-	//not for point lights
-	shader.setVector("light.direction", m_direction);
-
-	//not for dir lights
-	shader.setFloat("light.constant", 1.0f);
-	shader.setFloat("light.linear", 0.09f);
-	shader.setFloat("light.quadratic", 0.032f);
-
-	shader.setFloat("light.cutOff", m_spotlightRadius);
+	}
+	else if (m_type == SPOT_LIGHT)
+	{ 
+		prefix = "spotLight.";
+		shader.setFloat("spotLight.cutOff", m_spotlightRadius);
+		shader.setFloat("spotLight.outerCutOff", m_spotlightRadiusOuter);
+		shader.setVector("spotLight.direction", m_direction);
+	}
+	
+	shader.setVector(prefix + "ambient", m_ambient);
+	shader.setVector(prefix + "diffuse", m_diffuse); // darken the light a bit to fit the scene
+	shader.setVector(prefix + "specular", m_specular);
+	shader.setVector(prefix + "position", m_position);
+	if (m_type != DIRECTIONAL_LIGHT)
+	{
+		shader.setFloat(prefix + "constant", m_constant);
+		shader.setFloat(prefix + "linear", m_linear);
+		shader.setFloat(prefix + "quadratic", m_quadratic);
+	}
 }
 
 void Light::SetAttenuation(float linear, float quadratic, float constant)
@@ -51,4 +68,10 @@ void Light::SetAttenuation(float linear, float quadratic, float constant)
 	m_linear = linear;
 	m_quadratic = quadratic;
 	m_constant = constant;
+}
+
+void GLEN::Light::SetSpotlightRadius(float radius, float outerRadius)
+{
+	m_spotlightRadius = cos(Convert::DegreeToRadian(radius));
+	m_spotlightRadiusOuter = cos(Convert::DegreeToRadian(outerRadius));
 }

@@ -5,6 +5,8 @@
 InputController::InputController()
 {
 	GLEN::Engine::GetInstance()->GetInput().CaptureMouseAndDisablePointer(); //good for mouselook
+	calculateFront();
+	GLEN::Engine::GetInstance()->GetCamera().SetOrientation(m_cameraFront);
 }
 
 

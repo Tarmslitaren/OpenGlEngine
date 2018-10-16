@@ -748,7 +748,6 @@ namespace CommonUtilities
 	template <class TYPE>
 	void Matrix44<TYPE>::Inverse(Matrix44<TYPE> &aReturnMatrix)
 	{
-		//D3DXMATRIX tempMat;
 
 		aReturnMatrix = this->GetMatrix33().Transpose();
 

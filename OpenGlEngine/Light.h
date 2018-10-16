@@ -31,7 +31,7 @@ namespace GLEN
 	class Light
 	{
 	public:
-		Light(LightType lightType = POINT_LIGHT, ModelInstance* instance = nullptr);
+		Light(LightType lightType = POINT_LIGHT, ModelInstance* instance = nullptr, int index = -1);
 		~Light();
 		void SetPosition(const CU::Vector3f& pos) { m_position = pos; }
 		void SetDirection(const CU::Vector3f& dir) { m_direction = dir; }
@@ -39,7 +39,7 @@ namespace GLEN
 		void SetSpecular(const CU::Vector3f& specular) { m_specular = specular; }
 		void SetAmbient(const CU::Vector3f& ambient) { m_ambient = ambient; }
 		void SetAttenuation(float linear, float quadratic, float constant = 1);
-		void SetSpotlightRadius(float radius) { m_spotlightRadius = cos(Convert::DegreeToRadian(radius)); }
+		void SetSpotlightRadius(float radius, float outerRadius);
 		const CU::Vector3f& GetPosition() const { return m_position; }
 		//const CU::Vector3f& GetDirection() const { return m_direction; }
 		//const CU::Vector3f& GetDiffuse() const { return m_diffuse; }
@@ -61,6 +61,10 @@ namespace GLEN
 		float m_linear = 0.09f;
 		float m_quadratic = 0.032f;
 		float m_spotlightRadius = 0;
+		float m_spotlightRadiusOuter = 0;
+
+		//index to point lite array (need to change this idea somehow)
+		int m_index = -1;
 
 
 	};

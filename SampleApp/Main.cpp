@@ -236,29 +236,53 @@ int main()
 		
 	}
 
-	//init light
+	//init lights
 	GLEN::ShaderProgram lampShader = *engine.GetShaderContainer().CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
-	GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("cube", "lampShader");
+
+	//dir light
 	GLEN::Light* light = new GLEN::Light(GLEN::DIRECTIONAL_LIGHT);
-	auto lightPos = CU::Vector3f(1.2f, 1.0f, 2.0f);
-	light->SetPosition(lightPos);
 	light->SetDirection({ -0.2f, -1.0f, -0.3f });
-
-	light->SetSpotlightRadius(12.5f);
-	lampCube->SetScale(0.2f);
-
-
-
-
 	// light properties
-	// we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
-	// each environment and lighting type requires some tweaking to get the best out of your environment.
 	light->SetAmbient({ 0.1,0.1,0.1 });
 	light->SetDiffuse({ 0.8f, 0.8f, 0.8f });
 	light->SetSpecular({ 1.0f, 1.0f, 1.0f });
-	light->SetAttenuation(0.09f, 0.032f, 1);
-
 	scene.AddLight(light);
+
+	//point lights
+	CU::Vector3f pointLightPositions[] = {
+	CU::Vector3f(0.7f,  0.2f,  2.0f),
+	CU::Vector3f(2.3f, -3.3f, -4.0f),
+	CU::Vector3f(-4.0f,  2.0f, -12.0f),
+	CU::Vector3f(0.0f,  0.0f, -3.0f)
+	};
+	for (int i = 0; i < 4; i++) {
+		GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("cube", "lampShader");
+		GLEN::Light* light = new GLEN::Light(GLEN::POINT_LIGHT, lampCube, i);
+		auto lightPos = pointLightPositions[i];//CU::Vector3f(1.2f, 1.0f, 2.0f);
+		light->SetPosition(lightPos);
+
+		lampCube->SetScale(0.2f);
+
+		// light properties
+		// we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
+		// each environment and lighting type requires some tweaking to get the best out of your environment.
+		light->SetAmbient({ 0.1,0.1,0.1 });
+		light->SetDiffuse({ 0.8f, 0.8f, 0.8f });
+		light->SetSpecular({ 1.0f, 1.0f, 1.0f });
+		light->SetAttenuation(0.09f, 0.032f, 1);
+
+		scene.AddLight(light);
+	}
+	//flashlight:
+	GLEN::Light* flashlight = new GLEN::Light(GLEN::SPOT_LIGHT);
+	flashlight->SetDirection({ -0.2f, -1.0f, -0.3f });
+	// light properties
+	flashlight->SetAmbient({ 0.1,0.1,0.1 });
+	flashlight->SetDiffuse({ 0.8f, 0.8f, 0.8f });
+	flashlight->SetSpecular({ 1.0f, 1.0f, 1.0f });
+	flashlight->SetSpotlightRadius(12.5f, 17.5f);
+	scene.AddLight(flashlight);
+
 
 	engine.GetCamera().SetProjection(45, info.m_resolution.width / info.m_resolution.height);
 
@@ -283,16 +307,16 @@ int main()
 		inputController.Update(deltaTime);
 
 		//move the light
-		float radius = 5.0f;
-		float camX = sin(glfwGetTime()) * radius;
-		float camZ = cos(glfwGetTime()) * radius;
-		lightPos = CU::Vector3f(camX, 0, camZ);
-		light->SetPosition(lightPos);
-		light->SetDirection(CU::Vector3f(0, 0, 0) - lightPos);
+		//float radius = 5.0f;
+		//float camX = sin(glfwGetTime()) * radius;
+		//float camZ = cos(glfwGetTime()) * radius;
+		//lightPos = CU::Vector3f(camX, 0, camZ);
+		//light->SetPosition(lightPos);
+		//light->SetDirection(CU::Vector3f(0, 0, 0) - lightPos);
 
 		//move light with cammera (flashlight)
-		light->SetPosition(engine.GetCamera().GetPosition());
-		light->SetDirection(inputController.GetFront());
+		flashlight->SetPosition(engine.GetCamera().GetPosition());
+		flashlight->SetDirection(inputController.GetFront());
 
 		
 		//compared to opengl the x axis is reversed. this is fine, as now positive rotation over x axis is clockwize and not flipped.

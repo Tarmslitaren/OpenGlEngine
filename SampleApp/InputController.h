@@ -17,7 +17,7 @@ public:
 private:
 	void calculateFront();
 	float m_lastX = 400, m_lastY = 300;
-	float m_yaw = 0, m_pitch = 0;
+	float m_yaw = -90.f, m_pitch = 0;
 	bool m_firstMouse = true; //to prevent initial hitch
 	float m_cameraSpeed = 2.5f;
 	CU::Vector3f m_cameraPos = { 0, 0, 3 };

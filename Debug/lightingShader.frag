@@ -4,8 +4,6 @@ out vec4 FragColor;
 in vec3 Normal;  
 in vec3 FragPos; 
 
-//uniform vec3 lightPos;  
-//in vec3 LightPos;
 //uniform vec3 viewPos; //camera
 
 in vec2 TexCoords;
@@ -17,68 +15,145 @@ struct Material {
 }; 
 uniform Material material;
 
-struct Light {
-    vec3 position; // No longer necessery when using directional lights.
+
+struct DirectionalLight {
     vec3 direction;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};  
+uniform DirectionalLight dirLight;
+
+struct PointLight {    
+    vec3 position;
+    
+    float constant;
+    float linear;
+    float quadratic;  
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};  
+//fuu this
+#define NR_POINT_LIGHTS 4  
+uniform PointLight pointLights[NR_POINT_LIGHTS];
+
+struct SpotLight {    
+    vec3 position;
+	vec3 direction;
+    
+    float constant;
+    float linear;
+    float quadratic;  
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
 
-	float constant;
-	float linear;
-	float quadratic;
-	 //for spotlight
 	float cutOff;
+	float outerCutOff;
+};   
+uniform SpotLight spotLight;
 
-};
 
-uniform Light light;  
+
+//forward declare functions:
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir);
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);  
+vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir); 
 
 //this is phong lighting model: ambient + diffuse + specular
 void main()
 {
-
-
-	//ambient
-	vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords)).rgb;
-	//vec3 ambient = light.ambient * material.ambient; //if not using texture
-  
-
-     // diffuse calcuations
+    // properties
     vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(light.position - FragPos);
-	//vec3 lightDir = normalize(-light.direction); //for directional light
 
-	//spotlight
+	//vec3 viewDir = normalize(-FragPos); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
+	vec3 viewDir = normalize(FragPos); // fragpos should be inverted here, but there is something off about my view matrix
+   // vec3 viewDir = normalize(viewPos - FragPos);//if calculating the angle in the vertex shader
+
+    // phase 1: Directional lighting
+    vec3 result = CalculateDirectionalLight(dirLight, norm, viewDir);
+    // phase 2: Point lights
+    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+        result += CalculatePointLight(pointLights[i], norm, FragPos, viewDir);    
+    // phase 3: Spot light
+    result += CalculateSpotLight(spotLight, norm, FragPos, viewDir);    
+    
+    FragColor = vec4(result, 1.0);
+}
+
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
+{
+    vec3 lightDir = normalize(-light.direction);
+    // diffuse shading: the closer to surface normal the brighter
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // combine results
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+	//vec3 ambient = light.ambient * material.ambient; //if not using texture
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)); //specular: effect higher the smaller reverse angle from view.
+	//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
+    return (ambient + diffuse + specular);
+}  
+
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.position - fragPos);
+    // diffuse shading: he closer to surface normal the brighter
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // attenuation
+    float distance    = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
+    // combine results
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+	//vec3 ambient = light.ambient * material.ambient; //if not using texture
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)); //specular: effect higher the smaller reverse angle from view.
+	//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
+
+    ambient  *= attenuation;
+    diffuse  *= attenuation;
+    specular *= attenuation;
+    return (ambient + diffuse + specular);
+} 
+
+vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.position - fragPos);
+    // diffuse shading: he closer to surface normal the brighter
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // attenuation
+    float distance    = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
+    
+
+		//spotlight
 	float theta = dot(lightDir, normalize(-light.direction));
-	if(theta > light.cutOff) 
-	{  
+	float epsilon   = light.cutOff - light.outerCutOff;
+	float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);  
 
-		float diff = max(dot(norm, lightDir), 0.0);
-		//calc diffuse strength: the closer to surface normal the brighter
-		vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords)).rgb; 
 
-		//specular: effect higher the smaller reverse angle from view.
-		//vec3 viewDir = normalize(viewPos - FragPos); //if calculating the angle in the vertex shader
-		//vec3 viewDir = normalize(-FragPos); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
-		vec3 viewDir = normalize(-FragPos); // fragpos should be inverted here, but there is something off about my view matrix
-		vec3 reflectDir = reflect(-lightDir, norm); 
-		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-		vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)).rgb;
-		//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
+	// combine results
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+	//vec3 ambient = light.ambient * material.ambient; //if not using texture
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)); //specular: effect higher the smaller reverse angle from view.
+	//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
 
-		//calc attenuation (not for directional lights)
-		float distance    = length(light.position - FragPos);
-		float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));  
-		//ambient *= attenuation;
-		diffuse *= attenuation;
-		specular *= attenuation;
-
-     
-		FragColor = vec4(ambient + diffuse + specular, 1.0);  
-	}
-	else
-	{
-		FragColor = vec4(ambient, 1.0);  
-	}
+    ambient  *= attenuation * intensity;
+    diffuse  *= attenuation * intensity;
+    specular *= attenuation * intensity;
+    return (ambient + diffuse + specular);
 }
