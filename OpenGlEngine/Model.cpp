@@ -1,20 +1,20 @@
-#include "Primitive.h"
+#include "Model.h"
 #include <iostream>
 
 using namespace GLEN;
-Primitive::Primitive()
+Model::Model()
 {
 	m_polygonMode = GL_FILL;
 }
 
 
-Primitive::~Primitive()
+Model::~Model()
 {
 	glDeleteVertexArrays(1, &m_vertexArrayObjectHandle);
 	glDeleteBuffers(1, &m_vertexBufferObjectHandle);
 }
 
-void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
+void GLEN::Model::Render(CU::Matrix44f view, CU::Matrix44f projection)
 {
 	// ..:: Drawing code (in render loop) :: ..
 	// 4. draw the object
@@ -42,39 +42,39 @@ void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 
 }
 
-void GLEN::Primitive::AddVertice(const CU::Vector3f& vertice)
+void GLEN::Model::AddVertice(const CU::Vector3f& vertice)
 {
 	m_vertices.push_back(vertice.x);
 	m_vertices.push_back(vertice.y);
 	m_vertices.push_back(vertice.z);
 }
 
-void GLEN::Primitive::SetVerticeData(float data[], int size)
+void GLEN::Model::SetVerticeData(float data[], int size)
 {
 	SetVerticeData(data, size, m_vertexLayout);
 }
 
-void GLEN::Primitive::SetVerticeData(float data[], int size, const VertexLayout& vertexLayout)
+void GLEN::Model::SetVerticeData(float data[], int size, const VertexLayout& vertexLayout)
 {
 	m_vertexLayout = vertexLayout;
 	m_vertices.clear();
 	m_vertices.insert(m_vertices.begin(), &data[0], &data[size]);
 }
 
-void GLEN::Primitive::SetIndexData(unsigned int data[], int size)
+void GLEN::Model::SetIndexData(unsigned int data[], int size)
 {
 	m_indexes.clear();
 	m_indexes.insert(m_indexes.begin(), &data[0], &data[size]);
 }
 
-void GLEN::Primitive::AddTriangleIndexes(const CU::Vector3i indexes)
+void GLEN::Model::AddTriangleIndexes(const CU::Vector3i indexes)
 {
 	m_indexes.push_back(indexes.x);
 	m_indexes.push_back(indexes.y);
 	m_indexes.push_back(indexes.z);
 }
 
-int GLEN::Primitive::Finalize(DrawFrequency frequency, std::string id)
+int GLEN::Model::Finalize(DrawFrequency frequency, std::string id)
 {
 	m_id = id;
 

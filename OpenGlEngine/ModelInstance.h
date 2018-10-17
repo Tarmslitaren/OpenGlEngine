@@ -1,5 +1,5 @@
 #pragma once
-#include "Primitive.h"
+#include "Model.h"
 #include "CU_Matrix.h"
 #include "CU_Vector.h"
 #include "ShaderProgram.h"
@@ -20,7 +20,7 @@ namespace GLEN
 		void SetScale(float value) { m_orientation.Scale(value); } //let's see if this works
 	private:
 		bool m_isToRender = true;
-		Primitive* m_primitive;
+		Model* m_model;
 		CU::Matrix33f m_orientation;
 		CU::Vector3f m_position;
 		std::string m_shaderId;

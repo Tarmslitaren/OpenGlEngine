@@ -14,16 +14,24 @@ Material::~Material()
 
 void GLEN::Material::InitShaderVariables()
 {
+	//does this need to be run per frame? to set different materials with same shader
 	ShaderProgram shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(m_shaderHandle);
-	if (m_diffuseTextureHandle != -1) {
-		shader.setInt("material.diffuse", m_diffuseBinding);
+	if (m_diffuseTextureHandles.size() > 0) {
+		for (int i = 0; i < m_diffuseTextureHandles.size(); i++)
+		{
+			shader.setInt("material.diffuse[" + std::to_string(i) + "]", m_diffuseTextureHandles[i].second);
+		}
+		
 	}
 	else
 	{
 		shader.setVector("material.diffuse", m_diffuseColor);
 	}
-	if (m_specularTextureHandle != -1) {
-		shader.setInt("material.specular", m_specularBinding);
+	if (m_specularTextureHandles.size() > 0) {
+		for (int i = 0; i < m_specularTextureHandles.size(); i++)
+		{
+			shader.setInt("material.specular[" + std::to_string(i) + "]", m_specularTextureHandles[i].second);
+		}
 	}
 	else
 	{
@@ -31,28 +39,38 @@ void GLEN::Material::InitShaderVariables()
 	}
 	shader.setVector("material.ambient", m_ambient);
 	shader.setFloat("material.shininess", m_shininess);
+	shader.setInt("material.nrOfDiffuse", m_diffuseTextureHandles.size());
+	shader.setInt("material.nrOfSpecular", m_specularTextureHandles.size());
 }
 
 void GLEN::Material::Render()
 {
 
-	glActiveTexture(GL_TEXTURE0 + m_diffuseBinding);
-	glBindTexture(GL_TEXTURE_2D, m_diffuseTextureHandle);
-
-	glActiveTexture(GL_TEXTURE0 + m_specularBinding);
-	glBindTexture(GL_TEXTURE_2D, m_specularTextureHandle);
-	
 	//glBindTexture(GL_TEXTURE_2D, 0); //need this to reset?
+
+	for (auto handles : m_diffuseTextureHandles)
+	{
+		glActiveTexture(GL_TEXTURE0 + handles.second); // activate proper texture unit before binding
+		glBindTexture(GL_TEXTURE_2D, handles.first);
+	}
+	for (auto handles : m_specularTextureHandles)
+	{
+		glActiveTexture(GL_TEXTURE0 + handles.second); // activate proper texture unit before binding
+		glBindTexture(GL_TEXTURE_2D, handles.first);
+	}
+	//InitShaderVariables(); //needed?
+
+	//glActiveTexture(GL_TEXTURE0);
 }
 
-void GLEN::Material::SetDiffuseTexture(std::string path, int binding)
+void GLEN::Material::AddDiffuseTexture(std::string path, int binding)
 {
-	m_diffuseBinding = binding;
-	m_diffuseTextureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path)->getHandle();
+	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path)->getHandle();
+	m_diffuseTextureHandles.push_back({ textureHandle, binding });
 }
 
-void GLEN::Material::SetSpecularTexture(std::string path, int binding)
+void GLEN::Material::AddSpecularTexture(std::string path, int binding)
 {
-	m_specularTextureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path)->getHandle();
-	m_specularBinding = binding;
+	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path)->getHandle();
+	m_specularTextureHandles.push_back({ textureHandle, binding });
 }

@@ -7,10 +7,14 @@ in vec3 FragPos;
 //uniform vec3 viewPos; //camera
 
 in vec2 TexCoords;
+
+#define MAX_NR_TEXTURE 4  
 struct Material {
     vec3 ambient;//not used: amibient will equal diffuse map in most cases
-    sampler2D diffuse;
-    sampler2D specular;
+	int nrOfDiffuse;
+	int nrOfSpecular;
+    sampler2D diffuse[MAX_NR_TEXTURE];
+    sampler2D specular[MAX_NR_TEXTURE];
     float shininess;
 }; 
 uniform Material material;
@@ -94,10 +98,10 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // combine results
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse[0], TexCoords));
 	//vec3 ambient = light.ambient * material.ambient; //if not using texture
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)); //specular: effect higher the smaller reverse angle from view.
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse[0], TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular[0], TexCoords)); //specular: effect higher the smaller reverse angle from view.
 	//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
     return (ambient + diffuse + specular);
 }  
@@ -114,10 +118,10 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
     // combine results
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse[0], TexCoords));
 	//vec3 ambient = light.ambient * material.ambient; //if not using texture
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)); //specular: effect higher the smaller reverse angle from view.
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse[0], TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular[0], TexCoords)); //specular: effect higher the smaller reverse angle from view.
 	//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
 
     ambient  *= attenuation;
@@ -146,10 +150,10 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
 
 
 	// combine results
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse[0], TexCoords));
 	//vec3 ambient = light.ambient * material.ambient; //if not using texture
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords)); //specular: effect higher the smaller reverse angle from view.
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse[0], TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular[0], TexCoords)); //specular: effect higher the smaller reverse angle from view.
 	//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
 
     ambient  *= attenuation * intensity;

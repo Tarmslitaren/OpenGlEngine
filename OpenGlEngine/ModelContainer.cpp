@@ -1,5 +1,5 @@
 #include "ModelContainer.h"
-
+#include "assimp/config.h"
 using namespace GLEN;
 
 ModelContainer::ModelContainer()
@@ -11,25 +11,25 @@ ModelContainer::~ModelContainer()
 {
 }
 
-int GLEN::ModelContainer::CreatePrimitive(std::string id, float * verticeData, int dataSize, VertexLayout vertexLayout, const Material& material, DrawFrequency drawFrequency)
+int GLEN::ModelContainer::CreateModel(std::string id, float * verticeData, int dataSize, VertexLayout vertexLayout, const Material& material, DrawFrequency drawFrequency)
 {
 	//sanity check
-	if (GetPrimitive(id) != nullptr)
+	if (GetModel(id) != nullptr)
 	{
 		std::cout << "trying to add primitive with same id!" << std::endl;
-		return GetPrimitive(id)->GetHandle();
+		return GetModel(id)->GetHandle();
 	}
-	GLEN::Primitive* primitive = new GLEN::Primitive();
-	primitive->SetVerticeData(verticeData, dataSize, vertexLayout);
-	primitive->SetMaterial(material);
-	int handle = primitive->Finalize(drawFrequency, id);
-	m_primitives.push_back(primitive);
+	GLEN::Model* model = new GLEN::Model();
+	model->SetVerticeData(verticeData, dataSize, vertexLayout);
+	model->SetMaterial(material);
+	int handle = model->Finalize(drawFrequency, id);
+	m_models.push_back(model);
 	return handle;
 }
 
-Primitive * GLEN::ModelContainer::GetPrimitive(std::string id)
+Model * GLEN::ModelContainer::GetModel(std::string id)
 {
-	for (Primitive* primitive : m_primitives)
+	for (Model* primitive : m_models)
 	{
 		if (primitive->GetId() == id)
 		{
@@ -39,9 +39,9 @@ Primitive * GLEN::ModelContainer::GetPrimitive(std::string id)
 	return nullptr;
 }
 
-Primitive * GLEN::ModelContainer::GetPrimitive(int id)
+Model * GLEN::ModelContainer::GetModel(int id)
 {
-	for (Primitive* primitive : m_primitives)
+	for (Model* primitive : m_models)
 	{
 		if (primitive->GetHandle() == id)
 		{

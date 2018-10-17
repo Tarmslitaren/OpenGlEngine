@@ -8,7 +8,7 @@ GLEN::ModelInstance::ModelInstance(std::string primitiveId, std::string shaderPr
 {
 	m_orientation.SetIdentity();
 	m_shaderId = shaderProgram;
-	m_primitive = Engine::GetInstance()->GetModelContainer().GetPrimitive(primitiveId);
+	m_model = Engine::GetInstance()->GetModelContainer().GetModel(primitiveId);
 
 
 }
@@ -28,7 +28,7 @@ void GLEN::ModelInstance::Render(Light* light)
 
 
 		//todo: issue: we are setting these vaiables without knowing if they exist in the current shader. 
-		//should add uniform signature to shader class?? shader instance?
+		//soultion: material owns the shader. all uniforms sets to the material
 		ShaderProgram& shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(m_shaderId);
 		//m_shaderProgram.setMatrix("transform", m_model * view * projection);
 		CU::Matrix44f matrix = CU::Matrix44f::Identity();
@@ -42,8 +42,7 @@ void GLEN::ModelInstance::Render(Light* light)
 
 		light->ApplytoShader(m_shaderId);
 
-
-		m_primitive->Render(view, projection);
+		m_model->Render(view, projection);
 	}
 	//else: do we need to hide somehow?
 }

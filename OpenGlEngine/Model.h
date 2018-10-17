@@ -46,11 +46,11 @@ namespace GLEN
 
 
 
-	class Primitive
+	class Model
 	{
 	public:
-		Primitive();
-		~Primitive();
+		Model();
+		~Model();
 		void Render(CU::Matrix44f view, CU::Matrix44f projection);
 		void AddVertice(const CU::Vector3f& vertice);//remove
 		void SetVerticeData(float data[], int size);
@@ -71,7 +71,6 @@ namespace GLEN
 		unsigned int m_vertexBufferObjectHandle;
 		unsigned int m_vertexArrayObjectHandle;
 		unsigned int m_elementBufferObject;
-		ShaderProgram m_shaderProgram;
 		unsigned int m_polygonMode;
 		VertexLayout m_vertexLayout;
 		Material m_material;

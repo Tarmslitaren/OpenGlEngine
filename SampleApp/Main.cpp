@@ -2,7 +2,7 @@
 #include "enums.h"
 #include "Input.h"
 #include "Scene.h"
-#include "Primitive.h"
+#include "Model.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "CU_Matrix.h"
@@ -207,16 +207,16 @@ int main()
 
 
 	GLEN::Material material;
-	material.SetDiffuseTexture("container2.png", 0);
-	material.SetSpecularTexture("container2_specular.png", 1);
+	material.AddDiffuseTexture("container2.png", 0);
+	material.AddSpecularTexture("container2_specular.png", 1);
 	material.SetShininess(32.f);
 	material.SetShader(lightShader.GetHandle());
 	material.InitShaderVariables();
 
 
-	engine.GetModelContainer().CreatePrimitive("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, material);
+	engine.GetModelContainer().CreateModel("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, material);
 
-	std::vector<GLEN::Primitive> primitives;
+	std::vector<GLEN::Model> primitives;
 	for (int i = 0; i < 10; i++)
 	{
 

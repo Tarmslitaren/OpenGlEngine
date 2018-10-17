@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Primitive.h"
+#include "Model.h"
 #include <string>
 #include "Material.h"
 namespace GLEN
@@ -10,11 +10,11 @@ namespace GLEN
 	public:
 		ModelContainer();
 		~ModelContainer();
-		int CreatePrimitive(std::string id, float* verticeData, int dataSize, VertexLayout vertexLayout, const Material& material, DrawFrequency drawFrequency = GLEN::STATIC_DRAW);
-		Primitive* GetPrimitive(std::string id);
-		Primitive* GetPrimitive(int id);
+		int CreateModel(std::string id, float* verticeData, int dataSize, VertexLayout vertexLayout, const Material& material, DrawFrequency drawFrequency = GLEN::STATIC_DRAW);
+		Model* GetModel(std::string id);
+		Model* GetModel(int id);
 	private:
-		std::vector<Primitive*> m_primitives;
+		std::vector<Model*> m_models;
 	};
 }
 

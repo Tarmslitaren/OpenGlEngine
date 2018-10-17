@@ -31,6 +31,7 @@ void GLEN::Light::RenderObject()
 void GLEN::Light::ApplytoShader(std::string shaderId)
 {
 	//todo: question is if the shader bindings should be more generic and set/bound by external object
+	//nope: the material will decide on shader and bindings
 	ShaderProgram& shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(shaderId);
 	std::string prefix;
 	if (m_type == DIRECTIONAL_LIGHT)
@@ -52,7 +53,7 @@ void GLEN::Light::ApplytoShader(std::string shaderId)
 	}
 	
 	shader.setVector(prefix + "ambient", m_ambient);
-	shader.setVector(prefix + "diffuse", m_diffuse); // darken the light a bit to fit the scene
+	shader.setVector(prefix + "diffuse", m_diffuse);
 	shader.setVector(prefix + "specular", m_specular);
 	shader.setVector(prefix + "position", m_position);
 	if (m_type != DIRECTIONAL_LIGHT)

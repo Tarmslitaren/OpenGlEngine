@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Primitive.h"
+#include "Model.h"
 #include "Light.h"
 #include "ModelInstance.h"
 namespace GLEN

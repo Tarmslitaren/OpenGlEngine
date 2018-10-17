@@ -20,7 +20,7 @@ void GLEN::Scene::Render()
 
 		for (ModelInstance* model : m_models)
 		{
-			model->Render(light); //yeah currently this wont work for several lights , as there is no additive blending sceme in place
+			model->Render(light);
 		}
 	}
 }
