@@ -1,132 +1,202 @@
 #include "Model.h"
 #include <iostream>
-
+#include "Engine.h"
+#include "Mesh.h"
+#include "Material.h"
 using namespace GLEN;
-Model::Model()
+
+GLEN::Model::Model(std::string path)
 {
-	m_polygonMode = GL_FILL;
+	loadModel(path);
 }
 
-
-Model::~Model()
+GLEN::Model::Model(std::string id, Mesh* mesh)
 {
-	glDeleteVertexArrays(1, &m_vertexArrayObjectHandle);
-	glDeleteBuffers(1, &m_vertexBufferObjectHandle);
+	m_directory = id; //hmmm...
+	m_meshes.push_back(mesh);
 }
 
-void GLEN::Model::Render(CU::Matrix44f view, CU::Matrix44f projection)
+void GLEN::Model::Render(const CU::Matrix44f& view, const CU::Matrix44f& projection)
 {
-	// ..:: Drawing code (in render loop) :: ..
-	// 4. draw the object
-
-	m_material.Render(); //maybe this is wrong. since this method should only be run from here and needs to be run from here.
-
-
-	glBindVertexArray(m_vertexArrayObjectHandle);
-
-	glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
-
-	if (m_indexes.size() == 0) {
-		glDrawArrays(GL_TRIANGLES, 0, m_vertices.size()/3); //todo: generalize: other modes than GL_TRIANGLES
-	}
-	else
+	for (unsigned int i = 0; i < m_meshes.size(); i++)
 	{
-		glDrawElements(GL_TRIANGLES, m_indexes.size(), GL_UNSIGNED_INT, 0);
+		m_meshes[i]->Render(view, projection);
 	}
-
-	glBindVertexArray(0);
-
-	glBindTexture(GL_TEXTURE_2D, 0); //need this to reset?
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //set back to fill
-
 }
 
-void GLEN::Model::AddVertice(const CU::Vector3f& vertice)
+void GLEN::Model::loadModel(std::string path)
 {
-	m_vertices.push_back(vertice.x);
-	m_vertices.push_back(vertice.y);
-	m_vertices.push_back(vertice.z);
-}
 
-void GLEN::Model::SetVerticeData(float data[], int size)
-{
-	SetVerticeData(data, size, m_vertexLayout);
-}
-
-void GLEN::Model::SetVerticeData(float data[], int size, const VertexLayout& vertexLayout)
-{
-	m_vertexLayout = vertexLayout;
-	m_vertices.clear();
-	m_vertices.insert(m_vertices.begin(), &data[0], &data[size]);
-}
-
-void GLEN::Model::SetIndexData(unsigned int data[], int size)
-{
-	m_indexes.clear();
-	m_indexes.insert(m_indexes.begin(), &data[0], &data[size]);
-}
-
-void GLEN::Model::AddTriangleIndexes(const CU::Vector3i indexes)
-{
-	m_indexes.push_back(indexes.x);
-	m_indexes.push_back(indexes.y);
-	m_indexes.push_back(indexes.z);
-}
-
-int GLEN::Model::Finalize(DrawFrequency frequency, std::string id)
-{
-	m_id = id;
-
-	glGenBuffers(1, &m_vertexBufferObjectHandle);
-
-	glGenBuffers(1, &m_elementBufferObject);
-
-	glGenVertexArrays(1, &m_vertexArrayObjectHandle);
-
-	// ..:: Initialization code (done once (unless your object frequently changes)) :: ..
-	// 1. bind Vertex Array Object
-	glBindVertexArray(m_vertexArrayObjectHandle);
-	// 2. copy our vertices array in a buffer for OpenGL to use
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObjectHandle);
-	glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(float), &m_vertices[0], frequency);
-
-	//3 copy index buffer
-	if (m_indexes.size() > 0)
+	// read file via ASSIMP
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	// check for errors
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_elementBufferObject);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexes.size() * sizeof(float), &m_indexes[0], GL_STATIC_DRAW);
+		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+		return;
 	}
+	// retrieve the directory path of the filepath
+	m_directory = path.substr(0, path.find_last_of('/'));
 
-	// 4. then set our vertex attributes pointers
-	//0 is for the atrribute nr. we could query this instead of setting in the shader
-	//but this needs to be run after shader is attached,
-	/*int posAttributeLocation = glGetAttribLocation(m_shaderProgram.GetHandle(), "position");
-	if (posAttributeLocation < 0) {
-		std::cout << "can't find attribute location" << std::endl;
-		posAttributeLocation = 0;
-	}*/
+	// process ASSIMP's root node recursively
+	processNode(scene->mRootNode, scene);
 
+	//other useful options:
+	//aiProcess_GenNormals: actually creates normals for each vertex if the model didn't contain normal vectors.
+	//aiProcess_SplitLargeMeshes : splits large meshes into smaller sub - meshes which is useful if your rendering has a maximum number of vertices allowed and can only process smaller meshes.
+	//aiProcess_OptimizeMeshes : actually does the reverse by trying to join several meshes into one larger mesh, reducing drawing calls for optimization.
+	//http://assimp.sourceforge.net/lib_html/postprocess_8h.html
+}
 
-	//todo: this can be more general
-	glVertexAttribPointer(m_vertexLayout.locationAtrribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)m_vertexLayout.vertexOffset);
-	glEnableVertexAttribArray(m_vertexLayout.locationAtrribute);
-	if (m_vertexLayout.hasColor == true)
+void GLEN::Model::processNode(aiNode * node, const aiScene * scene)
+{
+	// process all the node's meshes (if any)
+	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
-		glVertexAttribPointer(m_vertexLayout.colorAtribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.colorOffset * sizeof(float)));
-		glEnableVertexAttribArray(m_vertexLayout.colorAtribute);
+		aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+		m_meshes.push_back(processMesh(mesh, scene));
+	}
+	// then do the same for each of its children
+	for (unsigned int i = 0; i < node->mNumChildren; i++)
+	{
+		processNode(node->mChildren[i], scene);
+	}
+}
+
+Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene)
+{
+	//std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
+	std::vector<float> vertexData;
+
+	// Walk through each of the mesh's vertices
+	for (unsigned int i = 0; i < aiMesh->mNumVertices; i++)
+	{
+		//Vertex vertex;
+		CU::Vector3f vector;
+		// positions
+		vertexData.push_back(aiMesh->mVertices[i].x);
+		vertexData.push_back(aiMesh->mVertices[i].y);
+		vertexData.push_back(aiMesh->mVertices[i].z);
+		// normals
+		if (aiMesh->HasNormals()) 
+		{
+			vertexData.push_back(aiMesh->mNormals[i].x);
+			vertexData.push_back(aiMesh->mNormals[i].y);
+			vertexData.push_back(aiMesh->mNormals[i].z);
+		}
+		// texture coordinates
+		if (aiMesh->HasTextureCoords(0)) // does the mesh contain texture coordinates?
+		{
+			// a vertex can contain up to 8 different texture coordinates. We here make the assumption that we won't 
+			// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+			//todo: handle more texture coordiantes
+			vertexData.push_back(aiMesh->mTextureCoords[0][i].x);
+			vertexData.push_back(aiMesh->mTextureCoords[0][i].y);
+		}
+		if (aiMesh->HasVertexColors(0))
+		{
+			vertexData.push_back(aiMesh->mColors[0][i].r);
+			vertexData.push_back(aiMesh->mColors[0][i].g);
+			vertexData.push_back(aiMesh->mColors[0][i].b);
+			vertexData.push_back(aiMesh->mColors[0][i].a);
+		}
+		// tangent
+		//vector.x = mesh->mTangents[i].x;
+		//vector.y = mesh->mTangents[i].y;
+		//vector.z = mesh->mTangents[i].z;
+		//vertex.Tangent = vector;
+		// bitangent
+		//vector.x = mesh->mBitangents[i].x;
+		//vector.y = mesh->mBitangents[i].y;
+		//vector.z = mesh->mBitangents[i].z;
+		//vertex.Bitangent = vector;
+	}
+	// now walk through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+	for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
+	{
+		aiFace face = aiMesh->mFaces[i];
+		// retrieve all indices of the face and store them in the indices vector
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			indices.push_back(face.mIndices[j]);
+	}
+	// process materials
+	aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
+
+	GLEN::Material material;
+	//material.AddDiffuseTexture("container2.png", 0);
+	//material.AddSpecularTexture("container2_specular.png", 1);
+	//material.SetShininess(32.f);
+	//material.SetShader(lightShader.GetHandle());
+	//material.InitShaderVariables();
+
+	int textureCount = 0;
+	for (unsigned int i = 0; i < aiMaterial->GetTextureCount(aiTextureType_DIFFUSE); i++, textureCount++)
+	{
+		aiString str;
+		aiMaterial->GetTexture(aiTextureType_DIFFUSE, i, &str);
+		material.AddDiffuseTexture(str.C_Str(), textureCount);
+
+	}
+	for (unsigned int i = 0; i < aiMaterial->GetTextureCount(aiTextureType_SPECULAR); i++, textureCount++)
+	{
+		aiString str;
+		aiMaterial->GetTexture(aiTextureType_SPECULAR, i, &str);
+		material.AddSpecularTexture(str.C_Str(), textureCount);
+
 	}
 
-	if (m_vertexLayout.hasTexCoords == true)
-	{
-		glVertexAttribPointer(m_vertexLayout.texCoordAttribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.texCoordOffset * sizeof(float)));
-		glEnableVertexAttribArray(m_vertexLayout.texCoordAttribute);
-	}
-	if (m_vertexLayout.hasNormals == true)
-	{
-		glVertexAttribPointer(m_vertexLayout.normalsAttribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.normalOffset * sizeof(float)));
-		glEnableVertexAttribArray(m_vertexLayout.normalsAttribute);
-	}
+	// 3. normal maps
+	//std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+	//textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+	// 4. height maps
+	//std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+	//textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-	return m_vertexArrayObjectHandle;
+	
+	std::string id = aiMesh->mName.C_Str(); //todo: this is unsafe, there might not be a name
+
+
+	VertexLayout vertexLayout;
+	int stride = 0;
+	int attributes = 0;
+	if (aiMesh->HasPositions()) //should always be true
+	{
+		
+		vertexLayout.locationAtrribute = attributes;
+		stride += 3;
+		attributes++;
+	}
+	if (aiMesh->HasNormals())
+	{
+		vertexLayout.hasNormals = true;
+		vertexLayout.normalsAttribute = attributes;
+		vertexLayout.normalOffset = stride;
+		stride += 3;
+		attributes++;
+		
+	}
+	if (aiMesh->HasTextureCoords(0))
+	{
+		vertexLayout.hasTexCoords = true;
+		vertexLayout.texCoordAttribute = attributes;
+		vertexLayout.texCoordOffset = stride;
+		stride += 2;
+		attributes++;
+	}
+	if (aiMesh->HasVertexColors(0)) //not standard
+	{
+		vertexLayout.hasColor = true;
+		vertexLayout.colorAtribute = attributes;
+		stride += 4; //rgba
+		attributes++;
+		
+	}
+	vertexLayout.stride = stride;
+
+	int handle = Engine::GetInstance()->GetMeshContainer().CreateMesh(id, &vertexData[0], vertexData.size() * sizeof(float), vertexLayout, material, &indices[0], indices.size() * sizeof(float));
+	Mesh* mesh = Engine::GetInstance()->GetMeshContainer().GetMesh(handle);
+	// return a mesh object created from the extracted mesh data
+	return mesh;
 }

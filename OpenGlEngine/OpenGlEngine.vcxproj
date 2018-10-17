@@ -140,6 +140,8 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshContainer.cpp" />
     <ClCompile Include="ModelContainer.cpp" />
     <ClCompile Include="ModelInstance.cpp" />
     <ClCompile Include="MouseListener.cpp" />
@@ -161,6 +163,8 @@
     <ClInclude Include="KHR\khrplatform.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshContainer.h" />
     <ClInclude Include="ModelContainer.h" />
     <ClInclude Include="ModelInstance.h" />
     <ClInclude Include="MouseListener.h" />

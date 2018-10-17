@@ -36,6 +36,8 @@
     <ClInclude Include="ModelContainer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshContainer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp" />
@@ -57,5 +59,7 @@
     <ClCompile Include="ModelContainer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshContainer.cpp" />
   </ItemGroup>
 </Project>

@@ -213,9 +213,9 @@ int main()
 	material.SetShader(lightShader.GetHandle());
 	material.InitShaderVariables();
 
-
-	engine.GetModelContainer().CreateModel("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, material);
-
+	int meshId = engine.GetMeshContainer().CreateMesh("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, material);
+	GLEN::Mesh* mesh = engine.GetMeshContainer().GetMesh(meshId);
+	engine.GetModelContainer().CreateModel("cube", mesh);
 	std::vector<GLEN::Model> primitives;
 	for (int i = 0; i < 10; i++)
 	{

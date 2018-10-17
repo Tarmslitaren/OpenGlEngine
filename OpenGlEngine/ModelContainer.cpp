@@ -11,41 +11,40 @@ ModelContainer::~ModelContainer()
 {
 }
 
-int GLEN::ModelContainer::CreateModel(std::string id, float * verticeData, int dataSize, VertexLayout vertexLayout, const Material& material, DrawFrequency drawFrequency)
+Model* GLEN::ModelContainer::CreateModel(std::string path, const Material& material )
+{
+	//sanity check
+	if (GetModel(path) != nullptr)
+	{
+		std::cout << "trying to add model with same id!" << std::endl;
+		return GetModel(path);
+	}
+	GLEN::Model* model = new GLEN::Model(path);
+	//model->SetMaterial(material);
+	m_models.push_back(model);
+	return model;
+}
+
+Model * GLEN::ModelContainer::CreateModel(std::string id, Mesh* mesh)
 {
 	//sanity check
 	if (GetModel(id) != nullptr)
 	{
-		std::cout << "trying to add primitive with same id!" << std::endl;
-		return GetModel(id)->GetHandle();
+		std::cout << "trying to add model with same id!" << std::endl;
+		return GetModel(id);
 	}
-	GLEN::Model* model = new GLEN::Model();
-	model->SetVerticeData(verticeData, dataSize, vertexLayout);
-	model->SetMaterial(material);
-	int handle = model->Finalize(drawFrequency, id);
+	GLEN::Model* model = new GLEN::Model(id, mesh);
 	m_models.push_back(model);
-	return handle;
+	return model;
 }
 
 Model * GLEN::ModelContainer::GetModel(std::string id)
 {
-	for (Model* primitive : m_models)
+	for (Model* model : m_models)
 	{
-		if (primitive->GetId() == id)
+		if (model->GetId() == id)
 		{
-			return primitive;
-		}
-	}
-	return nullptr;
-}
-
-Model * GLEN::ModelContainer::GetModel(int id)
-{
-	for (Model* primitive : m_models)
-	{
-		if (primitive->GetHandle() == id)
-		{
-			return primitive;
+			return model;
 		}
 	}
 	return nullptr;

@@ -17,7 +17,7 @@ void GLEN::Material::InitShaderVariables()
 	//does this need to be run per frame? to set different materials with same shader
 	ShaderProgram shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram(m_shaderHandle);
 	if (m_diffuseTextureHandles.size() > 0) {
-		for (int i = 0; i < m_diffuseTextureHandles.size(); i++)
+		for (unsigned int i = 0; i < m_diffuseTextureHandles.size(); i++)
 		{
 			shader.setInt("material.diffuse[" + std::to_string(i) + "]", m_diffuseTextureHandles[i].second);
 		}
@@ -28,7 +28,7 @@ void GLEN::Material::InitShaderVariables()
 		shader.setVector("material.diffuse", m_diffuseColor);
 	}
 	if (m_specularTextureHandles.size() > 0) {
-		for (int i = 0; i < m_specularTextureHandles.size(); i++)
+		for (unsigned int i = 0; i < m_specularTextureHandles.size(); i++)
 		{
 			shader.setInt("material.specular[" + std::to_string(i) + "]", m_specularTextureHandles[i].second);
 		}

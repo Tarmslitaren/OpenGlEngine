@@ -3,6 +3,7 @@
 #include "Model.h"
 #include <string>
 #include "Material.h"
+#include "Mesh.h"
 namespace GLEN
 {
 	class ModelContainer
@@ -10,9 +11,9 @@ namespace GLEN
 	public:
 		ModelContainer();
 		~ModelContainer();
-		int CreateModel(std::string id, float* verticeData, int dataSize, VertexLayout vertexLayout, const Material& material, DrawFrequency drawFrequency = GLEN::STATIC_DRAW);
+		Model* CreateModel(std::string path, const Material& material);
+		Model* CreateModel(std::string id, Mesh* mesh);
 		Model* GetModel(std::string id);
-		Model* GetModel(int id);
 	private:
 		std::vector<Model*> m_models;
 	};

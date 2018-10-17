@@ -7,6 +7,7 @@
 #include "TextureContainer.h"
 #include "ShaderContainer.h"
 #include "ModelContainer.h"
+#include "MeshContainer.h"
 namespace GLEN
 {
 
@@ -26,6 +27,7 @@ namespace GLEN
 		ShaderContainer& GetShaderContainer() { return m_shaderContainer; }
 		//EffectInput& GetEffectInput() { return myEffectInput; }
 		ModelContainer& GetModelContainer() { return m_modelContainer; }
+		MeshContainer& GetMeshContainer() { return m_meshContainer; }
 
 
 	private:
@@ -39,6 +41,7 @@ namespace GLEN
 		TextureContainer m_textureContainer;
 		ShaderContainer m_shaderContainer;
 		ModelContainer m_modelContainer;
+		MeshContainer m_meshContainer;
 
 
 	};
