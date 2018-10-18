@@ -4,11 +4,11 @@
 #include "Light.h"
 using namespace GLEN;
 
-GLEN::ModelInstance::ModelInstance(std::string primitiveId, std::string shaderProgram)
+GLEN::ModelInstance::ModelInstance(std::string modelId, std::string shaderProgram)
 {
 	m_orientation.SetIdentity();
 	m_shaderId = shaderProgram;
-	m_model = Engine::GetInstance()->GetModelContainer().GetModel(primitiveId);
+	m_model = Engine::GetInstance()->GetModelContainer().GetModel(modelId);
 
 
 }

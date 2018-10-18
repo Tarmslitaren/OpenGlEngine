@@ -125,8 +125,6 @@ Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene)
 	aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
 	GLEN::Material material;
-	//material.AddDiffuseTexture("container2.png", 0);
-	//material.AddSpecularTexture("container2_specular.png", 1);
 	//material.SetShininess(32.f);
 	//material.SetShader(lightShader.GetHandle());
 	//material.InitShaderVariables();
@@ -136,14 +134,16 @@ Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene)
 	{
 		aiString str;
 		aiMaterial->GetTexture(aiTextureType_DIFFUSE, i, &str);
-		material.AddDiffuseTexture(str.C_Str(), textureCount);
+		std::string filename = m_directory + '/' + str.C_Str();
+		material.AddDiffuseTexture(filename, textureCount);
 
 	}
 	for (unsigned int i = 0; i < aiMaterial->GetTextureCount(aiTextureType_SPECULAR); i++, textureCount++)
 	{
 		aiString str;
 		aiMaterial->GetTexture(aiTextureType_SPECULAR, i, &str);
-		material.AddSpecularTexture(str.C_Str(), textureCount);
+		std::string filename = m_directory + '/' + str.C_Str();
+		material.AddSpecularTexture(filename, textureCount);
 
 	}
 
@@ -195,7 +195,7 @@ Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene)
 	}
 	vertexLayout.stride = stride;
 
-	int handle = Engine::GetInstance()->GetMeshContainer().CreateMesh(id, &vertexData[0], vertexData.size() * sizeof(float), vertexLayout, material, &indices[0], indices.size() * sizeof(float));
+	int handle = Engine::GetInstance()->GetMeshContainer().CreateMesh(id, &vertexData[0], vertexData.size(), vertexLayout, material, &indices[0], indices.size());
 	Mesh* mesh = Engine::GetInstance()->GetMeshContainer().GetMesh(handle);
 	// return a mesh object created from the extracted mesh data
 	return mesh;

@@ -23,7 +23,7 @@ int GLEN::MeshContainer::CreateMesh(std::string id, float * verticeData, int dat
 	mesh->SetVerticeData(verticeData, dataSize, vertexLayout);
 	if (indexData != nullptr)
 	{
-		mesh->SetIndexData(indexData, dataSize);
+		mesh->SetIndexData(indexData, indexSize);
 	}
 	mesh->SetMaterial(material);
 	int handle = mesh->Finalize(drawFrequency, id);

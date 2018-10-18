@@ -11,9 +11,20 @@
     <Filter Include="glad\KHR">
       <UniqueIdentifier>{7f68a21c-02d9-4e67-9531-290110c97f37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="model">
+      <UniqueIdentifier>{9a856977-041a-445c-8c51-433455eddd43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="window">
+      <UniqueIdentifier>{85a6f001-b85e-4d39-b622-fbdc8471a2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{f9121872-b208-48e2-be4d-e5e56fb8b178}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="material">
+      <UniqueIdentifier>{8d50fbed-220d-4be9-a3b0-f2d3e30b9100}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window.h" />
     <ClInclude Include="glad\glad.h">
       <Filter>glad</Filter>
     </ClInclude>
@@ -22,44 +33,109 @@
     </ClInclude>
     <ClInclude Include="Engine.h" />
     <ClInclude Include="enums.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="TextureContainer.h" />
-    <ClInclude Include="ShaderContainer.h" />
-    <ClInclude Include="MouseListener.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="ModelInstance.h" />
-    <ClInclude Include="ModelContainer.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshContainer.h" />
+    <ClInclude Include="ModelInstance.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshContainer.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelContainer.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseListener.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>material</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>material</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureContainer.h">
+      <Filter>material</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderContainer.h">
+      <Filter>material</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>material</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Window.cpp" />
     <ClCompile Include="glad\glad.c">
       <Filter>glad</Filter>
     </ClCompile>
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="TextureContainer.cpp" />
-    <ClCompile Include="ShaderContainer.cpp" />
-    <ClCompile Include="MouseListener.cpp" />
-    <ClCompile Include="Light.cpp" />
-    <ClCompile Include="ModelInstance.cpp" />
-    <ClCompile Include="ModelContainer.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshContainer.cpp" />
+    <ClCompile Include="Model.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelContainer.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshContainer.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelInstance.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseListener.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>material</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>material</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureContainer.cpp">
+      <Filter>material</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderContainer.cpp">
+      <Filter>material</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>material</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
