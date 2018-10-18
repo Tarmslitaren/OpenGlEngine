@@ -28,7 +28,7 @@ int main()
 	GLEN::Scene scene;
 
 	// a plane
-	float vertices[] = {
+	float planeVerts[] = {
 		// positions          // colors           // texture coords
 		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
 		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
@@ -41,7 +41,7 @@ int main()
 	};
 
 	//cube with normals and texture coords
-	float vertices3[] = {
+	float cubeVerts[] = {
 		// positions          // normals           // texture coords
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
@@ -111,8 +111,8 @@ int main()
 	layout.texCoordAttribute = 2;
 	layout.stride = 8;
 
-
 	GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
+	//GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "depthTest.vert", "depthTest.frag");
 
 
 	GLEN::Material material;
@@ -122,7 +122,7 @@ int main()
 	material.SetShader(lightShader.GetHandle());
 	material.InitShaderVariables();
 
-	int meshId = engine.GetMeshContainer().CreateMesh("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, material);
+	int meshId = engine.GetMeshContainer().CreateMesh("cube", cubeVerts, sizeof(cubeVerts) / sizeof(float), layout, material);
 	GLEN::Mesh* mesh = engine.GetMeshContainer().GetMesh(meshId);
 	engine.GetModelContainer().CreateModel("cube", mesh);
 	std::vector<GLEN::Model> primitives;
@@ -140,13 +140,44 @@ int main()
 		ori.SetRotationZ(0.5*angle);
 		instance->SetOrientation(ori);
 		scene.AddModel(instance);
+		//instance->SetOutline(0.2f);
+
 		
 	}
 
+	//loaded model
 	engine.GetModelContainer().CreateModel("nanosuit/nanosuit.obj", material);
 	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit", "lightShader");
 	instance->SetScale(0.1f);
 	scene.AddModel(instance);
+	instance->SetOutline(0.2f);
+
+	//grass
+	std::vector<CU::Vector3f> vegetationPos;
+	vegetationPos.push_back({ -1.5f, 0.0f, -0.48f });
+	vegetationPos.push_back({ 1.5f, 0.0f, 0.51f });
+	vegetationPos.push_back({ 0.0f, 0.0f, 0.7f });
+	vegetationPos.push_back({ -0.3f, 0.0f, -2.3f });
+	vegetationPos.push_back({ 0.5f, 0.0f, -0.6f });
+	GLEN::Material grassMaterial;
+	grassMaterial.AddDiffuseTexture("grass.png", 0);
+	grassMaterial.SetShader(lightShader.GetHandle());
+	grassMaterial.InitShaderVariables();
+	GLEN::VertexLayout planeLayout;
+	planeLayout.hasTexCoords = true;
+	planeLayout.hasNormals = false;
+	planeLayout.texCoordOffset = 6;
+	planeLayout.texCoordAttribute = 2;
+	planeLayout.stride = 8;
+	int gmeshId = engine.GetMeshContainer().CreateMesh("grass", planeVerts, sizeof(planeVerts) / sizeof(float), planeLayout, grassMaterial, indices, sizeof(indices) / sizeof(int));
+	GLEN::Mesh* grassMesh = engine.GetMeshContainer().GetMesh(gmeshId);
+	engine.GetModelContainer().CreateModel("grass", grassMesh);
+	for (int i = 0; i < vegetationPos.size(); i++)
+	{
+		GLEN::ModelInstance* instance = new GLEN::ModelInstance("grass", "lightShader");
+		instance->SetPosition(vegetationPos[i]);
+		scene.AddModel(instance, true);
+	}
 
 	//init lights
 	GLEN::ShaderProgram lampShader = *engine.GetShaderContainer().CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
@@ -186,7 +217,7 @@ int main()
 
 		scene.AddLight(light);
 	}
-	lightShader.setInt("nrPointLights", nrPointLights);
+	lightShader.setInt("nrPointLights", nrPointLights); //todo: not here
 
 
 	//flashlight:

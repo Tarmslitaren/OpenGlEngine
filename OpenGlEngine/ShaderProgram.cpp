@@ -151,6 +151,13 @@ void GLEN::ShaderProgram::setVector(const std::string & name, CU::Vector3f vecto
 	glUniform3f(transformLoc, vector.x, vector.y, vector.z);
 }
 
+void GLEN::ShaderProgram::setVector4(const std::string & name, CU::Vector4f vector)
+{
+	use();
+	unsigned int transformLoc = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
+	glUniform4f(transformLoc, vector.x, vector.y, vector.z, vector.w);
+}
+
 bool GLEN::ShaderProgram::AddShader(const char * source, int& handle, ShaderType shaderType)
 {
 	handle = glCreateShader(shaderType);

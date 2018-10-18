@@ -87,7 +87,8 @@ void main()
     // phase 3: Spot light
     result += CalculateSpotLight(spotLight, norm, FragPos, viewDir);    
     
-    FragColor = vec4(result, 1.0);
+	float alpha = texture(material.diffuse[0], TexCoords).w; //should the alpha be affected by lighting model?
+    FragColor = vec4(result, alpha);
 }
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)

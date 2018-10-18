@@ -21,7 +21,8 @@ namespace GLEN
 		void setInt(const std::string &name, int value);
 		void setFloat(const std::string &name, float value);
 		void setMatrix(const std::string &name, CU::Matrix44f matrix);
-		void setVector(const std::string &name, CU::Vector3f matrix);
+		void setVector(const std::string &name, CU::Vector3f vector);
+		void setVector4(const std::string &name, CU::Vector4f vector);
 	private:
 		bool AddShader(const char* path, int& handle, ShaderType shaderType);
 		int m_vertexShaderHandle;

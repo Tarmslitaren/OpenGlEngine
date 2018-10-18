@@ -128,6 +128,7 @@ Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene)
 	//material.SetShininess(32.f);
 	//material.SetShader(lightShader.GetHandle());
 	//material.InitShaderVariables();
+	//todo: supply material definition (including uniform value pairs) to this, so we can set shader and so forth per mesh/model
 
 	int textureCount = 0;
 	for (unsigned int i = 0; i < aiMaterial->GetTextureCount(aiTextureType_DIFFUSE); i++, textureCount++)
