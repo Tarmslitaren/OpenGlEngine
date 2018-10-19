@@ -29,6 +29,11 @@ m_input(m_window.GetWindow())
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+
+	//this can potentially increase performace > 50% but onl yworks for models with properly winded triangles...
+	//glEnable(GL_CULL_FACE);
+
+
 	GetShaderContainer().CreateShaderProgram("singleColorScale", "scale.vert", "singleColor.frag");
 }
 

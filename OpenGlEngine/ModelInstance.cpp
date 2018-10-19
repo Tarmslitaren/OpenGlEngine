@@ -39,8 +39,10 @@ void GLEN::ModelInstance::Render(Light* light)
 		shader.setMatrix("projection", projection);
 
 		shader.setVector("viewPos", cam.GetPosition());
-		if(light)
+		if (light)
+		{
 			light->ApplytoShader(m_shaderId);
+		}
 
 		if (m_outLineThickness > 0)
 		{

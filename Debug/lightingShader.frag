@@ -72,6 +72,7 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
 //this is phong lighting model: ambient + diffuse + specular
 void main()
 {
+
     // properties
     vec3 norm = normalize(Normal);
 

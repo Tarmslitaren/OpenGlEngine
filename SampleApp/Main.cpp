@@ -150,7 +150,7 @@ int main()
 	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit", "lightShader");
 	instance->SetScale(0.1f);
 	scene.AddModel(instance);
-	instance->SetOutline(0.2f);
+	//instance->SetOutline(0.2f);
 
 	//grass
 	std::vector<CU::Vector3f> vegetationPos;
