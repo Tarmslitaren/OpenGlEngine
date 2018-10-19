@@ -7,6 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGlEngine", "OpenGlEngin
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleApp", "SampleApp\SampleApp.vcxproj", "{64666E44-F1CD-4C9B-A9FB-67A24A9C6A95}"
 	ProjectSection(ProjectDependencies) = postProject
+		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A} = {D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}
 		{021471DD-E328-4EEC-A61D-716C304C85D2} = {021471DD-E328-4EEC-A61D-716C304C85D2}
 	EndProjectSection
 EndProject
@@ -97,8 +98,8 @@ Global
 		{64666E44-F1CD-4C9B-A9FB-67A24A9C6A95}.Release|x86.ActiveCfg = Release|Win32
 		{64666E44-F1CD-4C9B-A9FB-67A24A9C6A95}.Release|x86.Build.0 = Release|Win32
 		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}.Debug + Collada|x64.ActiveCfg = Debug + Collada|Win32
-		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}.Debug + Collada|x86.ActiveCfg = Debug + Collada|Win32
-		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}.Debug + Collada|x86.Build.0 = Debug + Collada|Win32
+		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}.Debug + Collada|x86.ActiveCfg = Debug|Win32
+		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}.Debug + Collada|x86.Build.0 = Debug|Win32
 		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}.Debug Editor|x64.ActiveCfg = Debug Editor|Win32
 		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}.Debug Editor|x86.ActiveCfg = Debug Editor|Win32
 		{D0C7251A-4A6B-407B-BBA9-A899DFD01B4A}.Debug Editor|x86.Build.0 = Debug Editor|Win32
