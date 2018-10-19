@@ -1,32 +1,25 @@
-#include "Primitive.h"
+#include "Mesh.h"
 #include <iostream>
 
 using namespace GLEN;
-Primitive::Primitive()
+Mesh::Mesh()
 {
 	m_polygonMode = GL_FILL;
 }
 
 
-Primitive::~Primitive()
+Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &m_vertexArrayObjectHandle);
 	glDeleteBuffers(1, &m_vertexBufferObjectHandle);
 }
 
-void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
+void GLEN::Mesh::Render(CU::Matrix44f view, CU::Matrix44f projection)
 {
 	// ..:: Drawing code (in render loop) :: ..
 	// 4. draw the object
 
-
-
-	//todo: break out to material class owned by rpimitive (rename to model really..)
-	for (unsigned int i = 0; i < m_textureHandles.size();i++)
-	{
-		glActiveTexture(GL_TEXTURE0+i);
-		glBindTexture(GL_TEXTURE_2D, m_textureHandles[i]);
-	}
+	m_material.Render(); //maybe this is wrong. since this method should only be run from here and needs to be run from here.
 
 
 	glBindVertexArray(m_vertexArrayObjectHandle);
@@ -34,7 +27,7 @@ void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 	glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
 
 	if (m_indexes.size() == 0) {
-		glDrawArrays(GL_TRIANGLES, 0, m_vertices.size()/3); //todo: generalize: other modes than GL_TRIANGLES
+		glDrawArrays(GL_TRIANGLES, 0, m_vertices.size() / 3); //todo: generalize: other modes than GL_TRIANGLES
 	}
 	else
 	{
@@ -49,39 +42,39 @@ void GLEN::Primitive::Render(CU::Matrix44f view, CU::Matrix44f projection)
 
 }
 
-void GLEN::Primitive::AddVertice(const CU::Vector3f& vertice)
+void GLEN::Mesh::AddVertice(const CU::Vector3f& vertice)
 {
 	m_vertices.push_back(vertice.x);
 	m_vertices.push_back(vertice.y);
 	m_vertices.push_back(vertice.z);
 }
 
-void GLEN::Primitive::SetVerticeData(float data[], int size)
+void GLEN::Mesh::SetVerticeData(float data[], int size)
 {
 	SetVerticeData(data, size, m_vertexLayout);
 }
 
-void GLEN::Primitive::SetVerticeData(float data[], int size, const VertexLayout& vertexLayout)
+void GLEN::Mesh::SetVerticeData(float data[], int size, const VertexLayout& vertexLayout)
 {
 	m_vertexLayout = vertexLayout;
 	m_vertices.clear();
 	m_vertices.insert(m_vertices.begin(), &data[0], &data[size]);
 }
 
-void GLEN::Primitive::SetIndexData(unsigned int data[], int size)
+void GLEN::Mesh::SetIndexData(unsigned int data[], int size)
 {
 	m_indexes.clear();
 	m_indexes.insert(m_indexes.begin(), &data[0], &data[size]);
 }
 
-void GLEN::Primitive::AddTriangleIndexes(const CU::Vector3i indexes)
+void GLEN::Mesh::AddTriangleIndexes(const CU::Vector3i indexes)
 {
 	m_indexes.push_back(indexes.x);
 	m_indexes.push_back(indexes.y);
 	m_indexes.push_back(indexes.z);
 }
 
-int GLEN::Primitive::Finalize(DrawFrequency frequency, std::string id)
+int GLEN::Mesh::Finalize(DrawFrequency frequency, std::string id)
 {
 	m_id = id;
 
@@ -102,7 +95,7 @@ int GLEN::Primitive::Finalize(DrawFrequency frequency, std::string id)
 	if (m_indexes.size() > 0)
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_elementBufferObject);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexes.size() * sizeof(float), &m_indexes[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexes.size() * sizeof(float), &m_indexes[0], frequency);
 	}
 
 	// 4. then set our vertex attributes pointers

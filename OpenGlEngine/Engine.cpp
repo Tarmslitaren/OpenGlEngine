@@ -18,6 +18,18 @@ m_input(m_window.GetWindow())
 
 	//enable z-ordering
 	glEnable(GL_DEPTH_TEST);
+
+	//enable stencil 
+	glEnable(GL_STENCIL_TEST);
+
+	//test
+	//glDepthFunc(GL_ALWAYS);
+
+	//enable alpha blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	GetShaderContainer().CreateShaderProgram("singleColorScale", "scale.vert", "singleColor.frag");
 }
 
 
@@ -34,7 +46,7 @@ Engine* Engine::Create(const SetupInfo & infoArgument)
 	}
 	else
 	{
-		//log logic error
+		std::cout << "GLEN: Tried to create more than one engine." << std::endl;
 	}
 	return s_instance;
 }
@@ -44,7 +56,8 @@ void GLEN::Engine::RenderScene()
 	//clear color for test
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glStencilMask(0x00); //reset stencil
 }
 
 void Engine::Destroy()

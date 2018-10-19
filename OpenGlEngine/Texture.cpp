@@ -42,7 +42,13 @@ bool GLEN::Texture::LoadTexture(std::string path, bool flipY)
 		else if (m_channels == 3)
 			format = GL_RGB;
 		else if (m_channels == 4)//very naiive check. only works for a subset of image types.
+		{
 			format = GL_RGBA;
+
+			//don't wrap if has alpha: may produce blending artifacts so clamp instead.
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
 
 
 		//todo: use stb lib to figure out type of texture and use corresponding GL type (eg: GL_RGB,GL_RGBA etc)

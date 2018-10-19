@@ -2,7 +2,7 @@
 #include "enums.h"
 #include "Input.h"
 #include "Scene.h"
-#include "Primitive.h"
+#include "Model.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "CU_Matrix.h"
@@ -13,6 +13,7 @@
 #include "InputController.h"
 #include "ModelInstance.h"
 #include "ModelContainer.h"
+#include "Material.h"
 
 
 int main()
@@ -26,9 +27,8 @@ int main()
 	//triangle test
 	GLEN::Scene scene;
 
-	//GLEN::Primitive primitive;
 	// a plane
-	float vertices[] = {
+	float planeVerts[] = {
 		// positions          // colors           // texture coords
 		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
 		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
@@ -40,98 +40,8 @@ int main()
 	1, 2, 3  // second triangle
 	};
 
-	// a cube with texcords
-	float vertices2[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	//cube with normals
-	float vertices456[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-	};
-
 	//cube with normals and texture coords
-	float vertices3[] = {
+	float cubeVerts[] = {
 		// positions          // normals           // texture coords
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
@@ -201,39 +111,125 @@ int main()
 	layout.texCoordAttribute = 2;
 	layout.stride = 8;
 
-	//GLEN::Texture texture = *engine.GetTextureContainer().GetTexture("container.jpg");
-	//GLEN::Texture texture2 = *engine.GetTextureContainer().GetTexture("awesomeface.png");
-
-	GLEN::Texture diffuseMap = *engine.GetTextureContainer().GetTexture("container2.png");
-	GLEN::Texture specularMap = *engine.GetTextureContainer().GetTexture("container2_specular.png");
-
 	GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
+	//GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "depthTest.vert", "depthTest.frag");
 
-	lightShader.use();
-	lightShader.setInt("material.diffuse", 0);// diffuseMap.getHandle());
-	lightShader.setInt("material.specular", 1);// specularMap.getHandle());
 
-	engine.GetModelContainer().CreatePrimitive("cube", vertices3, sizeof(vertices3) / sizeof(float), layout, { (int)diffuseMap.getHandle(), (int)specularMap.getHandle() });
+	GLEN::Material material;
+	material.AddDiffuseTexture("container2.png", 0);
+	material.AddSpecularTexture("container2_specular.png", 1);
+	material.SetShininess(32.f);
+	material.SetShader(lightShader.GetHandle());
+	material.InitShaderVariables();
 
-	std::vector<GLEN::Primitive> primitives;
-	for (int i = 0; i < 1; i++)
+	int meshId = engine.GetMeshContainer().CreateMesh("cube", cubeVerts, sizeof(cubeVerts) / sizeof(float), layout, material);
+	GLEN::Mesh* mesh = engine.GetMeshContainer().GetMesh(meshId);
+	engine.GetModelContainer().CreateModel("cube", mesh);
+	std::vector<GLEN::Model> primitives;
+	for (int i = 0; i < 10; i++)
 	{
+
+		float angle = 20.0f * i;	
+
 		GLEN::ModelInstance* instance = new GLEN::ModelInstance("cube", "lightShader");
 		instance->SetPosition(cubePositions[i]);
+		CU::Matrix33f ori;
+		ori.SetIdentity();
+		ori.SetRotationX(angle);
+		ori.SetRotationY(0.3*angle);
+		ori.SetRotationZ(0.5*angle);
+		instance->SetOrientation(ori);
 		scene.AddModel(instance);
+		//instance->SetOutline(0.2f);
+
 		
 	}
 
+	//loaded model
+	engine.GetModelContainer().CreateModel("nanosuit/nanosuit.obj", material);
+	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit", "lightShader");
+	instance->SetScale(0.1f);
+	scene.AddModel(instance);
+	instance->SetOutline(0.2f);
 
+	//grass
+	std::vector<CU::Vector3f> vegetationPos;
+	vegetationPos.push_back({ -1.5f, 0.0f, -0.48f });
+	vegetationPos.push_back({ 1.5f, 0.0f, 0.51f });
+	vegetationPos.push_back({ 0.0f, 0.0f, 0.7f });
+	vegetationPos.push_back({ -0.3f, 0.0f, -2.3f });
+	vegetationPos.push_back({ 0.5f, 0.0f, -0.6f });
+	GLEN::Material grassMaterial;
+	grassMaterial.AddDiffuseTexture("grass.png", 0);
+	grassMaterial.SetShader(lightShader.GetHandle());
+	grassMaterial.InitShaderVariables();
+	GLEN::VertexLayout planeLayout;
+	planeLayout.hasTexCoords = true;
+	planeLayout.hasNormals = false;
+	planeLayout.texCoordOffset = 6;
+	planeLayout.texCoordAttribute = 2;
+	planeLayout.stride = 8;
+	int gmeshId = engine.GetMeshContainer().CreateMesh("grass", planeVerts, sizeof(planeVerts) / sizeof(float), planeLayout, grassMaterial, indices, sizeof(indices) / sizeof(int));
+	GLEN::Mesh* grassMesh = engine.GetMeshContainer().GetMesh(gmeshId);
+	engine.GetModelContainer().CreateModel("grass", grassMesh);
+	for (int i = 0; i < vegetationPos.size(); i++)
+	{
+		GLEN::ModelInstance* instance = new GLEN::ModelInstance("grass", "lightShader");
+		instance->SetPosition(vegetationPos[i]);
+		scene.AddModel(instance, true);
+	}
+
+	//init lights
 	GLEN::ShaderProgram lampShader = *engine.GetShaderContainer().CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
-	GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("cube", "lampShader");
-	GLEN::Light* light = new GLEN::Light(lampCube);
-	auto lightPos = CU::Vector3f(1.2f, 1.0f, 2.0f);
-	lampCube->SetPosition(lightPos);
-	light->SetPosition(lightPos);
-	lampCube->SetScale(0.2f);
 
+	//dir light
+	GLEN::Light* light = new GLEN::Light(GLEN::DIRECTIONAL_LIGHT);
+	light->SetDirection({ -0.2f, -1.0f, -0.3f });
+	// light properties
+	light->SetAmbient({ 0.1,0.1,0.1 });
+	light->SetDiffuse({ 0.8f, 0.8f, 0.8f });
+	light->SetSpecular({ 1.0f, 1.0f, 1.0f });
 	scene.AddLight(light);
+
+	//point lights
+	CU::Vector3f pointLightPositions[] = {
+	CU::Vector3f(0.7f,  0.2f,  2.0f),
+	CU::Vector3f(2.3f, -3.3f, -4.0f),
+	CU::Vector3f(-4.0f,  2.0f, -12.0f),
+	CU::Vector3f(0.0f,  0.0f, -3.0f)
+	};
+	int nrPointLights = 2;
+	for (int i = 0; i < nrPointLights; i++) {
+		GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("cube", "lampShader");
+		GLEN::Light* light = new GLEN::Light(GLEN::POINT_LIGHT, lampCube, i);
+		auto lightPos = pointLightPositions[i];//CU::Vector3f(1.2f, 1.0f, 2.0f);
+		light->SetPosition(lightPos);
+
+		lampCube->SetScale(0.2f);
+
+		// light properties
+		// we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
+		// each environment and lighting type requires some tweaking to get the best out of your environment.
+		light->SetAmbient({ 0.1,0.1,0.1 });
+		light->SetDiffuse({ 0.8f, 0.8f, 0.8f });
+		light->SetSpecular({ 1.0f, 1.0f, 1.0f });
+		light->SetAttenuation(0.09f, 0.032f, 1);
+
+		scene.AddLight(light);
+	}
+	lightShader.setInt("nrPointLights", nrPointLights); //todo: not here
+
+
+	//flashlight:
+	GLEN::Light* flashlight = new GLEN::Light(GLEN::SPOT_LIGHT);
+	flashlight->SetDirection({ -0.2f, -1.0f, -0.3f });
+	// light properties
+	flashlight->SetAmbient({ 0.1,0.1,0.1 });
+	flashlight->SetDiffuse({ 0.8f, 0.8f, 0.8f });
+	flashlight->SetSpecular({ 1.0f, 1.0f, 1.0f });
+	flashlight->SetSpotlightRadius(12.5f, 17.5f);
+	scene.AddLight(flashlight);
+
 
 	engine.GetCamera().SetProjection(45, info.m_resolution.width / info.m_resolution.height);
 
@@ -257,42 +253,36 @@ int main()
 
 		inputController.Update(deltaTime);
 
-		float radius = 10.0f;
-		float camX = sin(glfwGetTime()) * radius;
-		float camZ = cos(glfwGetTime()) * radius;
-		lightPos = CU::Vector3f(camX, 0, camZ);
-		lampCube->SetPosition(lightPos);
+		//move the light
+		//float radius = 5.0f;
+		//float camX = sin(glfwGetTime()) * radius;
+		//float camZ = cos(glfwGetTime()) * radius;
+		//lightPos = CU::Vector3f(camX, 0, camZ);
+		//light->SetPosition(lightPos);
+		//light->SetDirection(CU::Vector3f(0, 0, 0) - lightPos);
 
+		//move light with cammera (flashlight)
+		flashlight->SetPosition(engine.GetCamera().GetPosition());
+		flashlight->SetDirection(inputController.GetFront());
 
-		//auto cameraTarget = CU::Vector3f(camX, 0.f, camZ);
-
-		auto view = engine.GetCamera().getView();
-		auto pos = view.GetPosition();
-		view.Translate(pos);
-	
-
-		//view = engine.GetCamera().LookAt(cameraTarget);
 		
 		//compared to opengl the x axis is reversed. this is fine, as now positive rotation over x axis is clockwize and not flipped.
 		//also the order of matrix multiplication is reversed, now read from left to right instead of right to left...
 
 		engine.RenderScene();
 
-		auto projection = engine.GetCamera().getProjection();
 
-		light->SetPosition(lightPos);
-
-		CU::Vector3f lightColor;
-		lightColor.x = sin(glfwGetTime() * 2.0f);
-		lightColor.y = sin(glfwGetTime() * 0.7f);
-		lightColor.z = sin(glfwGetTime() * 1.3f);
-		CU::Vector3f diffuseColor = lightColor * 0.5f; // decrease the influence
-		CU::Vector3f ambientColor = diffuseColor * 0.2f; // low influence
-
+		//change light color
+		//CU::Vector3f lightColor;
+		//lightColor.x = sin(glfwGetTime() * 2.0f);
+		//lightColor.y = sin(glfwGetTime() * 0.7f);
+		//lightColor.z = sin(glfwGetTime() * 1.3f);
+		//CU::Vector3f diffuseColor = lightColor * 0.5f; // decrease the influence
+		//CU::Vector3f ambientColor = diffuseColor * 0.2f; // low influence
 		//light->SetAmbient(ambientColor);
 		//light->SetDiffuse(diffuseColor);
 
-		scene.Render(); //send in the camera here, or let the scene own the camera?
+		scene.Render();
 		
 	}
 

@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
-#include "Primitive.h"
+#include "Model.h"
 #include <string>
+#include "Material.h"
+#include "Mesh.h"
 namespace GLEN
 {
 	class ModelContainer
@@ -9,11 +11,11 @@ namespace GLEN
 	public:
 		ModelContainer();
 		~ModelContainer();
-		int CreatePrimitive(std::string id, float* verticeData, int dataSize, VertexLayout vertexLayout, std::vector<int> textureHandles, DrawFrequency drawFrequency = GLEN::STATIC_DRAW);
-		Primitive* GetPrimitive(std::string id);
-		Primitive* GetPrimitive(int id);
+		Model* CreateModel(std::string path, const Material& material);
+		Model* CreateModel(std::string id, Mesh* mesh);
+		Model* GetModel(std::string id);
 	private:
-		std::vector<Primitive*> m_primitives;
+		std::vector<Model*> m_models;
 	};
 }
 

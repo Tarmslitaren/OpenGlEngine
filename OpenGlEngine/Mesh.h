@@ -4,13 +4,13 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include "ShaderProgram.h"
+#include "Material.h"
 namespace GLEN
 {
 
-
-	/*GL_STATIC_DRAW: the data will most likely not change at all or very rarely.
-	GL_DYNAMIC_DRAW : the data is likely to change a lot.
-	GL_STREAM_DRAW : the data will change every time it is drawn.
+	/*	GL_STATIC_DRAW: the data will most likely not change at all or very rarely.
+		GL_DYNAMIC_DRAW : the data is likely to change a lot.
+		GL_STREAM_DRAW : the data will change every time it is drawn.
 	*/
 	enum DrawFrequency
 	{
@@ -44,25 +44,24 @@ namespace GLEN
 	};
 
 
-
-	class Primitive
+	class Mesh
 	{
 	public:
-		Primitive();
-		~Primitive();
+		Mesh();
+		~Mesh();
+
 		void Render(CU::Matrix44f view, CU::Matrix44f projection);
 		void AddVertice(const CU::Vector3f& vertice);//remove
 		void SetVerticeData(float data[], int size);
 		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);
 		void SetIndexData(unsigned int data[], int size);
 		void AddTriangleIndexes(const CU::Vector3i indexes);//remove?
-		int Finalize(DrawFrequency frequency, std::string id );
+		int Finalize(DrawFrequency frequency, std::string id);
 		void SetPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
-		void AddTexture(int aTextureHandle) { m_textureHandles.push_back(aTextureHandle); }
 
-		std::string GetId() { return m_id; }
-		int GetHandle() { return m_vertexArrayObjectHandle;  } //reuse this as id (could maybe be hash of id string istead but meh.)
-
+		std::string GetId() { return m_id; } //not guaranteed to be unique!
+		int GetHandle() { return m_vertexArrayObjectHandle; } //reuse this as id (could maybe be hash of id string instead but meh.)
+		void SetMaterial(const Material& material) { m_material = material; }
 	private:
 		std::string m_id;
 
@@ -71,10 +70,9 @@ namespace GLEN
 		unsigned int m_vertexBufferObjectHandle;
 		unsigned int m_vertexArrayObjectHandle;
 		unsigned int m_elementBufferObject;
-		ShaderProgram m_shaderProgram;
 		unsigned int m_polygonMode;
 		VertexLayout m_vertexLayout;
-		std::vector<unsigned int> m_textureHandles;
+		Material m_material;
 	};
 }
 

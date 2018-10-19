@@ -5,6 +5,8 @@
 InputController::InputController()
 {
 	GLEN::Engine::GetInstance()->GetInput().CaptureMouseAndDisablePointer(); //good for mouselook
+	calculateFront();
+	GLEN::Engine::GetInstance()->GetCamera().SetOrientation(m_cameraFront);
 }
 
 
@@ -43,13 +45,9 @@ void InputController::PointerEvent(const CU::Vector2f & mousePosition)
 		m_pitch = -89.0f;
 	}
 
-
-	CU::Vector3f front;
-	front.x = cos(Convert::DegreeToRadian(m_yaw)) * cos(Convert::DegreeToRadian(m_pitch));
-	front.y = sin(Convert::DegreeToRadian(m_pitch));
-	front.z = sin(Convert::DegreeToRadian(m_yaw)) * cos(Convert::DegreeToRadian(m_pitch));
-
-	GLEN::Engine::GetInstance()->GetCamera().LookAt(front.GetNormalized());
+	calculateFront();
+	GLEN::Engine::GetInstance()->GetCamera().SetOrientation(m_cameraFront);
+	//GLEN::Engine::GetInstance()->GetCamera().LookAt(m_cameraFront); //something is fucked. the position of the camera gets wildly inappropriate
 
 		//GLEN::Engine::GetInstance()->GetCamera().Pitch(m_pitch*0.01);
 	//GLEN::Engine::GetInstance()->GetCamera().Yaw(m_yaw*0.01);
@@ -97,4 +95,12 @@ void InputController::Update(float deltaTime)
 
 	//engine.GetCamera().SetPosition(cameraPos);
 
+}
+
+void InputController::calculateFront()
+{
+	m_cameraFront.x = cos(Convert::DegreeToRadian(m_yaw)) * cos(Convert::DegreeToRadian(m_pitch));
+	m_cameraFront.y = sin(Convert::DegreeToRadian(m_pitch));
+	m_cameraFront.z = sin(Convert::DegreeToRadian(m_yaw)) * cos(Convert::DegreeToRadian(m_pitch));
+	m_cameraFront.Normalize();
 }

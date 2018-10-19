@@ -1,5 +1,5 @@
 #pragma once
-#include "Primitive.h"
+#include "Model.h"
 #include "CU_Matrix.h"
 #include "CU_Vector.h"
 #include "ShaderProgram.h"
@@ -18,12 +18,19 @@ namespace GLEN
 		void SetToRender(bool toRender) { m_isToRender = toRender; }
 		bool GetVisible() { return m_isToRender; }
 		void SetScale(float value) { m_orientation.Scale(value); } //let's see if this works
+		void SetOutline(float thickness = 0.1f, CU::Vector4f color = { 1,1,1,1 });
+		CU::Vector3f GetPosition() { return m_position; }
 	private:
+		void DrawOutline();
 		bool m_isToRender = true;
-		Primitive* m_primitive;
+		Model* m_model;
 		CU::Matrix33f m_orientation;
 		CU::Vector3f m_position;
 		std::string m_shaderId;
-	};
+
+		//outline
+		float m_outLineThickness;
+		CU::Vector4f m_outLineColor;
+	}; 
 }
 

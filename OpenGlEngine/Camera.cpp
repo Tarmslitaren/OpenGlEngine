@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "CommonMacros.h"
+#include "VectorMath.h"
 using namespace GLEN;
 
 GLEN::Camera::Camera()
@@ -16,29 +17,35 @@ GLEN::Camera::~Camera()
 }
 
 //the view matrix is somehow wrong
-const CU::Matrix44f& GLEN::Camera::LookAt(const CU::Vector3f & target)
+CU::Matrix44f GLEN::Camera::LookAt(const CU::Vector3f & target)
 {
+	
 	auto target2 = m_position + target;
 	m_backDirection = CU::Vector3f(m_position - target2).GetNormalized(); //zaxis
 	auto upDirection = CU::Vector3f(0.0f, 1.0f, 0.0f); //world up
 	m_rightDirection = upDirection.Cross(m_backDirection).GetNormalized(); //xaxis
 	m_upDirection = m_backDirection.Cross(m_rightDirection); //yaxis
 
-	m_view.Set(m_rightDirection.x, m_rightDirection.y, m_rightDirection.z, 0, //right
+	CU::Matrix44f view;
+	view.Set(m_rightDirection.x, m_rightDirection.y, m_rightDirection.z, 0, //right
 		m_upDirection.x, m_upDirection.y, m_upDirection.z, 0, //up
 		m_backDirection.x, m_backDirection.y, m_backDirection.z, 0, //direction
 		0, 0, 0, 1);
 
 
-	//m_view.Translate({ -m_position.x, -m_position.y, -m_position.z });
 	CU::Matrix44f pos;
 	pos.SetIdentity();
 	CU::Vector3f invertPos = { -m_position.x, -m_position.y, -m_position.z }; //why invert? because the view matrix is the camera model matrix inversed.
 	pos.Translate(invertPos);
-	m_view = pos * m_view; //the mult order should here be reversed as  the matrix is inverted
+	
+	view = pos * view; //the mult order should here be reversed as  the matrix is inverted
+	//view.SetPosition(invertPos);
 
-	//m_view.Translate({ -m_position.x, -m_position.y, -m_position.z });
-	return m_view;
+	//view.Translate({ -m_position.x, -m_position.y, -m_position.z });
+
+	//SetOrientation(target2);
+	//m_orientation.Inverse(view);
+	return view;
 
 	//return UpdatePos();
 	/*
@@ -103,15 +110,21 @@ const CU::Matrix44f& GLEN::Camera::LookAt(const CU::Vector3f & target)
     return rotation * translation; // Remember to read from right to left (first translation then rotation)*/
 }
 
-void GLEN::Camera::LookForward()
+
+void GLEN::Camera::SetOrientation(const CU::Matrix33f & orientation)
 {
-	LookAt(m_position + CU::Vector3f(0, 0, -1));
+		m_orientation = orientation;
+}
+
+void GLEN::Camera::SetOrientation(const CU::Vector3f& lookAt)
+{
+	m_orientation = CU::GenerateMatrix(lookAt);
 }
 
 void GLEN::Camera::SetPosition(const CU::Vector3f& position)
 {
 	m_position = position;
-	m_view.Translate({ -m_position.x, -m_position.y, -m_position.z });
+	m_orientation.Translate({ m_position.x, m_position.y, m_position.z });
 }
 
 // compute screen coordinates first
@@ -157,6 +170,19 @@ void glFrustum(
 	M.myMatrix[3][3] = 0;
 }
 
+CU::Vector3f GLEN::Camera::GetLookAtDirection()
+{
+	CU::Vector3f lookat;
+	lookat.Set(0.0f, 0.0f, 1.0f);
+	lookat = lookat * m_orientation.GetMatrix33().Transpose();
+	return lookat;
+}
+
+CU::Matrix44f GLEN::Camera::GetView()
+{
+	return LookAt(GetLookAtDirection());
+}
+
 void GLEN::Camera::SetProjection(float fov, float aspectRatio, float nearPlane, float farPlane)
 {
 	m_projectionValues.fov = fov;
@@ -187,17 +213,20 @@ void GLEN::Camera::SetFov(float fov)
 void GLEN::Camera::Pitch(float angle)
 {
 	//not coorect
-	m_view *= CU::Matrix44f::RotateX(angle);
+	//m_view *= CU::Matrix44f::RotateX(angle);
+	m_orientation.SetRotationX(angle);
 }
 
 void GLEN::Camera::Yaw(float angle)
 {
 	//not coorect
-	m_view *= CU::Matrix44f::RotateY(angle);
+	//m_view *= CU::Matrix44f::RotateY(angle);
+	m_orientation.SetRotationY(angle);
 }
 
 void GLEN::Camera::Roll(float angle)
 {
 	//not coorect
-	m_view *= CU::Matrix44f::RotateZ(angle);
+	//m_view *= CU::Matrix44f::RotateZ(angle);
+	m_orientation.SetRotationZ(angle);
 }

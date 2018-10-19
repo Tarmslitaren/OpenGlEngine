@@ -161,10 +161,14 @@
     <ClInclude Include="InputController.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Debug\depthTest.frag" />
+    <None Include="..\Debug\scale.vert" />
+    <None Include="..\Debug\simple.vert" />
     <None Include="..\Debug\lampShader.frag" />
     <None Include="..\Debug\lampShader.vert" />
     <None Include="..\Debug\lightingShader.frag" />
     <None Include="..\Debug\lightingShader.vert" />
+    <None Include="..\Debug\singleColor.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

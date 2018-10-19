@@ -29,5 +29,17 @@
     <None Include="..\Debug\lightingShader.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Debug\singleColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Debug\depthTest.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Debug\simple.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Debug\scale.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
