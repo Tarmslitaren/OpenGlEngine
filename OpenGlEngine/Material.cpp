@@ -69,6 +69,11 @@ void GLEN::Material::AddDiffuseTexture(std::string path, int binding, bool trans
 	m_diffuseTextureHandles.push_back({ textureHandle, binding });
 }
 
+void GLEN::Material::AddDiffuseTexture(int textureHandle, int binding, bool transparant)
+{
+	m_diffuseTextureHandles.push_back({ textureHandle, binding });
+}
+
 void GLEN::Material::AddSpecularTexture(std::string path, int binding)
 {
 	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path)->getHandle();

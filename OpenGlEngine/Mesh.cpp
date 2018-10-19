@@ -14,16 +14,12 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &m_vertexBufferObjectHandle);
 }
 
-void GLEN::Mesh::Render(CU::Matrix44f view, CU::Matrix44f projection)
+void GLEN::Mesh::Render()
 {
-	// ..:: Drawing code (in render loop) :: ..
-	// 4. draw the object
 
 	m_material.Render(); //maybe this is wrong. since this method should only be run from here and needs to be run from here.
 
-
 	glBindVertexArray(m_vertexArrayObjectHandle);
-
 	glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
 
 	if (m_indexes.size() == 0) {
@@ -37,7 +33,6 @@ void GLEN::Mesh::Render(CU::Matrix44f view, CU::Matrix44f projection)
 	glBindVertexArray(0);
 
 	glBindTexture(GL_TEXTURE_2D, 0); //need this to reset?
-
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //set back to fill
 
 }

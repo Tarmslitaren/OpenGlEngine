@@ -8,9 +8,6 @@
     <Filter Include="glad">
       <UniqueIdentifier>{e31b3147-3d8a-453f-aede-1ab2a51abfb6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="glad\KHR">
-      <UniqueIdentifier>{7f68a21c-02d9-4e67-9531-290110c97f37}</UniqueIdentifier>
-    </Filter>
     <Filter Include="model">
       <UniqueIdentifier>{9a856977-041a-445c-8c51-433455eddd43}</UniqueIdentifier>
     </Filter>
@@ -25,12 +22,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="glad\glad.h">
-      <Filter>glad</Filter>
-    </ClInclude>
-    <ClInclude Include="KHR\khrplatform.h">
-      <Filter>glad\KHR</Filter>
-    </ClInclude>
     <ClInclude Include="Engine.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="stb_image.h" />
@@ -82,6 +73,7 @@
     <ClInclude Include="Light.h">
       <Filter>scene</Filter>
     </ClInclude>
+    <ClInclude Include="PostProcess.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad\glad.c">
@@ -137,5 +129,6 @@
     <ClCompile Include="Light.cpp">
       <Filter>scene</Filter>
     </ClCompile>
+    <ClCompile Include="PostProcess.cpp" />
   </ItemGroup>
 </Project>

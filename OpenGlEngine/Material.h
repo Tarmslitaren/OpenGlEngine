@@ -12,6 +12,7 @@ namespace GLEN
 		void InitShaderVariables();
 		void Render();
 		void AddDiffuseTexture(std::string path, int binding, bool transparant = false);
+		void AddDiffuseTexture(int textureHandle, int binding, bool transparant = false);
 		void AddSpecularTexture(std::string path, int binding);
 		void SetAmbient(const CU::Vector3f ambient) { m_ambient = ambient; }
 		void SetDiffuse(const CU::Vector3f diffuse) { m_diffuseColor = diffuse; }

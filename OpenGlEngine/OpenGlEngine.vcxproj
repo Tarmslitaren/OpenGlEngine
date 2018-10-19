@@ -162,6 +162,7 @@
     <ClCompile Include="ModelInstance.cpp" />
     <ClCompile Include="MouseListener.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderContainer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
@@ -174,9 +175,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="enums.h" />
-    <ClInclude Include="glad\glad.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="KHR\khrplatform.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -185,6 +184,7 @@
     <ClInclude Include="ModelInstance.h" />
     <ClInclude Include="MouseListener.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="PostProcess.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderContainer.h" />
     <ClInclude Include="ShaderProgram.h" />

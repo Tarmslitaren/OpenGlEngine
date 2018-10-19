@@ -17,7 +17,7 @@ namespace GLEN
 		Model(std::string path); //load from file
 		Model(std::string id, Mesh* mesh);
 		void AddMesh(Mesh* mesh) { m_meshes.push_back(mesh); }
-		void Render(const CU::Matrix44f& view, const CU::Matrix44f& projection);
+		void Render();
 		std::string GetId() { return m_directory; }
 	private:
 		void loadModel(std::string path);

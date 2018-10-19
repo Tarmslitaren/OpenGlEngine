@@ -49,7 +49,7 @@ void GLEN::ModelInstance::Render(Light* light)
 			DrawOutline(); //for
 		}
 		else {
-			m_model->Render(view, projection);
+			m_model->Render();
 		}
 	}
 	//else: do we need to hide somehow?
@@ -75,7 +75,7 @@ void GLEN::ModelInstance::DrawOutline()
 
 	glStencilFunc(GL_ALWAYS, 1, 0xFF); // all fragments should update the stencil buffer
 	glStencilMask(0xFF); // enable writing to the stencil buffer
-	m_model->Render(view, projection);
+	m_model->Render();
 
 
 	
@@ -99,7 +99,7 @@ void GLEN::ModelInstance::DrawOutline()
 	shader.setFloat("scaleUp", m_outLineThickness);
 	shader.setVector4("color", m_outLineColor);
 	//todo: support changing color
-	m_model->Render(view, projection);
+	m_model->Render();
 
 	//reset
 	glStencilMask(0xFF);

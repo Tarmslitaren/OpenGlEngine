@@ -50,7 +50,7 @@ namespace GLEN
 		Mesh();
 		~Mesh();
 
-		void Render(CU::Matrix44f view, CU::Matrix44f projection);
+		void Render();
 		void AddVertice(const CU::Vector3f& vertice);//remove
 		void SetVerticeData(float data[], int size);
 		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);

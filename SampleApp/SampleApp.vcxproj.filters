@@ -44,5 +44,23 @@
     <None Include="..\Workbed\lightingShaderNoAlpha.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Workbed\pp_simple.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Workbed\pp_simple.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Workbed\pp_invert.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Workbed\pp_grayscale.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Workbed\pp_sharpen.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Workbed\pp_blur.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

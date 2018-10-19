@@ -14,6 +14,7 @@
 #include "ModelInstance.h"
 #include "ModelContainer.h"
 #include "Material.h"
+#include "PostProcess.h"
 
 
 int main()
@@ -245,6 +246,8 @@ int main()
 
 	InputController inputController;
 
+	GLEN::PostProcess postProcess;
+
 	//main loop
 	while (engine.Update(deltaTime)) {
 		
@@ -287,7 +290,9 @@ int main()
 		//light->SetAmbient(ambientColor);
 		//light->SetDiffuse(diffuseColor);
 
-		scene.Render();
+
+		postProcess.Render(&scene);
+		//.Render();
 		
 	}
 
