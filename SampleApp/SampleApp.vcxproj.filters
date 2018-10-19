@@ -41,5 +41,8 @@
     <None Include="..\Workbed\singleColor.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Workbed\lightingShaderNoAlpha.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

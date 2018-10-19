@@ -16,7 +16,7 @@ Texture::~Texture()
 }
 
 
-bool GLEN::Texture::LoadTexture(std::string path, bool flipY)
+bool GLEN::Texture::LoadTexture(std::string path, bool transparant)
 {
 
 	m_path = path;
@@ -29,7 +29,6 @@ bool GLEN::Texture::LoadTexture(std::string path, bool flipY)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	stbi_set_flip_vertically_on_load(flipY); //flips the coords
 	
 	unsigned char *data = stbi_load(path.c_str(), &m_width, &m_height, &m_channels, 0);
 	if (data)
@@ -45,9 +44,12 @@ bool GLEN::Texture::LoadTexture(std::string path, bool flipY)
 		{
 			format = GL_RGBA;
 
-			//don't wrap if has alpha: may produce blending artifacts so clamp instead.
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			if (transparant)
+			{
+				//don't wrap if has alpha: may produce blending artifacts so clamp instead.
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			}
 		}
 
 

@@ -63,9 +63,9 @@ void GLEN::Material::Render()
 	//glActiveTexture(GL_TEXTURE0);
 }
 
-void GLEN::Material::AddDiffuseTexture(std::string path, int binding)
+void GLEN::Material::AddDiffuseTexture(std::string path, int binding, bool transparant)
 {
-	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path)->getHandle();
+	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path, transparant)->getHandle();
 	m_diffuseTextureHandles.push_back({ textureHandle, binding });
 }
 

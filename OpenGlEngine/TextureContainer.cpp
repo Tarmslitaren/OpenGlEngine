@@ -17,7 +17,7 @@ TextureContainer::~TextureContainer()
 	}
 }
 
-Texture* GLEN::TextureContainer::GetTexture(std::string path)
+Texture* GLEN::TextureContainer::GetTexture(std::string path, bool transparant)
 {
 	for (Texture* texture : m_textures)
 	{
@@ -27,7 +27,7 @@ Texture* GLEN::TextureContainer::GetTexture(std::string path)
 		}
 	}
 	Texture* texture = new Texture();
-	if (texture->LoadTexture(path))
+	if (texture->LoadTexture(path, transparant))
 	{
 		m_textures.push_back(texture);
 		return texture;

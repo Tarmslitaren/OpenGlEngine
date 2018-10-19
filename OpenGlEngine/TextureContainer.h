@@ -8,7 +8,7 @@ namespace GLEN
 	public:
 		TextureContainer();
 		~TextureContainer();
-		Texture* GetTexture(std::string path);
+		Texture* GetTexture(std::string path, bool transparant = false);
 
 	private:
 		std::vector<Texture*> m_textures;

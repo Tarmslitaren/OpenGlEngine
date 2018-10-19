@@ -112,6 +112,7 @@ int main()
 	layout.stride = 8;
 
 	GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
+	GLEN::ShaderProgram lightShaderNoAlpha = *engine.GetShaderContainer().CreateShaderProgram("lightingShaderNoAlpha", "lightingShader.vert", "lightingShaderNoAlpha.frag");
 	//GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "depthTest.vert", "depthTest.frag");
 
 
@@ -146,6 +147,10 @@ int main()
 	}
 
 	//loaded model
+	GLEN::Material material2;
+	material2.SetShininess(32.f);
+	material2.SetShader(lightShaderNoAlpha.GetHandle());
+	material2.InitShaderVariables();
 	engine.GetModelContainer().CreateModel("nanosuit/nanosuit.obj", material);
 	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit", "lightShader");
 	instance->SetScale(0.1f);
@@ -160,7 +165,7 @@ int main()
 	vegetationPos.push_back({ -0.3f, 0.0f, -2.3f });
 	vegetationPos.push_back({ 0.5f, 0.0f, -0.6f });
 	GLEN::Material grassMaterial;
-	grassMaterial.AddDiffuseTexture("blending_transparent_window.png", 0);
+	grassMaterial.AddDiffuseTexture("blending_transparent_window.png", 0, true);
 	grassMaterial.SetShader(lightShader.GetHandle());
 	grassMaterial.InitShaderVariables();
 	GLEN::VertexLayout planeLayout;

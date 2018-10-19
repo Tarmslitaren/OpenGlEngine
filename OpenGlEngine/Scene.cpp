@@ -38,10 +38,14 @@ void GLEN::Scene::Render()
 		model->Render(nullptr);
 	}
 
+	//enable alpha blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	for (auto it = m_sortingMap.rbegin(); it != m_sortingMap.rend(); ++it)
 	{
 		it->second->Render(nullptr);
 	}
+	glDisable(GL_BLEND);
 	
 	/*
 	Sorting objects with alpha:

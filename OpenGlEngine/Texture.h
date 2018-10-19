@@ -7,7 +7,7 @@ namespace GLEN
 	public:
 		Texture();
 		~Texture();
-		bool LoadTexture(std::string path, bool flipY = true);
+		bool LoadTexture(std::string path, bool transparant = false);
 		unsigned int getHandle() { return m_handle; }
 		const std::string& getPath() { return m_path; }
 	private:

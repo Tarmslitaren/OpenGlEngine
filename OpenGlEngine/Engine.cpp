@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
+#include "stb_image.h"
 
 using namespace GLEN;
 Engine* Engine::s_instance = nullptr;
@@ -25,13 +26,12 @@ m_input(m_window.GetWindow())
 	//test
 	//glDepthFunc(GL_ALWAYS);
 
-	//enable alpha blending
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 	//this can potentially increase performace > 50% but onl yworks for models with properly winded triangles...
 	//glEnable(GL_CULL_FACE);
+
+	stbi_set_flip_vertically_on_load(true); //flips the coords, because opengl wants it so.
 
 
 	GetShaderContainer().CreateShaderProgram("singleColorScale", "scale.vert", "singleColor.frag");
