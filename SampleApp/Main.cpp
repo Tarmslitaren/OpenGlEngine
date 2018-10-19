@@ -160,7 +160,7 @@ int main()
 	vegetationPos.push_back({ -0.3f, 0.0f, -2.3f });
 	vegetationPos.push_back({ 0.5f, 0.0f, -0.6f });
 	GLEN::Material grassMaterial;
-	grassMaterial.AddDiffuseTexture("grass.png", 0);
+	grassMaterial.AddDiffuseTexture("blending_transparent_window.png", 0);
 	grassMaterial.SetShader(lightShader.GetHandle());
 	grassMaterial.InitShaderVariables();
 	GLEN::VertexLayout planeLayout;

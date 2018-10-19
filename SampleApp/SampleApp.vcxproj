@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{64666E44-F1CD-4C9B-A9FB-67A24A9C6A95}</ProjectGuid>
     <RootNamespace>SampleApp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -70,12 +70,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);E:\libs\glfw-3.2.1\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;E:\libs\glfw-3.2.1\lib\debug</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);D:\dev\libs\glfw-3.2.1\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;D:\dev\libs\glfw-3.2.1\lib\relese</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);E:\libs\glfw-3.2.1\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;E:\libs\glfw-3.2.1\lib\release</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);D:\dev\libs\glfw-3.2.1\include</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;D:\dev\libs\glfw-3.2.1\lib\release</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\dev\libs\glfw-3.2.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\dev\libs\glfw-3.2.1\lib\release;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>D:\dev\libs\glfw-3.2.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\dev\libs\glfw-3.2.1\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -95,7 +103,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\CommonUtilities;..\OpenGlEngine;</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -121,10 +135,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\CommonUtilities;..\OpenGlEngine;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -132,6 +150,9 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonUtilities\CommonUtilities.vcxproj">
+      <Project>{d0c7251a-4a6b-407b-bba9-a899dfd01b4a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OpenGlEngine\OpenGlEngine.vcxproj">
       <Project>{021471dd-e328-4eec-a61d-716c304c85d2}</Project>
     </ProjectReference>
@@ -140,14 +161,14 @@
     <ClInclude Include="InputController.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Debug\depthTest.frag" />
-    <None Include="..\Debug\scale.vert" />
-    <None Include="..\Debug\simple.vert" />
-    <None Include="..\Debug\lampShader.frag" />
-    <None Include="..\Debug\lampShader.vert" />
-    <None Include="..\Debug\lightingShader.frag" />
-    <None Include="..\Debug\lightingShader.vert" />
-    <None Include="..\Debug\singleColor.frag" />
+    <None Include="..\Workbed\depthTest.frag" />
+    <None Include="..\Workbed\lampShader.frag" />
+    <None Include="..\Workbed\lampShader.vert" />
+    <None Include="..\Workbed\lightingShader.frag" />
+    <None Include="..\Workbed\lightingShader.vert" />
+    <None Include="..\Workbed\scale.vert" />
+    <None Include="..\Workbed\simple.vert" />
+    <None Include="..\Workbed\singleColor.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
