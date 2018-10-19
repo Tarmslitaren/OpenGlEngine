@@ -17,29 +17,29 @@
     <ClInclude Include="InputController.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Debug\lampShader.frag">
-      <Filter>Shaders</Filter>
+    <None Include="..\Workbed\depthTest.frag">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Debug\lampShader.vert">
-      <Filter>Shaders</Filter>
+    <None Include="..\Workbed\lampShader.frag">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Debug\lightingShader.frag">
-      <Filter>Shaders</Filter>
+    <None Include="..\Workbed\lampShader.vert">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Debug\lightingShader.vert">
-      <Filter>Shaders</Filter>
+    <None Include="..\Workbed\lightingShader.frag">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Debug\singleColor.frag">
-      <Filter>Shaders</Filter>
+    <None Include="..\Workbed\lightingShader.vert">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Debug\depthTest.frag">
-      <Filter>Shaders</Filter>
+    <None Include="..\Workbed\scale.vert">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Debug\simple.vert">
-      <Filter>Shaders</Filter>
+    <None Include="..\Workbed\simple.vert">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Debug\scale.vert">
-      <Filter>Shaders</Filter>
+    <None Include="..\Workbed\singleColor.frag">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>
