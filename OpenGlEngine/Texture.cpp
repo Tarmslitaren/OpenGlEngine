@@ -3,6 +3,7 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "ErrorHandler.h"
 using namespace GLEN;
 
 
@@ -72,6 +73,7 @@ bool GLEN::Texture::LoadTexture(std::string path, bool transparant)
 
 bool GLEN::Texture::LoadCubeMap(std::string id, std::vector<std::pair<std::string, CubeMapOrientation>> paths)
 {
+
 	m_path = id;
 
 	glGenTextures(1, &m_handle);
@@ -83,6 +85,7 @@ bool GLEN::Texture::LoadCubeMap(std::string id, std::vector<std::pair<std::strin
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
 
 	for (auto image : paths)
 	{
@@ -103,8 +106,6 @@ bool GLEN::Texture::LoadCubeMap(std::string id, std::vector<std::pair<std::strin
 			//todo: use stb lib to figure out type of texture and use corresponding GL type (eg: GL_RGB,GL_RGBA etc)
 			glTexImage2D(image.second, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data); //todo: check for errors obv.
 
-
-			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 			stbi_image_free(data);
 		}
 		else

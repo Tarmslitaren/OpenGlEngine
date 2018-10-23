@@ -28,19 +28,16 @@ void GLEN::Material::InitShaderVariables()
 	else
 	{
 		//m_shader->setVector("material.diffuse", m_diffuseColor);
-		ErrorHandler::CheckError("InitShaderVariables 2");
 	}
 	if (m_specularTextureHandles.size() > 0) {
 		for (unsigned int i = 0; i < m_specularTextureHandles.size(); i++)
 		{
 			m_shader->setInt("material.specular[" + std::to_string(i) + "]", m_specularTextureHandles[i].second);
 		}
-		ErrorHandler::CheckError("InitShaderVariables 3");
 	}
 	else
 	{
-		//m_shader->setVector("material.specular", m_specularColor);
-		ErrorHandler::CheckError("InitShaderVariables 4");
+		//m_shader->setVector("material.specular", m_specularColor); //this produce error when material.specular is not a vec3
 	}
 	m_shader->setVector("material.ambient", m_ambient);
 	m_shader->setFloat("material.shininess", m_shininess);
@@ -69,9 +66,6 @@ void GLEN::Material::Render(const CU::Matrix44f& model)
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMapHandle);
 		return; //cubemaps handle their own uniforms
-	}
-	if (m_shader->GetId() == "pp_simple") {
-		return;
 	}
 	//InitShaderVariables(); //needed? Only if the material changes in runtime. seems to be quite specific case (unlike light properties)
 

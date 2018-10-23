@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine.h"
-//#include "enums.h"
 #include "Input.h"
 #include "Scene.h"
 #include "Model.h"
@@ -9,7 +8,6 @@
 #include "CU_Matrix.h"
 #include "CU_Vector.h"
 #include "VectorMath.h"
-//#include "CommonMacros.h"
 #include <math.h>
 #include "InputController.h"
 #include "ModelInstance.h"
@@ -91,8 +89,6 @@ int main()
 	};
 
 
-	ErrorHandler::CheckError("main 4");
-
 
 	CU::Vector3f cubePositions[] = {
 	  CU::Vector3f(0.0f,  0.0f,  0.0f),
@@ -114,9 +110,6 @@ int main()
 	layout.texCoordOffset = 6;
 	layout.texCoordAttribute = 2;
 	layout.stride = 8;
-
-	//GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().GetShaderProgram("lightShader");
-	//GLEN::ShaderProgram lightShaderNoAlpha = *engine.GetShaderContainer().GetShaderProgram("lightingShaderNoAlpha");
 
 	//GLEN::ShaderProgram reflectShader = *engine.GetShaderContainer().GetShaderProgram("reflectShader");
 
@@ -149,7 +142,6 @@ int main()
 		
 	}
 
-	ErrorHandler::CheckError("main 3");
 
 	//loaded model
 	GLEN::Material material2("lightShaderNoAlpha");
@@ -168,7 +160,6 @@ int main()
 	vegetationPos.push_back({ 0.5f, 0.0f, -0.6f });
 	GLEN::Material grassMaterial("lightShader");
 	grassMaterial.AddDiffuseTexture("blending_transparent_window.png", 0, true);
-	ErrorHandler::CheckError("main 23");
 	grassMaterial.InitShaderVariables();
 	
 	GLEN::VertexLayout planeLayout;
@@ -178,7 +169,6 @@ int main()
 	planeLayout.texCoordAttribute = 2;
 	planeLayout.stride = 8;
 	int gmeshId = engine.GetMeshContainer().CreateMesh("grass", planeVerts, sizeof(planeVerts) / sizeof(float), planeLayout, grassMaterial, indices, sizeof(indices) / sizeof(int));
-	ErrorHandler::CheckError("main 22");
 	GLEN::Mesh* grassMesh = engine.GetMeshContainer().GetMesh(gmeshId);
 	engine.GetModelContainer().CreateModel("grass", grassMesh);
 	for (int i = 0; i < vegetationPos.size(); i++)
@@ -187,8 +177,6 @@ int main()
 		instance->SetPosition(vegetationPos[i]);
 		scene.AddModel(instance, true);
 	}
-
-	ErrorHandler::CheckError("main 2");
 
 
 	//skybox
@@ -280,7 +268,6 @@ int main()
 
 	};
 	//main loop
-	ErrorHandler::CheckError("main 1");
 	while (engine.Update(deltaTime)) {
 
 		if (engine.GetInput().GetKeyPressed(GLEN::KEY_ESC)) {
@@ -326,7 +313,6 @@ int main()
 		
 		//compared to opengl the x axis is reversed. this is fine, as now positive rotation over x axis is clockwize and not flipped.
 		//also the order of matrix multiplication is reversed, now read from left to right instead of right to left...
-		ErrorHandler::CheckErrorOnce("mainloop 2");
 		engine.RenderScene();
 
 

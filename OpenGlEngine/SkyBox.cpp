@@ -1,5 +1,6 @@
 #include "SkyBox.h"
 #include "Engine.h"
+#include "ErrorHandler.h"
 using namespace GLEN;
 
 GLEN::SkyBox::SkyBox(std::string id, std::vector<std::pair<std::string, GLEN::CubeMapOrientation>> cubemapImages)

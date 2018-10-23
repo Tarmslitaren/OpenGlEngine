@@ -4,7 +4,7 @@
 #include <iostream>
 
 std::vector<std::string> ErrorHandler::m_checked;
-//Engine* Engine::s_instance = nullptr;
+
 GLenum glCheckError()
 {
 	GLenum errorCode;
