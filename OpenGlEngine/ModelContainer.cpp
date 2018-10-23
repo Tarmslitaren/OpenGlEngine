@@ -19,7 +19,7 @@ Model* GLEN::ModelContainer::CreateModel(std::string path, const Material& mater
 		std::cout << "trying to add model with same id!" << std::endl;
 		return GetModel(path);
 	}
-	GLEN::Model* model = new GLEN::Model(path);
+	GLEN::Model* model = new GLEN::Model(path, material);
 	//model->SetMaterial(material);
 	m_models.push_back(model);
 	return model;

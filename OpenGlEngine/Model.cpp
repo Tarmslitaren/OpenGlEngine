@@ -5,9 +5,9 @@
 #include "Material.h"
 using namespace GLEN;
 
-GLEN::Model::Model(std::string path)
+GLEN::Model::Model(std::string path, const Material& material)
 {
-	loadModel(path);
+	loadModel(path, material);
 }
 
 GLEN::Model::Model(std::string id, Mesh* mesh)
@@ -16,15 +16,15 @@ GLEN::Model::Model(std::string id, Mesh* mesh)
 	m_meshes.push_back(mesh);
 }
 
-void GLEN::Model::Render()
+void GLEN::Model::Render(const CU::Matrix44f& model)
 {
 	for (unsigned int i = 0; i < m_meshes.size(); i++)
 	{
-		m_meshes[i]->Render();
+		m_meshes[i]->Render(model);
 	}
 }
 
-void GLEN::Model::loadModel(std::string path)
+void GLEN::Model::loadModel(std::string path, const Material& material)
 {
 
 	// read file via ASSIMP
@@ -40,7 +40,7 @@ void GLEN::Model::loadModel(std::string path)
 	m_directory = path.substr(0, path.find_last_of('/'));
 
 	// process ASSIMP's root node recursively
-	processNode(scene->mRootNode, scene);
+	processNode(scene->mRootNode, scene, material);
 
 	//other useful options:
 	//aiProcess_GenNormals: actually creates normals for each vertex if the model didn't contain normal vectors.
@@ -49,22 +49,22 @@ void GLEN::Model::loadModel(std::string path)
 	//http://assimp.sourceforge.net/lib_html/postprocess_8h.html
 }
 
-void GLEN::Model::processNode(aiNode * node, const aiScene * scene)
+void GLEN::Model::processNode(aiNode * node, const aiScene * scene, const Material& material)
 {
 	// process all the node's meshes (if any)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-		m_meshes.push_back(processMesh(mesh, scene));
+		m_meshes.push_back(processMesh(mesh, scene, material));
 	}
 	// then do the same for each of its children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		processNode(node->mChildren[i], scene);
+		processNode(node->mChildren[i], scene, material);
 	}
 }
 
-Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene)
+Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene, const Material& materialInput)
 {
 	//std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -124,10 +124,7 @@ Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene)
 	// process materials
 	aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
-	GLEN::Material material;
-	//material.SetShininess(32.f);
-	//material.SetShader(lightShader.GetHandle());
-	//material.InitShaderVariables();
+	GLEN::Material material(materialInput);
 	//todo: supply material definition (including uniform value pairs) to this, so we can set shader and so forth per mesh/model
 
 	int textureCount = 0;

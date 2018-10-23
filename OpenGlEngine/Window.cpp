@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
-
+#include "ErrorHandler.h"
 using namespace GLEN;
 Window::Window(SetupInfo setupInfo)
 {
@@ -75,4 +75,5 @@ void Window::Create(SetupInfo setupInfo)
 	//register callback for window rezise event
 	glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
 
+	ErrorHandler::CheckError();
 }

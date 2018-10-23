@@ -47,6 +47,7 @@ namespace GLEN
 		//const CU::Vector3f& GetAmbient() const { return m_ambient;}
 		void RenderObject();
 		void ApplytoShader(std::string shader);
+		LightType GetType() { return m_type; }
 	private:
 		LightType m_type;
 		ModelInstance* m_debugRenderObject;

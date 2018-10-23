@@ -9,6 +9,7 @@ namespace GLEN
 		TextureContainer();
 		~TextureContainer();
 		Texture* GetTexture(std::string path, bool transparant = false);
+		Texture* LoadCubeMap(std::string id, std::vector< std::pair < std::string, CubeMapOrientation > > paths);
 
 	private:
 		std::vector<Texture*> m_textures;

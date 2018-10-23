@@ -3,9 +3,13 @@
 #include <iostream>
 #include "Engine.h"
 #include "Material.h"
+#include "ErrorHandler.h"
 using namespace GLEN;
 
+
+unsigned int quadVAO, quadVBO;
 PostProcess::PostProcess()
+	:m_quad(Material("pp_simple"))
 {
 
 	//init frame buffer
@@ -44,7 +48,13 @@ PostProcess::PostProcess()
 	);*/
 
 	//create shader
-	m_shader = Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp", "pp_simple.vert", "pp_simple.frag");
+	//todo: create all kinds of shaders and put in container
+	m_shader = Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_simple", "pp_simple.vert", "pp_simple.frag");
+	Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_grayscale", "pp_simple.vert", "pp_grayscale.frag");
+	Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_invert", "pp_simple.vert", "pp_invert.frag");
+	Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_blur", "pp_simple.vert", "pp_blur.frag");
+	Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_sharpen", "pp_simple.vert", "pp_sharpen.frag");
+	Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_edges", "pp_simple.vert", "pp_edges.frag");
 
 
 	//create a quad
@@ -71,13 +81,26 @@ PostProcess::PostProcess()
 	m_quad.SetVerticeData(quadVertices, 24, layout);
 	m_quad.Finalize(GLEN::STATIC_DRAW, "pp_quad");
 	
-	Material material;
-	material.AddDiffuseTexture(m_texture, 0);
-	material.SetShader(m_shader->GetHandle());
-	//m_quad.SetPolygonMode(POLYGONMODE_LINE); //show the quad
+	//Material material(m_shader->GetId());
+	m_quad.GetMaterial().AddDiffuseTexture(m_texture, 0);
+	m_quad.SetPolygonMode(POLYGONMODE_LINE); //show the quad
 
-	m_quad.SetMaterial(material);
+	//m_quad.ChangeMaterial(material);
 
+
+	// screen quad VAO
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	//m_shader->setInt("screenTexture", 0);
+	ErrorHandler::CheckError();
 
 }
 
@@ -95,22 +118,45 @@ void GLEN::PostProcess::Render(Scene* scene)
 		-Bind to the default framebuffer.
 		-Draw a quad that spans the entire screen with the new framebuffer's color buffer as its texture.
 		*/
-
+	ErrorHandler::CheckErrorOnce("PostProcess 0");
 		// first pass
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject);
+	ErrorHandler::CheckErrorOnce("PostProcess 1");
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
 	glEnable(GL_DEPTH_TEST);
+
 	scene->Render();
-	//DrawScene();
+	ErrorHandler::CheckErrorOnce("PostProcess 2");
 
 	// second pass
-	glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+	/*glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//draw quad
 	m_shader->use();
 	glDisable(GL_DEPTH_TEST);
-	m_quad.Render();
+	m_quad.Render(CU::Matrix44f::Identity());*/
+	
+	//glPolygonMode(GL_FRONT_AND_BACK, POLYGONMODE_LINE);
+
+	// second pass
+	glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	m_shader->use();
+	glBindVertexArray(quadVAO);
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	ErrorHandler::CheckErrorOnce("PostProcess 3");
+	
+}
+
+void GLEN::PostProcess::SetShader(std::string id)
+{
+	m_shader = Engine::GetInstance()->GetShaderContainer().GetShaderProgram(id);
 }

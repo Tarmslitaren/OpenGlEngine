@@ -2,7 +2,8 @@
 #include <iostream>
 
 using namespace GLEN;
-Mesh::Mesh()
+Mesh::Mesh(const Material& material)
+:m_material(material)
 {
 	m_polygonMode = GL_FILL;
 }
@@ -14,12 +15,15 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &m_vertexBufferObjectHandle);
 }
 
-void GLEN::Mesh::Render()
+void GLEN::Mesh::Render(const CU::Matrix44f& model)
 {
 
-	m_material.Render(); //maybe this is wrong. since this method should only be run from here and needs to be run from here.
+	
+
+	m_material.Render(model); //this method should only be run from here and needs to be run from here.
 
 	glBindVertexArray(m_vertexArrayObjectHandle);
+
 	glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
 
 	if (m_indexes.size() == 0) {

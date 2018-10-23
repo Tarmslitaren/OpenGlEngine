@@ -8,6 +8,7 @@
 #include "ShaderContainer.h"
 #include "ModelContainer.h"
 #include "MeshContainer.h"
+#include "Scene.h"
 namespace GLEN
 {
 
@@ -28,9 +29,11 @@ namespace GLEN
 		//EffectInput& GetEffectInput() { return myEffectInput; }
 		ModelContainer& GetModelContainer() { return m_modelContainer; }
 		MeshContainer& GetMeshContainer() { return m_meshContainer; }
+		Scene& GetCurrentScene() { return *m_scenes[m_currentScene]; }
 
 
 	private:
+		void InitScene();
 		Engine();
 		virtual ~Engine();
 		Engine(const SetupInfo & infoArgument);
@@ -42,6 +45,8 @@ namespace GLEN
 		ShaderContainer m_shaderContainer;
 		ModelContainer m_modelContainer;
 		MeshContainer m_meshContainer;
+		std::vector < Scene* > m_scenes; //todo: scene container/handler with loading/unloading and switching scenes
+		int m_currentScene = 0;
 
 
 	};

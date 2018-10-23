@@ -47,10 +47,10 @@ namespace GLEN
 	class Mesh
 	{
 	public:
-		Mesh();
+		Mesh(const Material& material);
 		~Mesh();
 
-		void Render();
+		void Render(const CU::Matrix44f& model);
 		void AddVertice(const CU::Vector3f& vertice);//remove
 		void SetVerticeData(float data[], int size);
 		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);
@@ -61,7 +61,8 @@ namespace GLEN
 
 		std::string GetId() { return m_id; } //not guaranteed to be unique!
 		int GetHandle() { return m_vertexArrayObjectHandle; } //reuse this as id (could maybe be hash of id string instead but meh.)
-		void SetMaterial(const Material& material) { m_material = material; }
+		void ChangeMaterial(const Material& material) { m_material = material; }
+		Material& GetMaterial() { return m_material; }
 	private:
 		std::string m_id;
 

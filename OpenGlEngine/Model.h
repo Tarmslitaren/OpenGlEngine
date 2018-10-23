@@ -14,15 +14,15 @@ namespace GLEN
 	class Model
 	{
 	public:
-		Model(std::string path); //load from file
+		Model(std::string path, const Material& material); //load from file
 		Model(std::string id, Mesh* mesh);
 		void AddMesh(Mesh* mesh) { m_meshes.push_back(mesh); }
-		void Render();
+		void Render(const CU::Matrix44f& model);
 		std::string GetId() { return m_directory; }
 	private:
-		void loadModel(std::string path);
-		void processNode(aiNode *node, const aiScene *scene);
-		Mesh* processMesh(aiMesh *mesh, const aiScene *scene);
+		void loadModel(std::string path, const Material& material);
+		void processNode(aiNode *node, const aiScene *scene, const Material& material);
+		Mesh* processMesh(aiMesh *mesh, const aiScene *scene, const Material& material);
 
 		std::vector<Mesh*> m_meshes;
 		std::string m_directory;

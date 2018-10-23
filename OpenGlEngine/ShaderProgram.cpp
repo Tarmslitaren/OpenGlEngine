@@ -122,40 +122,61 @@ void GLEN::ShaderProgram::use()
 void GLEN::ShaderProgram::setBool(const std::string & name, bool value)
 {
 	use();
-	glUniform1i(glGetUniformLocation(m_shaderProgramHandle, name.c_str()), (int)value);
+	int location = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
+	if (location >= 0)
+	{
+		glUniform1i(location, (int)value);
+	}
 }
 
 void GLEN::ShaderProgram::setInt(const std::string & name, int value)
 {
 	use();
-	glUniform1i(glGetUniformLocation(m_shaderProgramHandle, name.c_str()), value);
+	int location = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
+	if (location >= 0)
+	{
+		glUniform1i(location, value);
+	}
 }
 
 void GLEN::ShaderProgram::setFloat(const std::string & name, float value)
 {
 	use();
-	glUniform1f(glGetUniformLocation(m_shaderProgramHandle, name.c_str()), value);
+	int location = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
+	if (location >= 0)
+	{
+		glUniform1f(location, value);
+	}
 }
 
 void GLEN::ShaderProgram::setMatrix(const std::string & name, CU::Matrix44f matrix)
 {
 	use();
-	unsigned int transformLoc = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, matrix.myMatrix[0]);
+	int location = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
+	if (location >= 0)
+	{
+		glUniformMatrix4fv(location, 1, GL_FALSE, matrix.myMatrix[0]);
+	}
 }
 
 void GLEN::ShaderProgram::setVector(const std::string & name, CU::Vector3f vector)
 {
 	use();
-	unsigned int transformLoc = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
-	glUniform3f(transformLoc, vector.x, vector.y, vector.z);
+	int location = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
+	if (location >= 0)
+	{
+		glUniform3f(location, vector.x, vector.y, vector.z);
+	}
 }
 
 void GLEN::ShaderProgram::setVector4(const std::string & name, CU::Vector4f vector)
 {
 	use();
-	unsigned int transformLoc = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
-	glUniform4f(transformLoc, vector.x, vector.y, vector.z, vector.w);
+	int location = glGetUniformLocation(m_shaderProgramHandle, name.c_str());
+	if (location >= 0)
+	{
+		glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+	}
 }
 
 bool GLEN::ShaderProgram::AddShader(const char * source, int& handle, ShaderType shaderType)

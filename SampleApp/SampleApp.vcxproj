@@ -168,14 +168,19 @@
     <None Include="..\Workbed\lightingShader.vert" />
     <None Include="..\Workbed\lightingShaderNoAlpha.frag" />
     <None Include="..\Workbed\pp_blur.frag" />
+    <None Include="..\Workbed\pp_edges.frag" />
     <None Include="..\Workbed\pp_grayscale.frag" />
     <None Include="..\Workbed\pp_invert.frag" />
     <None Include="..\Workbed\pp_sharpen.frag" />
     <None Include="..\Workbed\pp_simple.frag" />
     <None Include="..\Workbed\pp_simple.vert" />
+    <None Include="..\Workbed\reflection.frag" />
+    <None Include="..\Workbed\reflection.vert" />
     <None Include="..\Workbed\scale.vert" />
     <None Include="..\Workbed\simple.vert" />
     <None Include="..\Workbed\singleColor.frag" />
+    <None Include="..\Workbed\skybox.frag" />
+    <None Include="..\Workbed\skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

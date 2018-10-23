@@ -23,8 +23,7 @@ void GLEN::Light::RenderObject()
 	if (m_debugRenderObject != nullptr)
 	{
 		m_debugRenderObject->SetPosition(m_position);
-		Light light;
-		m_debugRenderObject->Render(&light);
+		m_debugRenderObject->Render();
 	}
 }
 

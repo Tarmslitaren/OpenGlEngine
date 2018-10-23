@@ -1,5 +1,6 @@
+#pragma once
 #include "Engine.h"
-#include "enums.h"
+//#include "enums.h"
 #include "Input.h"
 #include "Scene.h"
 #include "Model.h"
@@ -15,6 +16,8 @@
 #include "ModelContainer.h"
 #include "Material.h"
 #include "PostProcess.h"
+#include "SkyBox.h"
+#include "ErrorHandler.h"
 
 
 int main()
@@ -26,7 +29,7 @@ int main()
 	GLEN::Engine::Create(info);
 	GLEN::Engine& engine = *GLEN::Engine::GetInstance();
 	//triangle test
-	GLEN::Scene scene;
+	GLEN::Scene& scene = engine.GetCurrentScene();
 
 	// a plane
 	float planeVerts[] = {
@@ -88,7 +91,7 @@ int main()
 	};
 
 
-
+	ErrorHandler::CheckError("main 4");
 
 
 	CU::Vector3f cubePositions[] = {
@@ -112,16 +115,15 @@ int main()
 	layout.texCoordAttribute = 2;
 	layout.stride = 8;
 
-	GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
-	GLEN::ShaderProgram lightShaderNoAlpha = *engine.GetShaderContainer().CreateShaderProgram("lightingShaderNoAlpha", "lightingShader.vert", "lightingShaderNoAlpha.frag");
-	//GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().CreateShaderProgram("lightShader", "depthTest.vert", "depthTest.frag");
+	//GLEN::ShaderProgram lightShader = *engine.GetShaderContainer().GetShaderProgram("lightShader");
+	//GLEN::ShaderProgram lightShaderNoAlpha = *engine.GetShaderContainer().GetShaderProgram("lightingShaderNoAlpha");
+
+	//GLEN::ShaderProgram reflectShader = *engine.GetShaderContainer().GetShaderProgram("reflectShader");
 
 
-	GLEN::Material material;
+	GLEN::Material material("lightShader");
 	material.AddDiffuseTexture("container2.png", 0);
 	material.AddSpecularTexture("container2_specular.png", 1);
-	material.SetShininess(32.f);
-	material.SetShader(lightShader.GetHandle());
 	material.InitShaderVariables();
 
 	int meshId = engine.GetMeshContainer().CreateMesh("cube", cubeVerts, sizeof(cubeVerts) / sizeof(float), layout, material);
@@ -133,7 +135,7 @@ int main()
 
 		float angle = 20.0f * i;	
 
-		GLEN::ModelInstance* instance = new GLEN::ModelInstance("cube", "lightShader");
+		GLEN::ModelInstance* instance = new GLEN::ModelInstance("cube");
 		instance->SetPosition(cubePositions[i]);
 		CU::Matrix33f ori;
 		ori.SetIdentity();
@@ -147,17 +149,16 @@ int main()
 		
 	}
 
+	ErrorHandler::CheckError("main 3");
+
 	//loaded model
-	GLEN::Material material2;
-	material2.SetShininess(32.f);
-	material2.SetShader(lightShaderNoAlpha.GetHandle());
+	GLEN::Material material2("lightShaderNoAlpha");
 	material2.InitShaderVariables();
 	engine.GetModelContainer().CreateModel("nanosuit/nanosuit.obj", material);
-	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit", "lightShader");
+	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit");
 	instance->SetScale(0.1f);
 	scene.AddModel(instance);
 	//instance->SetOutline(0.2f);
-
 	//grass
 	std::vector<CU::Vector3f> vegetationPos;
 	vegetationPos.push_back({ -1.5f, 0.0f, -0.48f });
@@ -165,10 +166,11 @@ int main()
 	vegetationPos.push_back({ 0.0f, 0.0f, 0.7f });
 	vegetationPos.push_back({ -0.3f, 0.0f, -2.3f });
 	vegetationPos.push_back({ 0.5f, 0.0f, -0.6f });
-	GLEN::Material grassMaterial;
+	GLEN::Material grassMaterial("lightShader");
 	grassMaterial.AddDiffuseTexture("blending_transparent_window.png", 0, true);
-	grassMaterial.SetShader(lightShader.GetHandle());
+	ErrorHandler::CheckError("main 23");
 	grassMaterial.InitShaderVariables();
+	
 	GLEN::VertexLayout planeLayout;
 	planeLayout.hasTexCoords = true;
 	planeLayout.hasNormals = false;
@@ -176,17 +178,32 @@ int main()
 	planeLayout.texCoordAttribute = 2;
 	planeLayout.stride = 8;
 	int gmeshId = engine.GetMeshContainer().CreateMesh("grass", planeVerts, sizeof(planeVerts) / sizeof(float), planeLayout, grassMaterial, indices, sizeof(indices) / sizeof(int));
+	ErrorHandler::CheckError("main 22");
 	GLEN::Mesh* grassMesh = engine.GetMeshContainer().GetMesh(gmeshId);
 	engine.GetModelContainer().CreateModel("grass", grassMesh);
 	for (int i = 0; i < vegetationPos.size(); i++)
 	{
-		GLEN::ModelInstance* instance = new GLEN::ModelInstance("grass", "lightShader");
+		GLEN::ModelInstance* instance = new GLEN::ModelInstance("grass");
 		instance->SetPosition(vegetationPos[i]);
 		scene.AddModel(instance, true);
 	}
 
-	//init lights
-	GLEN::ShaderProgram lampShader = *engine.GetShaderContainer().CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
+	ErrorHandler::CheckError("main 2");
+
+
+	//skybox
+	std::vector< std::pair <std::string, GLEN::CubeMapOrientation> > cubemapImages = {
+		{"skybox/right.jpg", GLEN::CUBE_MAP_POSITIVE_X},
+		{"skybox/left.jpg", GLEN::CUBE_MAP_NEGATIVE_X},
+		{"skybox/bottom.jpg", GLEN::CUBE_MAP_POSITIVE_Y},
+		{"skybox/top.jpg", GLEN::CUBE_MAP_NEAGATIVE_Y},
+		{"skybox/front.jpg", GLEN::CUBE_MAP_POSITIVE_Z},
+		{"skybox/back.jpg", GLEN::CUBE_MAP_NEAGATIVE_Z},
+	};
+	GLEN::SkyBox* skyBox = new GLEN::SkyBox("skybox", cubemapImages);
+	scene.SetSkyBox(skyBox);
+
+	//init lights:
 
 	//dir light
 	GLEN::Light* light = new GLEN::Light(GLEN::DIRECTIONAL_LIGHT);
@@ -198,6 +215,13 @@ int main()
 	scene.AddLight(light);
 
 	//point lights
+	GLEN::Material lampMat("lampShader");
+	lampMat.InitShaderVariables();
+	int meshIdlamp = engine.GetMeshContainer().CreateMesh("lampCube", cubeVerts, sizeof(cubeVerts) / sizeof(float), layout, lampMat);
+	GLEN::Mesh* meshlamp = engine.GetMeshContainer().GetMesh(meshIdlamp);
+	engine.GetModelContainer().CreateModel("lampCube", meshlamp);
+
+
 	CU::Vector3f pointLightPositions[] = {
 	CU::Vector3f(0.7f,  0.2f,  2.0f),
 	CU::Vector3f(2.3f, -3.3f, -4.0f),
@@ -206,7 +230,7 @@ int main()
 	};
 	int nrPointLights = 2;
 	for (int i = 0; i < nrPointLights; i++) {
-		GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("cube", "lampShader");
+		GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("lampCube");
 		GLEN::Light* light = new GLEN::Light(GLEN::POINT_LIGHT, lampCube, i);
 		auto lightPos = pointLightPositions[i];//CU::Vector3f(1.2f, 1.0f, 2.0f);
 		light->SetPosition(lightPos);
@@ -223,7 +247,6 @@ int main()
 
 		scene.AddLight(light);
 	}
-	lightShader.setInt("nrPointLights", nrPointLights); //todo: not here
 
 
 	//flashlight:
@@ -246,13 +269,39 @@ int main()
 
 	InputController inputController;
 
-	GLEN::PostProcess postProcess;
+	int index = 0;
+	std::vector < std::string > ppEffects = {
+		"pp_grayscale",
+		"pp_edges",
+		"pp_invert",
+		"pp_sharpen",
+		"pp_blur",
+		"pp_simple"
 
+	};
 	//main loop
+	ErrorHandler::CheckError("main 1");
 	while (engine.Update(deltaTime)) {
-		
+
 		if (engine.GetInput().GetKeyPressed(GLEN::KEY_ESC)) {
 			break;
+		}
+
+		if (engine.GetInput().GetKeyPressed(GLFW_KEY_V))
+		{
+			index++;
+			if (index >= ppEffects.size()) {
+				index = 0;
+			}
+			scene.GetPostProcess().SetShader(ppEffects[index]);
+		}
+		if (engine.GetInput().GetKeyPressed(GLFW_KEY_B))
+		{
+			index--;
+			if (index < 0) {
+				index = ppEffects.size() - 1;
+			}
+			scene.GetPostProcess().SetShader(ppEffects[index]);
 		}
 
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -260,6 +309,7 @@ int main()
 		lastFrame = currentFrame;
 
 		inputController.Update(deltaTime);
+
 
 		//move the light
 		//float radius = 5.0f;
@@ -276,7 +326,7 @@ int main()
 		
 		//compared to opengl the x axis is reversed. this is fine, as now positive rotation over x axis is clockwize and not flipped.
 		//also the order of matrix multiplication is reversed, now read from left to right instead of right to left...
-
+		ErrorHandler::CheckErrorOnce("mainloop 2");
 		engine.RenderScene();
 
 
@@ -289,11 +339,8 @@ int main()
 		//CU::Vector3f ambientColor = diffuseColor * 0.2f; // low influence
 		//light->SetAmbient(ambientColor);
 		//light->SetDiffuse(diffuseColor);
-
-
-		postProcess.Render(&scene);
-		//.Render();
-		
+		ErrorHandler::CheckError("mainloop 1");
+	
 	}
 
 	engine.Destroy();

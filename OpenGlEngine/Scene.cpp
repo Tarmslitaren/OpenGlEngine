@@ -2,9 +2,12 @@
 #include "CU_Matrix.h"
 #include <map>
 #include "Engine.h"
+#include "PostProcess.h"
 using namespace GLEN;
 Scene::Scene()
 {
+	AddLightShader("lightShader");
+	AddLightShader("lightShaderNoAlpha");
 }
 
 
@@ -16,6 +19,69 @@ void GLEN::Scene::Render()
 {
 
 
+	for (Light* light : m_lights)
+	{
+		light->RenderObject();//for debug use only
+		for (std::string id : m_lightShaders)
+		{
+			light->ApplytoShader(id);
+		}
+	}
+
+	for (ModelInstance* model : m_models)
+	{
+		model->Render();
+	}
+
+	if (m_skyBox != nullptr)
+	{
+		m_skyBox->Render();
+	}
+
+	RenderTransparantModels();
+}
+
+void GLEN::Scene::Update(float deltaTime)
+{
+}
+
+void GLEN::Scene::AddModel(ModelInstance * instance, bool transparent)
+{
+	if (transparent == true) {
+		m_transparantModels.push_back(instance);
+	}
+	else
+	{
+		m_models.push_back(instance);
+	}
+}
+
+void GLEN::Scene::AddLight(Light * light)
+{
+	m_lights.push_back(light);
+	if (light->GetType() == POINT_LIGHT)
+	{
+		m_nrOfPointLights++;
+		for (std::string id : m_lightShaders)
+		{
+			Engine::GetInstance()->GetShaderContainer().GetShaderProgram(id)->setInt("nrPointLights", m_nrOfPointLights);
+		}
+	}
+}
+
+void GLEN::Scene::RenderWithPostProcess()
+{
+	m_postProcess.Render(this);
+}
+
+PostProcess & GLEN::Scene::GetPostProcess()
+{
+	return m_postProcess;
+}
+
+
+void GLEN::Scene::RenderTransparantModels()
+{
 	//naiive sort of transparent items
 	m_sortingMap.clear();
 	auto cameraPosition = Engine::GetInstance()->GetCamera().GetPosition();
@@ -26,27 +92,15 @@ void GLEN::Scene::Render()
 		float distance = (cameraPosition - position).Length2();
 		m_sortingMap[distance] = m_transparantModels[i];
 	}
-
-	for (Light* light : m_lights)
-	{
-		light->RenderObject();//for debug use only
-		light->ApplytoShader("lightShader");
-	}
-
-	for (ModelInstance* model : m_models)
-	{
-		model->Render(nullptr);
-	}
-
 	//enable alpha blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	for (auto it = m_sortingMap.rbegin(); it != m_sortingMap.rend(); ++it)
 	{
-		it->second->Render(nullptr);
+		it->second->Render();
 	}
 	glDisable(GL_BLEND);
-	
+
 	/*
 	Sorting objects with alpha:
 
@@ -66,19 +120,4 @@ void GLEN::Scene::Render()
 
 	or this: https://blog.icare3d.org/2010/06/fast-and-accurate-single-pass-buffer.html
 */
-}
-
-void GLEN::Scene::Update(float deltaTime)
-{
-}
-
-void GLEN::Scene::AddModel(ModelInstance * instance, bool transparent)
-{
-	if (transparent == true) {
-		m_transparantModels.push_back(instance);
-	}
-	else
-	{
-		m_models.push_back(instance);
-	}
 }

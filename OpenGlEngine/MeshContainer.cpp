@@ -19,13 +19,12 @@ int GLEN::MeshContainer::CreateMesh(std::string id, float * verticeData, int dat
 	//	std::cout << "trying to add mesh with same id!" << std::endl;
 	//	return GetMesh(id)->GetHandle();
 	//}
-	GLEN::Mesh* mesh = new GLEN::Mesh();
+	GLEN::Mesh* mesh = new GLEN::Mesh(material);
 	mesh->SetVerticeData(verticeData, dataSize, vertexLayout);
 	if (indexData != nullptr)
 	{
 		mesh->SetIndexData(indexData, indexSize);
 	}
-	mesh->SetMaterial(material);
 	int handle = mesh->Finalize(drawFrequency, id);
 	m_meshes.push_back(mesh);
 	return handle;

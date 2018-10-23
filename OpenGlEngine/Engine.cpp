@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
-
+#include "ErrorHandler.h"
 using namespace GLEN;
 Engine* Engine::s_instance = nullptr;
 
@@ -34,9 +34,25 @@ m_input(m_window.GetWindow())
 	stbi_set_flip_vertically_on_load(true); //flips the coords, because opengl wants it so.
 
 
-	GetShaderContainer().CreateShaderProgram("singleColorScale", "scale.vert", "singleColor.frag");
+	m_shaderContainer.CreateShaderProgram("singleColorScale", "scale.vert", "singleColor.frag");
+
+	//is this the place? or is it in shader container? or light container?
+	m_shaderContainer.CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
+	m_shaderContainer.CreateShaderProgram("lightShaderNoAlpha", "lightingShader.vert", "lightingShaderNoAlpha.frag");
+	m_shaderContainer.CreateShaderProgram("reflectShader", "reflection.vert", "reflection.frag");
+	//Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("depthTestShader", "depthTest.vert", "depthTest.frag");
+
+	m_shaderContainer.CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
+
+	m_shaderContainer.CreateShaderProgram("pp_simple", "pp_simple.vert", "pp_simple.frag");
 }
 
+
+void GLEN::Engine::InitScene()
+{
+	Scene* scene = new Scene();
+	m_scenes.push_back(scene);
+}
 
 Engine::~Engine()
 {
@@ -47,7 +63,8 @@ Engine* Engine::Create(const SetupInfo & infoArgument)
 	if (s_instance == nullptr)
 	{
 		s_instance = new Engine(infoArgument);
-		
+
+		s_instance->InitScene();
 	}
 	else
 	{
@@ -63,6 +80,9 @@ void GLEN::Engine::RenderScene()
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glStencilMask(0x00); //reset stencil
+	ErrorHandler::CheckErrorOnce("engine 1");
+	(*m_scenes[m_currentScene]).RenderWithPostProcess();
+	ErrorHandler::CheckErrorOnce("engine 2");
 }
 
 void Engine::Destroy()

@@ -38,3 +38,25 @@ Texture* GLEN::TextureContainer::GetTexture(std::string path, bool transparant)
 	}
 	return nullptr;
 }
+
+Texture * GLEN::TextureContainer::LoadCubeMap(std::string id, std::vector<std::pair<std::string, CubeMapOrientation>> paths)
+{
+	for (Texture* texture : m_textures)
+	{
+		if (texture->getPath() == id)
+		{
+			return texture;
+		}
+	}
+	Texture* texture = new Texture();
+	if (texture->LoadCubeMap(id, paths))
+	{
+		m_textures.push_back(texture);
+		return texture;
+	}
+	else
+	{
+		//handle load failure
+	}
+	return nullptr;
+}

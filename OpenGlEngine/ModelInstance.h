@@ -10,9 +10,9 @@ namespace GLEN
 	class ModelInstance
 	{
 	public:
-		ModelInstance(std::string primitiveId, std::string shaderProgram);
+		ModelInstance(std::string primitiveId);
 		~ModelInstance();
-		void Render(Light* light);
+		void Render();
 		void SetOrientation(const CU::Matrix33f& orientation) { m_orientation = orientation; }
 		void SetPosition(const CU::Vector3f& position) { m_position = position; }
 		void SetToRender(bool toRender) { m_isToRender = toRender; }
@@ -26,7 +26,6 @@ namespace GLEN
 		Model* m_model;
 		CU::Matrix33f m_orientation;
 		CU::Vector3f m_position;
-		std::string m_shaderId;
 
 		//outline
 		float m_outLineThickness;

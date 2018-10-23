@@ -74,6 +74,10 @@
       <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="PostProcess.h" />
+    <ClInclude Include="SkyBox.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad\glad.c">
@@ -130,5 +134,9 @@
       <Filter>scene</Filter>
     </ClCompile>
     <ClCompile Include="PostProcess.cpp" />
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ErrorHandler.cpp" />
   </ItemGroup>
 </Project>
