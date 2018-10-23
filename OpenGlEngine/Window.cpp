@@ -49,10 +49,12 @@ void Window::Create(SetupInfo setupInfo)
 
 	//glfw init
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //this needed for mac osX
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+	
 
 	m_window = glfwCreateWindow(setupInfo.m_resolution.width, setupInfo.m_resolution.height, "LearnOpenGL", NULL, NULL);
 	if (m_window == NULL)
@@ -74,6 +76,6 @@ void Window::Create(SetupInfo setupInfo)
 
 	//register callback for window rezise event
 	glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
-
+	ErrorHandler::InitDebugOutput();
 	ErrorHandler::CheckError();
 }

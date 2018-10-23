@@ -33,8 +33,7 @@ void GLEN::SkyBox::Render()
 	auto projection = cam.GetProjection();
 	auto view = cam.GetView();
 	view.SetPosition({ 0,0,0 });
-	CU::Matrix44f model;
-	m_mesh->Render(model);
+	m_mesh->Render();
 	m_shader->setMatrix("view", view);
 	m_shader->setMatrix("projection", projection);
 

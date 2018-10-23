@@ -21,24 +21,13 @@ void GLEN::Mesh::Render(const CU::Matrix44f& model)
 	
 
 	m_material.Render(model); //this method should only be run from here and needs to be run from here.
+	RenderInternal();
+}
 
-	glBindVertexArray(m_vertexArrayObjectHandle);
-
-	glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
-
-	if (m_indexes.size() == 0) {
-		glDrawArrays(GL_TRIANGLES, 0, m_vertices.size() / 3); //todo: generalize: other modes than GL_TRIANGLES
-	}
-	else
-	{
-		glDrawElements(GL_TRIANGLES, m_indexes.size(), GL_UNSIGNED_INT, 0);
-	}
-
-	glBindVertexArray(0);
-
-	glBindTexture(GL_TEXTURE_2D, 0); //need this to reset?
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //set back to fill
-
+void GLEN::Mesh::Render()
+{
+	m_material.Render(); //this method should only be run from here and needs to be run from here.
+	RenderInternal();
 }
 
 void GLEN::Mesh::AddVertice(const CU::Vector3f& vertice)
@@ -128,4 +117,24 @@ int GLEN::Mesh::Finalize(DrawFrequency frequency, std::string id)
 	}
 
 	return m_vertexArrayObjectHandle;
+}
+
+void GLEN::Mesh::RenderInternal()
+{
+	glBindVertexArray(m_vertexArrayObjectHandle);
+
+	glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
+
+	if (m_indexes.size() == 0) {
+		glDrawArrays(GL_TRIANGLES, 0, m_vertices.size() / 3); //todo: generalize: other modes than GL_TRIANGLES
+	}
+	else
+	{
+		glDrawElements(GL_TRIANGLES, m_indexes.size(), GL_UNSIGNED_INT, 0);
+	}
+
+	glBindVertexArray(0);
+
+	glBindTexture(GL_TEXTURE_2D, 0); //need this to reset?
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //set back to fill
 }

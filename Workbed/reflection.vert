@@ -15,3 +15,5 @@ void main()
     Position = vec3(model * vec4(aPos, 1.0));
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 } 
+
+	//aPos is flipped because of differences between CU::Matrix and opengl format. voi ei. or faulty projection, maybe.

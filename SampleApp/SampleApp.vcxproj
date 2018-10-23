@@ -176,6 +176,7 @@
     <None Include="..\Workbed\pp_simple.vert" />
     <None Include="..\Workbed\reflection.frag" />
     <None Include="..\Workbed\reflection.vert" />
+    <None Include="..\Workbed\refraction.frag" />
     <None Include="..\Workbed\scale.vert" />
     <None Include="..\Workbed\simple.vert" />
     <None Include="..\Workbed\singleColor.frag" />

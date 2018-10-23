@@ -51,6 +51,7 @@ namespace GLEN
 		~Mesh();
 
 		void Render(const CU::Matrix44f& model);
+		void Render();
 		void AddVertice(const CU::Vector3f& vertice);//remove
 		void SetVerticeData(float data[], int size);
 		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);
@@ -64,6 +65,7 @@ namespace GLEN
 		void ChangeMaterial(const Material& material) { m_material = material; }
 		Material& GetMaterial() { return m_material; }
 	private:
+		void RenderInternal();
 		std::string m_id;
 
 		std::vector<float> m_vertices;

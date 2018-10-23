@@ -48,27 +48,7 @@ void GLEN::Material::InitShaderVariables()
 
 void GLEN::Material::Render(const CU::Matrix44f& model)
 {
-	m_shader->use();
-	//glBindTexture(GL_TEXTURE_2D, 0); //need this to reset?
-
-	for (auto handles : m_diffuseTextureHandles)
-	{
-		glActiveTexture(GL_TEXTURE0 + handles.second); // activate proper texture unit before binding
-		glBindTexture(GL_TEXTURE_2D, handles.first);
-	}
-	for (auto handles : m_specularTextureHandles)
-	{
-		glActiveTexture(GL_TEXTURE0 + handles.second); // activate proper texture unit before binding
-		glBindTexture(GL_TEXTURE_2D, handles.first);
-	}
-	if (m_cubeMapHandle != -1)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMapHandle);
-		return; //cubemaps handle their own uniforms
-	}
-	//InitShaderVariables(); //needed? Only if the material changes in runtime. seems to be quite specific case (unlike light properties)
-
+	RenderInternal();
 
 	//todo: I've made a horrible mistake! in marrying materials to meshes, made it difficult to easily create new instances with different shaders.
 	//update shader vars from model instance
@@ -76,16 +56,18 @@ void GLEN::Material::Render(const CU::Matrix44f& model)
 	auto projection = cam.GetProjection();
 	auto view = cam.GetView();
 	//m_shaderProgram.setMatrix("transform", m_model * view * projection);
-	
+
 
 	m_shader->setMatrix("model", model);
 	m_shader->setMatrix("view", view);
 	m_shader->setMatrix("projection", projection);
 
 	m_shader->setVector("viewPos", cam.GetPosition());
+}
 
-
-	//glActiveTexture(GL_TEXTURE0);
+void GLEN::Material::Render()
+{
+	RenderInternal();
 }
 
 void GLEN::Material::AddDiffuseTexture(std::string path, int binding, bool transparant)
@@ -108,4 +90,32 @@ void GLEN::Material::AddSpecularTexture(std::string path, int binding)
 {
 	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path)->getHandle();
 	m_specularTextureHandles.push_back({ textureHandle, binding });
+}
+
+void GLEN::Material::RenderInternal()
+{
+	m_shader->use();
+	//glBindTexture(GL_TEXTURE_2D, 0); //need this to reset?
+
+	for (auto handles : m_diffuseTextureHandles)
+	{
+		glActiveTexture(GL_TEXTURE0 + handles.second); // activate proper texture unit before binding
+		glBindTexture(GL_TEXTURE_2D, handles.first);
+	}
+	for (auto handles : m_specularTextureHandles)
+	{
+		glActiveTexture(GL_TEXTURE0 + handles.second); // activate proper texture unit before binding
+		glBindTexture(GL_TEXTURE_2D, handles.first);
+	}
+	if (m_cubeMapHandle != -1)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMapHandle);
+		//return; //cubemaps handle their own uniforms
+	}
+	//InitShaderVariables(); //needed? Only if the material changes in runtime. seems to be quite specific case (unlike light properties)
+
+
+
+	//glActiveTexture(GL_TEXTURE0);
 }

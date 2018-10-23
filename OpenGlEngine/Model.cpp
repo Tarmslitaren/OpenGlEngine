@@ -144,6 +144,7 @@ Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene, const Mat
 		material.AddSpecularTexture(filename, textureCount);
 
 	}
+	//todo: support reflection maps (use ambient map for that)
 
 	// 3. normal maps
 	//std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");

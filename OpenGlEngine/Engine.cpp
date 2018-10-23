@@ -40,6 +40,7 @@ m_input(m_window.GetWindow())
 	m_shaderContainer.CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
 	m_shaderContainer.CreateShaderProgram("lightShaderNoAlpha", "lightingShader.vert", "lightingShaderNoAlpha.frag");
 	m_shaderContainer.CreateShaderProgram("reflectShader", "reflection.vert", "reflection.frag");
+	m_shaderContainer.CreateShaderProgram("refractShader", "reflection.vert", "refraction.frag");
 	//Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("depthTestShader", "depthTest.vert", "depthTest.frag");
 
 	m_shaderContainer.CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
@@ -91,5 +92,6 @@ void Engine::Destroy()
 bool GLEN::Engine::Update(float deltaTime)
 {
 	m_input.Update(deltaTime);
+	m_shaderContainer.GetShaderProgram("reflectShader")->setVector("cameraPos", m_camera.GetPosition());
 	return m_window.Update();
 }

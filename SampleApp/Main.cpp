@@ -88,6 +88,49 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 	};
 
+	float newCubeVerts[] = { //pos+normals
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	};
 
 
 	CU::Vector3f cubePositions[] = {
@@ -103,6 +146,18 @@ int main()
 	  CU::Vector3f(-1.3f,  1.0f, -1.5f)
 	};
 
+	//skybox
+	std::vector< std::pair <std::string, GLEN::CubeMapOrientation> > cubemapImages = {
+		{"skybox/right.jpg", GLEN::CUBE_MAP_POSITIVE_X},
+		{"skybox/left.jpg", GLEN::CUBE_MAP_NEGATIVE_X},
+		{"skybox/bottom.jpg", GLEN::CUBE_MAP_POSITIVE_Y},
+		{"skybox/top.jpg", GLEN::CUBE_MAP_NEAGATIVE_Y},
+		{"skybox/front.jpg", GLEN::CUBE_MAP_POSITIVE_Z},
+		{"skybox/back.jpg", GLEN::CUBE_MAP_NEAGATIVE_Z},
+	};
+	GLEN::SkyBox* skyBox = new GLEN::SkyBox("skybox", cubemapImages);
+	scene.SetSkyBox(skyBox);
+
 	GLEN::VertexLayout layout;
 	layout.hasTexCoords = true;
 	layout.hasNormals = true;
@@ -113,16 +168,16 @@ int main()
 
 	//GLEN::ShaderProgram reflectShader = *engine.GetShaderContainer().GetShaderProgram("reflectShader");
 
-
-	GLEN::Material material("lightShader");
+	GLEN::Material material("refractShader");
 	material.AddDiffuseTexture("container2.png", 0);
 	material.AddSpecularTexture("container2_specular.png", 1);
+	material.SetCubeMapTexture("skybox");
 	material.InitShaderVariables();
 
 	int meshId = engine.GetMeshContainer().CreateMesh("cube", cubeVerts, sizeof(cubeVerts) / sizeof(float), layout, material);
 	GLEN::Mesh* mesh = engine.GetMeshContainer().GetMesh(meshId);
 	engine.GetModelContainer().CreateModel("cube", mesh);
-	std::vector<GLEN::Model> primitives;
+	std::vector<GLEN::ModelInstance*> cubes;
 	for (int i = 0; i < 10; i++)
 	{
 
@@ -137,10 +192,27 @@ int main()
 		ori.SetRotationZ(0.5*angle);
 		instance->SetOrientation(ori);
 		scene.AddModel(instance);
+		cubes.push_back(instance);
 		//instance->SetOutline(0.2f);
 
 		
 	}
+
+	//new reflection cube
+	GLEN::Material materialr("reflectShader");
+	materialr.SetCubeMapTexture("skybox");
+	materialr.InitShaderVariables();
+	GLEN::VertexLayout layoutr;
+	layoutr.hasTexCoords = false;
+	layoutr.hasNormals = true;
+	layoutr.normalOffset = 3;
+	layoutr.stride = 6;
+	int meshIdr = engine.GetMeshContainer().CreateMesh("cuber", newCubeVerts, sizeof(newCubeVerts) / sizeof(float), layoutr, materialr);
+	GLEN::Mesh* meshr = engine.GetMeshContainer().GetMesh(meshIdr);
+	engine.GetModelContainer().CreateModel("cuber", meshr);
+	GLEN::ModelInstance* instancer = new GLEN::ModelInstance("cuber");
+	instancer->SetScale(2.1f);
+	scene.AddModel(instancer);
 
 
 	//loaded model
@@ -178,18 +250,6 @@ int main()
 		scene.AddModel(instance, true);
 	}
 
-
-	//skybox
-	std::vector< std::pair <std::string, GLEN::CubeMapOrientation> > cubemapImages = {
-		{"skybox/right.jpg", GLEN::CUBE_MAP_POSITIVE_X},
-		{"skybox/left.jpg", GLEN::CUBE_MAP_NEGATIVE_X},
-		{"skybox/bottom.jpg", GLEN::CUBE_MAP_POSITIVE_Y},
-		{"skybox/top.jpg", GLEN::CUBE_MAP_NEAGATIVE_Y},
-		{"skybox/front.jpg", GLEN::CUBE_MAP_POSITIVE_Z},
-		{"skybox/back.jpg", GLEN::CUBE_MAP_NEAGATIVE_Z},
-	};
-	GLEN::SkyBox* skyBox = new GLEN::SkyBox("skybox", cubemapImages);
-	scene.SetSkyBox(skyBox);
 
 	//init lights:
 
@@ -326,6 +386,17 @@ int main()
 		//light->SetAmbient(ambientColor);
 		//light->SetDiffuse(diffuseColor);
 		ErrorHandler::CheckError("mainloop 1");
+
+		//move the cube:
+			float radius = 5.0f;
+		float camX = sin(glfwGetTime()) * radius;
+		float camZ = cos(glfwGetTime()) * radius;
+		auto pos = CU::Vector3f(camX, 0, camZ);
+		cubes[0]->SetPosition(pos);
+		for (auto cube : cubes)
+		{
+			auto pos = cube->GetPosition();
+		}
 	
 	}
 

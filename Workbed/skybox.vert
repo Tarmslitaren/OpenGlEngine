@@ -11,7 +11,8 @@ void main()
    // TexCoords = aPos;
     //gl_Position = projection * view * vec4(-aPos, 1.0);
 	//gl_Position = projection * view * vec4(aPos, 1.0);
-	//aPos is flipped because of differences between CU::Matrix and opengl format. voi ei. or faulty projection, maybe.
+	//aPos is flipped because we didn't set stbi_set_flip_vertically_on_load(false);
+	//however if we do set that then we have other problems with reflect shaders.
 
 	TexCoords = aPos;
     vec4 pos = projection * view * vec4(-aPos, 1.0);
