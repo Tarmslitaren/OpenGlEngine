@@ -30,12 +30,6 @@ void GLEN::Mesh::Render()
 	RenderInternal();
 }
 
-void GLEN::Mesh::AddVertice(const CU::Vector3f& vertice)
-{
-	m_vertices.push_back(vertice.x);
-	m_vertices.push_back(vertice.y);
-	m_vertices.push_back(vertice.z);
-}
 
 void GLEN::Mesh::SetVerticeData(float data[], int size)
 {
@@ -53,13 +47,6 @@ void GLEN::Mesh::SetIndexData(unsigned int data[], int size)
 {
 	m_indexes.clear();
 	m_indexes.insert(m_indexes.begin(), &data[0], &data[size]);
-}
-
-void GLEN::Mesh::AddTriangleIndexes(const CU::Vector3i indexes)
-{
-	m_indexes.push_back(indexes.x);
-	m_indexes.push_back(indexes.y);
-	m_indexes.push_back(indexes.z);
 }
 
 int GLEN::Mesh::Finalize(DrawFrequency frequency, std::string id)
@@ -94,6 +81,21 @@ int GLEN::Mesh::Finalize(DrawFrequency frequency, std::string id)
 		std::cout << "can't find attribute location" << std::endl;
 		posAttributeLocation = 0;
 	}*/
+
+	//todo: load non iterleaved like this so we can kill the vertexlayout and all will be more general:
+	/*
+	float positions[] = { ... };
+	float normals[] = { ... };
+	float tex[] = { ... };
+	// fill buffer
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(positions), &positions);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(positions), sizeof(normals), &normals);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(positions) + sizeof(normals), sizeof(tex), &tex);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(positions)));
+	glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(sizeof(positions) + sizeof(normals)));
+*/
 
 
 	//todo: this can be more general

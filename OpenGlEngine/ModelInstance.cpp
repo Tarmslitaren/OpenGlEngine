@@ -46,6 +46,7 @@ void GLEN::ModelInstance::SetOutline(float thickness, CU::Vector4f color)
 
 void GLEN::ModelInstance::DrawOutline()
 {
+	//todo: thsi doesn't work with postprocess on
 	Camera cam = Engine::GetInstance()->GetCamera();
 	auto projection = cam.GetProjection();
 	auto view = cam.GetView();

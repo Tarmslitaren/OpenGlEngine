@@ -52,11 +52,9 @@ namespace GLEN
 
 		void Render(const CU::Matrix44f& model);
 		void Render();
-		void AddVertice(const CU::Vector3f& vertice);//remove
 		void SetVerticeData(float data[], int size);
 		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);
 		void SetIndexData(unsigned int data[], int size);
-		void AddTriangleIndexes(const CU::Vector3i indexes);//remove?
 		int Finalize(DrawFrequency frequency, std::string id);
 		void SetPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
 

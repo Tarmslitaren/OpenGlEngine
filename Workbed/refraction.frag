@@ -22,6 +22,6 @@ void main()
 
 	float ratio = 1.00 / 1.52; //from air to glass
     vec3 I = normalize(Position - cameraPos);
-    vec3 R = refract(I, normalize(Normal), ratio);
+    vec3 R = refract(I, normalize(Normal), -ratio); //flipped because, who knows why
     FragColor = vec4(texture(skybox, R).rgb, 1.0);
 }
