@@ -16,7 +16,7 @@
 #include "PostProcess.h"
 #include "SkyBox.h"
 #include "ErrorHandler.h"
-
+#include "Mesh.h"
 
 int main()
 {
@@ -41,97 +41,6 @@ int main()
 	0, 1, 3, // first triangle
 	1, 2, 3  // second triangle
 	};
-
-	//cube with normals and texture coords
-	float cubeVerts[] = {
-		// positions          // normals           // texture coords
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-	};
-
-	float newCubeVerts[] = { //pos+normals
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-	};
-
 
 	CU::Vector3f cubePositions[] = {
 	  CU::Vector3f(0.0f,  0.0f,  0.0f),
@@ -158,25 +67,16 @@ int main()
 	GLEN::SkyBox* skyBox = new GLEN::SkyBox("skybox", cubemapImages);
 	scene.SetSkyBox(skyBox);
 
-	GLEN::VertexLayout layout;
-	layout.hasTexCoords = true;
-	layout.hasNormals = true;
-	layout.normalOffset = 3;
-	layout.texCoordOffset = 6;
-	layout.texCoordAttribute = 2;
-	layout.stride = 8;
 
-	//GLEN::ShaderProgram reflectShader = *engine.GetShaderContainer().GetShaderProgram("reflectShader");
-
-	GLEN::Material material("refractShader");
+	GLEN::Material material("lightShader");
 	material.AddDiffuseTexture("container2.png", 0);
 	material.AddSpecularTexture("container2_specular.png", 1);
 	material.SetCubeMapTexture("skybox");
 	material.InitShaderVariables();
 
-	int meshId = engine.GetMeshContainer().CreateMesh("cube", cubeVerts, sizeof(cubeVerts) / sizeof(float), layout, material);
-	GLEN::Mesh* mesh = engine.GetMeshContainer().GetMesh(meshId);
+	GLEN::Mesh* mesh = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateBox("cube", {1,1,1},material));
 	engine.GetModelContainer().CreateModel("cube", mesh);
+
 	std::vector<GLEN::ModelInstance*> cubes;
 	for (int i = 0; i < 10; i++)
 	{
@@ -202,13 +102,8 @@ int main()
 	GLEN::Material materialr("reflectShader");
 	materialr.SetCubeMapTexture("skybox");
 	materialr.InitShaderVariables();
-	GLEN::VertexLayout layoutr;
-	layoutr.hasTexCoords = false;
-	layoutr.hasNormals = true;
-	layoutr.normalOffset = 3;
-	layoutr.stride = 6;
-	int meshIdr = engine.GetMeshContainer().CreateMesh("cuber", newCubeVerts, sizeof(newCubeVerts) / sizeof(float), layoutr, materialr);
-	GLEN::Mesh* meshr = engine.GetMeshContainer().GetMesh(meshIdr);
+
+	GLEN::Mesh* meshr = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateBox("cuber", { 1,1,1 }, materialr));
 	engine.GetModelContainer().CreateModel("cuber", meshr);
 	GLEN::ModelInstance* instancer = new GLEN::ModelInstance("cuber");
 	instancer->SetScale(2.1f);
@@ -218,11 +113,12 @@ int main()
 	//loaded model
 	GLEN::Material material2("lightShaderNoAlpha");
 	material2.InitShaderVariables();
-	engine.GetModelContainer().CreateModel("nanosuit/nanosuit.obj", material);
+	engine.GetModelContainer().CreateModel("nanosuit/nanosuit.obj", material2);
 	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit");
 	instance->SetScale(0.1f);
 	scene.AddModel(instance);
 	//instance->SetOutline(0.2f);
+
 	//grass
 	std::vector<CU::Vector3f> vegetationPos;
 	vegetationPos.push_back({ -1.5f, 0.0f, -0.48f });
@@ -265,8 +161,7 @@ int main()
 	//point lights
 	GLEN::Material lampMat("lampShader");
 	lampMat.InitShaderVariables();
-	int meshIdlamp = engine.GetMeshContainer().CreateMesh("lampCube", cubeVerts, sizeof(cubeVerts) / sizeof(float), layout, lampMat);
-	GLEN::Mesh* meshlamp = engine.GetMeshContainer().GetMesh(meshIdlamp);
+	GLEN::Mesh* meshlamp = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateBox("lampCube", { 1,1,1 }, lampMat));
 	engine.GetModelContainer().CreateModel("lampCube", meshlamp);
 
 

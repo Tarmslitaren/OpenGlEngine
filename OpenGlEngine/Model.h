@@ -24,7 +24,7 @@ namespace GLEN
 		void processNode(aiNode *node, const aiScene *scene, const Material& material);
 		Mesh* processMesh(aiMesh *mesh, const aiScene *scene, const Material& material);
 
-		std::vector<Mesh*> m_meshes;
+		std::vector<Mesh*> m_meshes; //todo: hierachy not preserved
 		std::string m_directory;
 	};
 }

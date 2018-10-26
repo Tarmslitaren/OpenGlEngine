@@ -10,7 +10,7 @@ Engine::Engine(const SetupInfo& infoArgument)
 :m_window(infoArgument), 
 m_input(m_window.GetWindow())
 {
-
+	m_SetupInfo = infoArgument;
 	//query amount of vetex attributes supported by system (usually 16.)
 	//a vertex attribute is the same as it's input variables
 	int nrAttributes;

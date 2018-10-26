@@ -26,8 +26,8 @@ namespace GLEN
 	};
 
 	//todo: need to generalise this
-	struct VertexLayout {
-		VertexLayout() {};
+	struct VertexLayout
+	{
 
 		int locationAtrribute = 0; //set in shader
 		int colorAtribute = 1; //set in shader
@@ -43,37 +43,54 @@ namespace GLEN
 		bool hasNormals = true;
 	};
 
+	struct VertexContent
+	{
+		std::vector<int> indexes;
+		std::vector<float> positions;
+		std::vector<float> texCoords;
+		std::vector<float> normals;
+		std::vector<float> colors;
+
+		//use this only for interleaved data
+		std::vector<float> interleavedVertices;
+	};
+
 
 	class Mesh
 	{
 	public:
+		Mesh(std::string id, const Material& material, const VertexContent& data, DrawFrequency drawFrequency = GLEN::STATIC_DRAW);
 		Mesh(const Material& material);
 		~Mesh();
 
-		void Render(const CU::Matrix44f& model);
+		void Render(const CU::Matrix44f& model); //todo: noooope not here: keep this in the instances
 		void Render();
+		
 		void SetVerticeData(float data[], int size);
 		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);
 		void SetIndexData(unsigned int data[], int size);
-		int Finalize(DrawFrequency frequency, std::string id);
+		int Finalize(DrawFrequency frequency, std::string id); //todo: raii
 		void SetPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
 
 		std::string GetId() { return m_id; } //not guaranteed to be unique!
 		int GetHandle() { return m_vertexArrayObjectHandle; } //reuse this as id (could maybe be hash of id string instead but meh.)
-		void ChangeMaterial(const Material& material) { m_material = material; }
 		Material& GetMaterial() { return m_material; }
 	private:
 		void RenderInternal();
+		void InitInterleaved();
+		void InitNonInterleaved();
 		std::string m_id;
 
-		std::vector<float> m_vertices;
-		std::vector<int> m_indexes;
+		//std::vector<float> m_vertices;
+		//std::vector<int> m_indexes;
 		unsigned int m_vertexBufferObjectHandle;
 		unsigned int m_vertexArrayObjectHandle;
 		unsigned int m_elementBufferObject;
 		unsigned int m_polygonMode;
 		VertexLayout m_vertexLayout;
 		Material m_material;
+		VertexContent m_vertexData;
+		DrawFrequency m_frequency;
 	};
 }
 

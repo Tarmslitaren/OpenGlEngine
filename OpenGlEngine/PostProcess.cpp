@@ -6,12 +6,11 @@
 #include "ErrorHandler.h"
 using namespace GLEN;
 
-
-//unsigned int quadVAO, quadVBO;
 PostProcess::PostProcess()
 	:m_quad(Material("pp_simple"))
 {
 
+	SetupInfo info = Engine::GetInstance()->GetSetupInfo();
 	//init frame buffer
 	glGenFramebuffers(1, &m_frameBufferObject);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject);
@@ -20,7 +19,7 @@ PostProcess::PostProcess()
 	//init texture
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL); //todo: no hard coded screen size
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info.m_resolution.width, info.m_resolution.height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -31,7 +30,7 @@ PostProcess::PostProcess()
 	//init renderbuffer with depth+stencil
 	glGenRenderbuffers(1, &m_renderBufferObject);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_renderBufferObject);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, info.m_resolution.width, info.m_resolution.height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_renderBufferObject);
 
