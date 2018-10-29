@@ -23,6 +23,8 @@ ShaderInput::~ShaderInput()
 
 void GLEN::ShaderInput::SetMatrixes(const CU::Matrix44<float> & projection, const CU::Matrix44<float> & view)
 {
+
+	//todo: make seperate method to supply only view,a s proj is not updated as often
 	//proj
 	glBindBuffer(GL_UNIFORM_BUFFER, m_Matrices);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(CU::Matrix44<float>), projection.myMatrix);

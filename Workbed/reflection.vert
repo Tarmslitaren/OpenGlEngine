@@ -1,6 +1,6 @@
 #version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 10) in vec3 aNormal;
+layout (location = VERTEX_LAYOUT_POSITION) in vec3 aPos;
+layout (location = VERTEX_LAYOUT_NORMALS) in vec3 aNormal;
 out vec3 Normal;
 out vec3 Position;
 

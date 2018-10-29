@@ -69,7 +69,35 @@ ShaderProgram::~ShaderProgram()
 
 bool GLEN::ShaderProgram::AddVertexShader(const char * source)
 {
-	return AddShader(source, m_vertexShaderHandle, GLEN::VERTEX_SHADER);
+
+// source for GLSL compiler
+// you can prepare this array at runtime to support multiple shaders with different attributes
+	std::string one = "#version 330 core\n"
+		"#define VERTEX_LAYOUT_POSITION " + std::to_string((int)VERTEX_LAYOUT_POSITION) + "\n"
+		"#define VERTEX_LAYOUT_TEXCOORDS " + std::to_string((int)VERTEX_LAYOUT_TEXCOORDS) + "\n"
+		"#define VERTEX_LAYOUT_NORMALS " + std::to_string((int)VERTEX_LAYOUT_NORMALS) + "\n"
+		"#define VERTEX_LAYOUT_COLOR " + std::to_string((int)VERTEX_LAYOUT_COLOR) + "\n"
+		"//"; //to comment out the #version 330 core line in the actual shader
+	
+	std::string res = one + source;
+
+	m_vertexShaderHandle = glCreateShader(GLEN::VERTEX_SHADER);
+	const GLchar* result = res.c_str();
+	glShaderSource(m_vertexShaderHandle, 1, &result, NULL);
+	glCompileShader(m_vertexShaderHandle);
+
+	//check for compile error
+	int  success;
+	char infoLog[512];
+	glGetShaderiv(m_vertexShaderHandle, GL_COMPILE_STATUS, &success);
+	//std::cout << glGetError() << std::endl;
+	if (!success)
+	{
+		glGetShaderInfoLog(m_vertexShaderHandle, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+		return false;
+	}
+	return true;
 }
 
 bool GLEN::ShaderProgram::AddFragmentShader(const char * source)
