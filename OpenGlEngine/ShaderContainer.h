@@ -3,7 +3,7 @@
 #include <vector>
 namespace GLEN
 {
-	class ShaderContainer
+	class ShaderContainer 
 	{
 	public:
 		ShaderContainer();

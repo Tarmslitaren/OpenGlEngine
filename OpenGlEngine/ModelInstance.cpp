@@ -48,8 +48,6 @@ void GLEN::ModelInstance::DrawOutline()
 {
 	//todo: thsi doesn't work with postprocess on
 	Camera cam = Engine::GetInstance()->GetCamera();
-	auto projection = cam.GetProjection();
-	auto view = cam.GetView();
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -76,8 +74,6 @@ void GLEN::ModelInstance::DrawOutline()
 	ShaderProgram& shader = *Engine::GetInstance()->GetShaderContainer().GetShaderProgram("singleColorScale");
 
 	shader.setMatrix("model", matrix);
-	shader.setMatrix("view", view);
-	shader.setMatrix("projection", projection);
 
 	shader.setFloat("scaleUp", m_outLineThickness);
 	shader.setVector4("color", m_outLineColor);

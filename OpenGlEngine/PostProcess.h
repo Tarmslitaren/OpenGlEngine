@@ -16,7 +16,7 @@ namespace GLEN
 		unsigned int m_texture;
 		unsigned int m_renderBufferObject;
 		ShaderProgram* m_shader;
-		Mesh m_quad;
+		Mesh* m_quad;
 	};
 }
 

@@ -11,24 +11,11 @@ MeshContainer::~MeshContainer()
 {
 }
 
-int GLEN::MeshContainer::CreateMesh(std::string id, float * verticeData, int dataSize, VertexLayout vertexLayout, const Material& material, unsigned int* indexData, int indexSize, DrawFrequency drawFrequency)
+int GLEN::MeshContainer::CreateMesh(std::string id, const VertexContent & data, const Material & material, VertexLayout layout, DrawFrequency drawFrequency)
 {
-	//todo: this
-	//sanity check
-	//if (GetMesh(id) != nullptr)
-	//{
-	//	std::cout << "trying to add mesh with same id!" << std::endl;
-	//	return GetMesh(id)->GetHandle();
-	//}
-	GLEN::Mesh* mesh = new GLEN::Mesh(material);
-	mesh->SetVerticeData(verticeData, dataSize, vertexLayout);
-	if (indexData != nullptr)
-	{
-		mesh->SetIndexData(indexData, indexSize);
-	}
-	int handle = mesh->Finalize(drawFrequency, id);
+	GLEN::Mesh* mesh = new GLEN::Mesh(id, material, data, drawFrequency);
 	m_meshes.push_back(mesh);
-	return handle;
+	return mesh->GetHandle();
 }
 
 int GLEN::MeshContainer::CreateMesh(std::string id, const VertexContent & data, const Material & material, DrawFrequency drawFrequency)
@@ -41,49 +28,50 @@ int GLEN::MeshContainer::CreateMesh(std::string id, const VertexContent & data, 
 int GLEN::MeshContainer::CreateBox(std::string id, CU::Vector3f dimensions, const Material & material, DrawFrequency drawFrequency)
 {
 
+	const CU::Vector3f dim = dimensions * 0.5f;
 	VertexContent content;
 	content.positions = {
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-dim.x, -dim.y, -dim.z,
+		 dim.x, -dim.y, -dim.z,
+		 dim.x,  dim.y, -dim.z,
+		 dim.x,  dim.y, -dim.z,
+		-dim.x,  dim.y, -dim.z,
+		-dim.x, -dim.y, -dim.z,
 
-		-0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
+		-dim.x, -dim.y,  dim.z,
+		 dim.x, -dim.y,  dim.z,
+		 dim.x,  dim.y,  dim.z,
+		 dim.x,  dim.y,  dim.z,
+		-dim.x,  dim.y,  dim.z,
+		-dim.x, -dim.y,  dim.z,
 
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
+		-dim.x,  dim.y,  dim.z,
+		-dim.x,  dim.y, -dim.z,
+		-dim.x, -dim.y, -dim.z,
+		-dim.x, -dim.y, -dim.z,
+		-dim.x, -dim.y,  dim.z,
+		-dim.x,  dim.y,  dim.z,
 
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
+		 dim.x,  dim.y,  dim.z,
+		 dim.x,  dim.y, -dim.z,
+		 dim.x, -dim.y, -dim.z,
+		 dim.x, -dim.y, -dim.z,
+		 dim.x, -dim.y,  dim.z,
+		 dim.x,  dim.y,  dim.z,
 
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-dim.x, -dim.y, -dim.z,
+		 dim.x, -dim.y, -dim.z,
+		 dim.x, -dim.y,  dim.z,
+		 dim.x, -dim.y,  dim.z,
+		-dim.x, -dim.y,  dim.z,
+		-dim.x, -dim.y, -dim.z,
 
-		-0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f
+		-dim.x,  dim.y, -dim.z,
+		 dim.x,  dim.y, -dim.z,
+		 dim.x,  dim.y,  dim.z,
+		 dim.x,  dim.y,  dim.z,
+		-dim.x,  dim.y,  dim.z,
+		-dim.x,  dim.y, -dim.z
 	};
 
 	content.normals = {
@@ -184,8 +172,33 @@ int GLEN::MeshContainer::CreateBox(std::string id, CU::Vector3f dimensions, cons
 	layout.stride = 8;*/
 
 	int meshId = CreateMesh(id, content, material, drawFrequency);
-	//int meshId = CreateMesh(id, cubeVerts, sizeof(cubeVerts) / sizeof(float), layout, material);
-	//GLEN::Mesh* mesh = GetMesh(meshId);
+	return meshId;
+}
+
+int GLEN::MeshContainer::CreateQuad(std::string id, CU::Vector3f dimensions, const Material & material, DrawFrequency drawFrequency)
+{
+	const CU::Vector3f dim = dimensions * 0.5f;
+	VertexContent content;
+	// a plane
+	content.positions = {
+		 dim.x,  dim.y, dim.z,
+		 dim.x, -dim.y, dim.z,
+		-dim.x, -dim.y, dim.z,
+		-dim.x,  dim.y, dim.z, 
+	};
+
+	content.texCoords = {
+		 1.0f, 1.0f,   // top right
+		 1.0f, 0.0f,   // bottom right
+		 0.0f, 0.0f,   // bottom left
+		 0.0f, 1.0f    // top left 
+	};
+	content.indexes = {
+	0, 1, 3, // first triangle
+	1, 2, 3  // second triangle
+	};
+
+	int meshId = CreateMesh(id, content, material, drawFrequency);
 	return meshId;
 }
 

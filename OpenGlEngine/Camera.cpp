@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "CommonMacros.h"
 #include "VectorMath.h"
+#include "Engine.h"
 using namespace GLEN;
 
 GLEN::Camera::Camera()
@@ -229,4 +230,9 @@ void GLEN::Camera::Roll(float angle)
 	//not coorect
 	//m_view *= CU::Matrix44f::RotateZ(angle);
 	m_orientation.SetRotationZ(angle);
+}
+
+void GLEN::Camera::UpdateShaders()
+{
+	Engine::GetInstance()->GetShaderInput().SetMatrixes(GetProjection(), GetView());
 }

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef COMMONUTILITIES_MATRIX44_HEADER
 #define COMMONUTILITIES_MATRIX44_HEADER
 
@@ -442,7 +443,7 @@ namespace CommonUtilities
 		Matrix44<TYPE>& Scale(TYPE aType);
 		void SetScaling(const TYPE& aXScale, const TYPE& aYScale, const TYPE& aZScale);
 
-		CU::Vector3<TYPE> GetScaling();
+		Vector3<TYPE> GetScaling();
 
 		static Matrix44<TYPE> RotateX(float aAngle);
 		static Matrix44<TYPE> RotateY(float aAngle);
@@ -452,9 +453,9 @@ namespace CommonUtilities
 
 		Matrix33<TYPE> GetMatrix33() const;
 
-		CU::Vector3<TYPE> GetPosition() const;
-		void SetPosition(const CU::Vector3<TYPE>& aPosition);
-		void Translate(const CU::Vector3<TYPE>& aPosition);
+		Vector3<TYPE> GetPosition() const;
+		void SetPosition(const Vector3<TYPE>& aPosition);
+		void Translate(const Vector3<TYPE>& aPosition);
 		
 
 		TYPE myMatrix[4][4];
@@ -489,23 +490,23 @@ namespace CommonUtilities
 	}
 
 	template <class TYPE>
-	void CommonUtilities::Matrix44<TYPE>::Translate(const CU::Vector3<TYPE>& aPosition)
+	void CommonUtilities::Matrix44<TYPE>::Translate(const Vector3<TYPE>& aPosition)
 	{
 		//translation is just setting the position in the world
 		SetPosition(aPosition);
 	}
 
 	template <class TYPE>
-	void CommonUtilities::Matrix44<TYPE>::SetPosition( const CU::Vector3<TYPE>& aPosition ) 
+	void CommonUtilities::Matrix44<TYPE>::SetPosition( const Vector3<TYPE>& aPosition ) 
 	{
 		myMatrix[3][0] = aPosition.x;
 		myMatrix[3][1] = aPosition.y;
 		myMatrix[3][2] = aPosition.z;
 	}
 	template <class TYPE>
-	CU::Vector3<TYPE> CommonUtilities::Matrix44<TYPE>::GetPosition() const
+	Vector3<TYPE> CommonUtilities::Matrix44<TYPE>::GetPosition() const
 	{
-		return CU::Vector3<TYPE>(myMatrix[3][0],myMatrix[3][1],myMatrix[3][2]);
+		return Vector3<TYPE>(myMatrix[3][0],myMatrix[3][1],myMatrix[3][2]);
 	}
 	template <class TYPE>
 	Matrix44<TYPE> operator*(const Matrix44<TYPE>& aLeftSideMatrix,Matrix44<TYPE>& aRightSideMatrix)
@@ -751,10 +752,10 @@ namespace CommonUtilities
 
 		aReturnMatrix = this->GetMatrix33().Transpose();
 
-		CU::Vector3<TYPE> tempVec(-myMatrix[3][0], -myMatrix[3][1], -myMatrix[3][2]);
+		Vector3<TYPE> tempVec(-myMatrix[3][0], -myMatrix[3][1], -myMatrix[3][2]);
 
 
-		CU::Vector3<TYPE> tempVec2 = tempVec;
+		Vector3<TYPE> tempVec2 = tempVec;
 
 		tempVec.x=tempVec2.myX*aReturnMatrix.myMatrix[0][0]+tempVec2.myY*aReturnMatrix.myMatrix[1][0]+tempVec2.myZ*aReturnMatrix.myMatrix[2][0];
 		tempVec.y=tempVec2.myX*aReturnMatrix.myMatrix[0][1]+tempVec2.myY*aReturnMatrix.myMatrix[1][1]+tempVec2.myZ*aReturnMatrix.myMatrix[2][1];
@@ -831,9 +832,9 @@ namespace CommonUtilities
 	}
 
 	template <typename TYPE>
-	CU::Vector3<TYPE> Matrix44<TYPE>::GetScaling()
+	Vector3<TYPE> Matrix44<TYPE>::GetScaling()
 	{
-		return(CU::Vector3<TYPE>(myMatrix[0][0], myMatrix[1][1], myMatrix[2][2]));
+		return(Vector3<TYPE>(myMatrix[0][0], myMatrix[1][1], myMatrix[2][2]));
 	}
 
 	template <class TYPE>

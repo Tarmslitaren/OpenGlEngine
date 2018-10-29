@@ -32,6 +32,8 @@ namespace GLEN
 		void Pitch(float angle);
 		void Yaw(float angle);
 		void Roll(float angle);
+
+		void UpdateShaders();
 	private:
 		CU::Vector3f m_position;
 		CU::Matrix44f m_orientation;

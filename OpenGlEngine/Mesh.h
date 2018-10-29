@@ -25,14 +25,9 @@ namespace GLEN
 		POLYGONMODE_POINT = GL_POINT
 	};
 
-	//todo: need to generalise this
+
 	struct VertexLayout
 	{
-
-		int locationAtrribute = 0; //set in shader
-		int colorAtribute = 1; //set in shader
-		int texCoordAttribute = 2; //set in shader
-		int normalsAttribute = 1;
 		int stride = 6;
 		int texCoordOffset = 6;
 		int colorOffset = 3;
@@ -53,6 +48,7 @@ namespace GLEN
 
 		//use this only for interleaved data
 		std::vector<float> interleavedVertices;
+		VertexLayout vertexLayout;
 	};
 
 
@@ -66,16 +62,18 @@ namespace GLEN
 		void Render(const CU::Matrix44f& model); //todo: noooope not here: keep this in the instances
 		void Render();
 		
-		void SetVerticeData(float data[], int size);
-		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);
-		void SetIndexData(unsigned int data[], int size);
-		int Finalize(DrawFrequency frequency, std::string id); //todo: raii
+
 		void SetPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
 
 		std::string GetId() { return m_id; } //not guaranteed to be unique!
 		int GetHandle() { return m_vertexArrayObjectHandle; } //reuse this as id (could maybe be hash of id string instead but meh.)
 		Material& GetMaterial() { return m_material; }
 	private:
+		void SetVerticeData(float data[], int size);
+		void SetVerticeData(float data[], int size, const VertexLayout& vertexLayout);
+		void SetIndexData(unsigned int data[], int size);
+		int Finalize(DrawFrequency frequency, std::string id); //todo: raii
+
 		void RenderInternal();
 		void InitInterleaved();
 		void InitNonInterleaved();
@@ -87,7 +85,6 @@ namespace GLEN
 		unsigned int m_vertexArrayObjectHandle;
 		unsigned int m_elementBufferObject;
 		unsigned int m_polygonMode;
-		VertexLayout m_vertexLayout;
 		Material m_material;
 		VertexContent m_vertexData;
 		DrawFrequency m_frequency;

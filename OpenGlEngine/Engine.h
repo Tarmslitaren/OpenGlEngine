@@ -8,6 +8,7 @@
 #include "ModelContainer.h"
 #include "MeshContainer.h"
 #include "Scene.h"
+#include "ShaderInput.h"
 namespace GLEN
 {
 
@@ -30,6 +31,7 @@ namespace GLEN
 		MeshContainer& GetMeshContainer() { return m_meshContainer; }
 		Scene& GetCurrentScene() { return *m_scenes[m_currentScene]; }
 		SetupInfo& GetSetupInfo() { return m_SetupInfo; }
+		ShaderInput& GetShaderInput() { return m_shaderInput; }
 
 
 	private:
@@ -48,6 +50,7 @@ namespace GLEN
 		std::vector < Scene* > m_scenes; //todo: scene container/handler with loading/unloading and switching scenes
 		int m_currentScene = 0;
 		SetupInfo m_SetupInfo;
+		ShaderInput m_shaderInput;
 
 	};
 };

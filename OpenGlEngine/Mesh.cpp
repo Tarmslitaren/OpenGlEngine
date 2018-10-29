@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include <iostream>
+#include "enums.h"
 
 using namespace GLEN;
 GLEN::Mesh::Mesh(std::string id, const Material & material, const VertexContent & data, DrawFrequency drawFrequency)
@@ -39,12 +40,12 @@ void GLEN::Mesh::Render()
 
 void GLEN::Mesh::SetVerticeData(float data[], int size)
 {
-	SetVerticeData(data, size, m_vertexLayout);
+	SetVerticeData(data, size, m_vertexData.vertexLayout);
 }
 
 void GLEN::Mesh::SetVerticeData(float data[], int size, const VertexLayout& vertexLayout)
 {
-	m_vertexLayout = vertexLayout;
+	m_vertexData.vertexLayout = vertexLayout;
 	m_vertexData.interleavedVertices.clear();
 	m_vertexData.interleavedVertices.insert(m_vertexData.interleavedVertices.begin(), &data[0], &data[size]);
 }
@@ -98,7 +99,7 @@ void GLEN::Mesh::RenderInternal()
 		if (m_vertexData.interleavedVertices.size() > 0)
 		{
 			glDrawArrays(GL_TRIANGLES, 0, m_vertexData.interleavedVertices.size() / 3); //todo: generalize: other modes than GL_TRIANGLES
-			//todo: the devide by 3 here should be a bug if the verice size is bigger than three: should devide by stride instead
+			//todo: the divide by 3 here should be a bug if the vertice coontains more than just positions: should devide by stride*3 instead
 		}
 		else
 		{
@@ -121,23 +122,23 @@ void GLEN::Mesh::InitInterleaved()
 	glBufferData(GL_ARRAY_BUFFER, m_vertexData.interleavedVertices.size() * sizeof(float), &m_vertexData.interleavedVertices[0], m_frequency);
 
 	//todo: this can be more general
-	glVertexAttribPointer(m_vertexLayout.locationAtrribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)m_vertexLayout.vertexOffset);
-	glEnableVertexAttribArray(m_vertexLayout.locationAtrribute);
-	if (m_vertexLayout.hasColor == true)
+	glVertexAttribPointer(VERTEX_LAYOUT_POSITION, 3, GL_FLOAT, GL_FALSE, m_vertexData.vertexLayout.stride * sizeof(float), (void*)m_vertexData.vertexLayout.vertexOffset);
+	glEnableVertexAttribArray(VERTEX_LAYOUT_POSITION);
+	if (m_vertexData.vertexLayout.hasColor == true)
 	{
-		glVertexAttribPointer(m_vertexLayout.colorAtribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.colorOffset * sizeof(float)));
-		glEnableVertexAttribArray(m_vertexLayout.colorAtribute);
+		glVertexAttribPointer(VERTEX_LAYOUT_COLOR, 3, GL_FLOAT, GL_FALSE, m_vertexData.vertexLayout.stride * sizeof(float), (void*)(m_vertexData.vertexLayout.colorOffset * sizeof(float)));
+		glEnableVertexAttribArray(VERTEX_LAYOUT_COLOR);
 	}
 
-	if (m_vertexLayout.hasTexCoords == true)
+	if (m_vertexData.vertexLayout.hasTexCoords == true)
 	{
-		glVertexAttribPointer(m_vertexLayout.texCoordAttribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.texCoordOffset * sizeof(float)));
-		glEnableVertexAttribArray(m_vertexLayout.texCoordAttribute);
+		glVertexAttribPointer(VERTEX_LAYOUT_TEXCOORDS, 3, GL_FLOAT, GL_FALSE, m_vertexData.vertexLayout.stride * sizeof(float), (void*)(m_vertexData.vertexLayout.texCoordOffset * sizeof(float)));
+		glEnableVertexAttribArray(VERTEX_LAYOUT_TEXCOORDS);
 	}
-	if (m_vertexLayout.hasNormals == true)
+	if (m_vertexData.vertexLayout.hasNormals == true)
 	{
-		glVertexAttribPointer(m_vertexLayout.normalsAttribute, 3, GL_FLOAT, GL_FALSE, m_vertexLayout.stride * sizeof(float), (void*)(m_vertexLayout.normalOffset * sizeof(float)));
-		glEnableVertexAttribArray(m_vertexLayout.normalsAttribute);
+		glVertexAttribPointer(VERTEX_LAYOUT_NORMALS, 3, GL_FLOAT, GL_FALSE, m_vertexData.vertexLayout.stride * sizeof(float), (void*)(m_vertexData.vertexLayout.normalOffset * sizeof(float)));
+		glEnableVertexAttribArray(VERTEX_LAYOUT_NORMALS);
 	}
 }
 
@@ -154,19 +155,17 @@ void GLEN::Mesh::InitNonInterleaved()
 	
 	glBufferSubData(GL_ARRAY_BUFFER, offset, dataSize, &m_vertexData.positions[0]);
 	offset = dataSize;
-	int attributeId = 0;
 
-	glVertexAttribPointer(attributeId, 3, GL_FLOAT, GL_FALSE, 3 * sizeOfFloat, 0);
+	glVertexAttribPointer(VERTEX_LAYOUT_POSITION, 3, GL_FLOAT, GL_FALSE, 3 * sizeOfFloat, 0);
 
-	glEnableVertexAttribArray(attributeId);
+	glEnableVertexAttribArray(VERTEX_LAYOUT_POSITION);
 	if (m_vertexData.normals.size() > 0)
 	{
 		int dataSize = m_vertexData.normals.size() * sizeOfFloat;
 		glBufferSubData(GL_ARRAY_BUFFER, offset, dataSize, &m_vertexData.normals[0]);
 		
-		attributeId++;
-		glVertexAttribPointer(attributeId, 3, GL_FLOAT, GL_FALSE, 3 * sizeOfFloat, (void*)offset);
-		glEnableVertexAttribArray(attributeId);
+		glVertexAttribPointer(VERTEX_LAYOUT_NORMALS, 3, GL_FLOAT, GL_FALSE, 3 * sizeOfFloat, (void*)offset);
+		glEnableVertexAttribArray(VERTEX_LAYOUT_NORMALS);
 		offset += dataSize;
 	}
 	if (m_vertexData.texCoords.size() > 0)
@@ -174,18 +173,16 @@ void GLEN::Mesh::InitNonInterleaved()
 		int dataSize = m_vertexData.texCoords.size() * sizeOfFloat;
 		glBufferSubData(GL_ARRAY_BUFFER, offset, dataSize, &m_vertexData.texCoords[0]);
 	
-		attributeId++;
-		glVertexAttribPointer(attributeId, 2, GL_FLOAT, GL_FALSE, 2 * sizeOfFloat, (void*)offset);
-		glEnableVertexAttribArray(attributeId);
+		glVertexAttribPointer(VERTEX_LAYOUT_TEXCOORDS, 2, GL_FLOAT, GL_FALSE, 2 * sizeOfFloat, (void*)offset);
+		glEnableVertexAttribArray(VERTEX_LAYOUT_TEXCOORDS);
 		offset += dataSize;
 	}
 	if (m_vertexData.colors.size() > 0)
 	{
 		int dataSize = m_vertexData.colors.size() * sizeOfFloat;
 		glBufferSubData(GL_ARRAY_BUFFER, offset, dataSize, &m_vertexData.colors[0]);
-		attributeId++;
-		glVertexAttribPointer(attributeId, 3, GL_FLOAT, GL_FALSE, 3 * sizeOfFloat, (void*)offset);
-		glEnableVertexAttribArray(attributeId); //todo: is this here or in render? or shader?
+		glVertexAttribPointer(VERTEX_LAYOUT_COLOR, 3, GL_FLOAT, GL_FALSE, 3 * sizeOfFloat, (void*)offset);
+		glEnableVertexAttribArray(VERTEX_LAYOUT_COLOR); //todo: is this here or in render? or shader?
 		offset += dataSize;
 	}
 

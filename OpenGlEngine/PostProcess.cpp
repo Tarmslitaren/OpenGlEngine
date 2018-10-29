@@ -7,7 +7,6 @@
 using namespace GLEN;
 
 PostProcess::PostProcess()
-	:m_quad(Material("pp_simple"))
 {
 
 	SetupInfo info = Engine::GetInstance()->GetSetupInfo();
@@ -54,33 +53,14 @@ PostProcess::PostProcess()
 	Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_blur", "pp_simple.vert", "pp_blur.frag");
 	Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_sharpen", "pp_simple.vert", "pp_sharpen.frag");
 	Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("pp_edges", "pp_simple.vert", "pp_edges.frag");
-
-
-	//create a quad
-	float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-	// positions   // texCoords
-	-1.0f,  1.0f,  0.0f, 1.0f,
-	-1.0f, -1.0f,  0.0f, 0.0f,
-	 1.0f, -1.0f,  1.0f, 0.0f,
-
-	-1.0f,  1.0f,  0.0f, 1.0f,
-	 1.0f, -1.0f,  1.0f, 0.0f,
-	 1.0f,  1.0f,  1.0f, 1.0f
-	};
-
-	//possible issue: mesh init does not handle 2d positions.
-
-	VertexLayout layout;
-	layout.hasNormals = false;
-	layout.stride = 4;
-	layout.hasTexCoords = true;
-	layout.texCoordOffset = 2;
-	layout.texCoordAttribute = 1;
-
-	m_quad.SetVerticeData(quadVertices, 24, layout);
-	m_quad.Finalize(GLEN::STATIC_DRAW, "pp_quad");
 	
-	m_quad.GetMaterial().AddDiffuseTexture(m_texture, 0);
+
+
+	Material material("pp_simple");
+	material.AddDiffuseTexture(m_texture, 0);
+	int meshId = Engine::GetInstance()->GetMeshContainer().CreateQuad("pp_quad", { 2,2,0 },material);
+	m_quad = Engine::GetInstance()->GetMeshContainer().GetMesh(meshId);
+
 	//m_quad.SetPolygonMode(POLYGONMODE_LINE); //show the quad
 
 }
@@ -115,7 +95,7 @@ void GLEN::PostProcess::Render(Scene* scene)
 	//draw quad
 	m_shader->use();
 	glDisable(GL_DEPTH_TEST);
-	m_quad.Render(CU::Matrix44f::Identity());
+	m_quad->Render(CU::Matrix44f::Identity());
 
 	
 }
@@ -123,5 +103,5 @@ void GLEN::PostProcess::Render(Scene* scene)
 void GLEN::PostProcess::SetShader(std::string id)
 {
 	m_shader = Engine::GetInstance()->GetShaderContainer().GetShaderProgram(id);
-	m_quad.GetMaterial().SetShader(m_shader);
+	m_quad->GetMaterial().SetShader(m_shader);
 }

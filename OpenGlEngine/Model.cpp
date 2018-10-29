@@ -5,8 +5,9 @@
 #include "Material.h"
 using namespace GLEN;
 
-GLEN::Model::Model(std::string path, const Material& material)
+GLEN::Model::Model(std::string path, const Material& material, bool loadInterleaved)
 {
+	m_loadInterleaved = loadInterleaved;
 	loadModel(path, material);
 }
 
@@ -66,61 +67,7 @@ void GLEN::Model::processNode(aiNode * node, const aiScene * scene, const Materi
 
 Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene, const Material& materialInput)
 {
-	//std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<float> vertexData;
 
-	// Walk through each of the mesh's vertices
-	for (unsigned int i = 0; i < aiMesh->mNumVertices; i++)
-	{
-		//Vertex vertex;
-		CU::Vector3f vector;
-		// positions
-		vertexData.push_back(aiMesh->mVertices[i].x);
-		vertexData.push_back(aiMesh->mVertices[i].y);
-		vertexData.push_back(aiMesh->mVertices[i].z);
-		// normals
-		if (aiMesh->HasNormals()) 
-		{
-			vertexData.push_back(aiMesh->mNormals[i].x);
-			vertexData.push_back(aiMesh->mNormals[i].y);
-			vertexData.push_back(aiMesh->mNormals[i].z);
-		}
-		// texture coordinates
-		if (aiMesh->HasTextureCoords(0)) // does the mesh contain texture coordinates?
-		{
-			// a vertex can contain up to 8 different texture coordinates. We here make the assumption that we won't 
-			// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-			//todo: handle more texture coordiantes
-			vertexData.push_back(aiMesh->mTextureCoords[0][i].x);
-			vertexData.push_back(aiMesh->mTextureCoords[0][i].y);
-		}
-		if (aiMesh->HasVertexColors(0))
-		{
-			vertexData.push_back(aiMesh->mColors[0][i].r);
-			vertexData.push_back(aiMesh->mColors[0][i].g);
-			vertexData.push_back(aiMesh->mColors[0][i].b);
-			vertexData.push_back(aiMesh->mColors[0][i].a);
-		}
-		// tangent
-		//vector.x = mesh->mTangents[i].x;
-		//vector.y = mesh->mTangents[i].y;
-		//vector.z = mesh->mTangents[i].z;
-		//vertex.Tangent = vector;
-		// bitangent
-		//vector.x = mesh->mBitangents[i].x;
-		//vector.y = mesh->mBitangents[i].y;
-		//vector.z = mesh->mBitangents[i].z;
-		//vertex.Bitangent = vector;
-	}
-	// now walk through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
-	for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
-	{
-		aiFace face = aiMesh->mFaces[i];
-		// retrieve all indices of the face and store them in the indices vector
-		for (unsigned int j = 0; j < face.mNumIndices; j++)
-			indices.push_back(face.mIndices[j]);
-	}
 	// process materials
 	aiMaterial* aiMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 
@@ -153,33 +100,122 @@ Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene, const Mat
 	//std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 	//textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-	
-	std::string id = aiMesh->mName.C_Str(); //todo: this is unsafe, there might not be a name
+	if (m_loadInterleaved)
+	{
+		return processMeshInterleaved(aiMesh, scene, material);
+	}
 
+	VertexContent content;
+	//todo: bajs: this wont work as aiMesh stores vectors and not raw floats: will need to loop anyway :(
+	/*content.positions.insert(content.positions.end(), &aiMesh->mVertices[0], &aiMesh->mVertices[aiMesh->mNumVertices]);
+	if (aiMesh->HasNormals())
+	{
+		content.normals.insert(content.normals.end(), &aiMesh->mVertices[0], &aiMesh->mNormals[aiMesh->mNumVertices]);
+	}
+	if (aiMesh->HasTextureCoords(0))
+	{
+		content.texCoords.insert(content.texCoords.end(), &aiMesh->mTextureCoords[0][0], &aiMesh->mTextureCoords[0][aiMesh->mNumVertices]);
+	}
+	if (aiMesh->HasVertexColors(0))
+	{
+		content.colors.insert(content.colors.end(), &aiMesh->mColors[0][0], &aiMesh->mColors[0][aiMesh->mNumVertices]);
+	}*/
+
+	// now walk through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+	std::vector<unsigned int> indices;
+	for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
+	{
+		aiFace face = aiMesh->mFaces[i];
+		// retrieve all indices of the face and store them in the indices vector
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			indices.push_back(face.mIndices[j]);
+	}
+
+	std::string id = aiMesh->mName.C_Str(); //todo: this is unsafe, there might not be a name
+	int handle = Engine::GetInstance()->GetMeshContainer().CreateMesh(id, content, material);
+	Mesh* mesh = Engine::GetInstance()->GetMeshContainer().GetMesh(handle);
+
+	// return a mesh object created from the extracted mesh data
+	return mesh;
+}
+
+Mesh * GLEN::Model::processMeshInterleaved(aiMesh * aiMesh, const aiScene * scene, const Material & material)
+{
+
+	VertexContent content;
+
+	// Walk through each of the mesh's vertices
+	for (unsigned int i = 0; i < aiMesh->mNumVertices; i++)
+	{
+		//Vertex vertex;
+		CU::Vector3f vector;
+		// positions
+		content.interleavedVertices.push_back(aiMesh->mVertices[i].x);
+		content.interleavedVertices.push_back(aiMesh->mVertices[i].y);
+		content.interleavedVertices.push_back(aiMesh->mVertices[i].z);
+		// normals
+		if (aiMesh->HasNormals())
+		{
+			content.interleavedVertices.push_back(aiMesh->mNormals[i].x);
+			content.interleavedVertices.push_back(aiMesh->mNormals[i].y);
+			content.interleavedVertices.push_back(aiMesh->mNormals[i].z);
+		}
+		// texture coordinates
+		if (aiMesh->HasTextureCoords(0)) // does the mesh contain texture coordinates?
+		{
+			// a vertex can contain up to 8 different texture coordinates. We here make the assumption that we won't 
+			// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+			//todo: handle more texture coordiantes
+			content.interleavedVertices.push_back(aiMesh->mTextureCoords[0][i].x);
+			content.interleavedVertices.push_back(aiMesh->mTextureCoords[0][i].y);
+		}
+		if (aiMesh->HasVertexColors(0))
+		{
+			content.interleavedVertices.push_back(aiMesh->mColors[0][i].r);
+			content.interleavedVertices.push_back(aiMesh->mColors[0][i].g);
+			content.interleavedVertices.push_back(aiMesh->mColors[0][i].b);
+			content.interleavedVertices.push_back(aiMesh->mColors[0][i].a);
+		}
+		// tangent
+		//vector.x = mesh->mTangents[i].x;
+		//vector.y = mesh->mTangents[i].y;
+		//vector.z = mesh->mTangents[i].z;
+		//vertex.Tangent = vector;
+		// bitangent
+		//vector.x = mesh->mBitangents[i].x;
+		//vector.y = mesh->mBitangents[i].y;
+		//vector.z = mesh->mBitangents[i].z;
+		//vertex.Bitangent = vector;
+	}
+	// now walk through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+	for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
+	{
+		aiFace face = aiMesh->mFaces[i];
+		// retrieve all indices of the face and store them in the indices vector
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			content.indexes.push_back(face.mIndices[j]);
+	}
 
 	VertexLayout vertexLayout;
 	int stride = 0;
 	int attributes = 0;
 	if (aiMesh->HasPositions()) //should always be true
 	{
-		
-		vertexLayout.locationAtrribute = attributes;
+
 		stride += 3;
 		attributes++;
 	}
 	if (aiMesh->HasNormals())
 	{
 		vertexLayout.hasNormals = true;
-		vertexLayout.normalsAttribute = attributes;
 		vertexLayout.normalOffset = stride;
 		stride += 3;
 		attributes++;
-		
+
 	}
 	if (aiMesh->HasTextureCoords(0))
 	{
 		vertexLayout.hasTexCoords = true;
-		vertexLayout.texCoordAttribute = attributes;
 		vertexLayout.texCoordOffset = stride;
 		stride += 2;
 		attributes++;
@@ -187,15 +223,17 @@ Mesh* GLEN::Model::processMesh(aiMesh * aiMesh, const aiScene * scene, const Mat
 	if (aiMesh->HasVertexColors(0)) //not standard
 	{
 		vertexLayout.hasColor = true;
-		vertexLayout.colorAtribute = attributes;
 		stride += 4; //rgba
 		attributes++;
-		
+
 	}
 	vertexLayout.stride = stride;
 
-	int handle = Engine::GetInstance()->GetMeshContainer().CreateMesh(id, &vertexData[0], vertexData.size(), vertexLayout, material, &indices[0], indices.size());
+	content.vertexLayout = vertexLayout;
+
+	std::string id = aiMesh->mName.C_Str(); //todo: this is unsafe, there might not be a name
+
+	int handle = Engine::GetInstance()->GetMeshContainer().CreateMesh(id, content, material);
 	Mesh* mesh = Engine::GetInstance()->GetMeshContainer().GetMesh(handle);
-	// return a mesh object created from the extracted mesh data
 	return mesh;
 }

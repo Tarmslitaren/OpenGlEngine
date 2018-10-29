@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="glad">
       <UniqueIdentifier>{e31b3147-3d8a-453f-aede-1ab2a51abfb6}</UniqueIdentifier>
     </Filter>
@@ -19,6 +15,10 @@
     </Filter>
     <Filter Include="material">
       <UniqueIdentifier>{8d50fbed-220d-4be9-a3b0-f2d3e30b9100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +78,7 @@
       <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="ErrorHandler.h" />
+    <ClInclude Include="ShaderInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad\glad.c">
@@ -138,5 +139,71 @@
       <Filter>scene</Filter>
     </ClCompile>
     <ClCompile Include="ErrorHandler.cpp" />
+    <ClCompile Include="ShaderInput.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Workbed\depthTest.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\lampShader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\lampShader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\lightingShader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\lightingShader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\lightingShaderNoAlpha.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\pp_blur.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\pp_edges.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\pp_grayscale.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\pp_invert.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\pp_sharpen.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\pp_simple.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\pp_simple.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\reflection.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\reflection.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\refraction.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\scale.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\simple.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\singleColor.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\skybox.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\skybox.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

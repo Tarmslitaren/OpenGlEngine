@@ -59,8 +59,6 @@ void GLEN::Material::Render(const CU::Matrix44f& model)
 
 
 	m_shader->setMatrix("model", model);
-	m_shader->setMatrix("view", view);
-	m_shader->setMatrix("projection", projection);
 
 	m_shader->setVector("viewPos", cam.GetPosition());
 }

@@ -1,6 +1,8 @@
 #include "InputController.h"
 #include "Engine.h"
 #include "Converters.h"
+#include "Engine.h"
+#include "ShaderInput.h"
 
 InputController::InputController()
 {
@@ -46,12 +48,13 @@ void InputController::PointerEvent(const CU::Vector2f & mousePosition)
 	}
 
 	calculateFront();
-	GLEN::Engine::GetInstance()->GetCamera().SetOrientation(m_cameraFront);
+	GLEN::Camera& cam = GLEN::Engine::GetInstance()->GetCamera();
+	cam.SetOrientation(m_cameraFront);
 	//GLEN::Engine::GetInstance()->GetCamera().LookAt(m_cameraFront); //something is fucked. the position of the camera gets wildly inappropriate
 
 		//GLEN::Engine::GetInstance()->GetCamera().Pitch(m_pitch*0.01);
 	//GLEN::Engine::GetInstance()->GetCamera().Yaw(m_yaw*0.01);
-
+	cam.UpdateShaders();
 }
 
 void InputController::ScrollEvent(const CU::Vector2f & scrollOffset)
@@ -70,30 +73,42 @@ void InputController::ScrollEvent(const CU::Vector2f & scrollOffset)
 		fov = 45.0f;
 	}
 
-	GLEN::Engine::GetInstance()->GetCamera().SetFov(fov);
+	GLEN::Camera& cam = GLEN::Engine::GetInstance()->GetCamera();
+	cam.SetFov(fov);
+
+	cam.UpdateShaders();
+
 }
 
 void InputController::Update(float deltaTime)
 {
+	CU::Vector3f oldPos = m_cameraPos;
 	GLEN::Engine& engine = *GLEN::Engine::GetInstance();
 	float cameraSpeed = m_cameraSpeed * deltaTime;
 	if (engine.GetInput().GetKeyPressed(GLFW_KEY_W))
-		m_cameraPos +=m_cameraFront * cameraSpeed;
+	{
+		m_cameraPos += m_cameraFront * cameraSpeed;
+	}
 	if (engine.GetInput().GetKeyPressed(GLFW_KEY_S))
+	{
 		m_cameraPos -= m_cameraFront * cameraSpeed;
+	}
 	if (engine.GetInput().GetKeyPressed(GLFW_KEY_A))
+	{
 		m_cameraPos -= m_cameraFront.Cross(m_cameraUp).GetNormalized() * cameraSpeed;
+	}
 	if (engine.GetInput().GetKeyPressed(GLFW_KEY_D))
 	{
 		m_cameraPos += m_cameraFront.Cross(m_cameraUp).GetNormalized() * cameraSpeed;
 	}
 
-	engine.GetCamera().SetPosition(m_cameraPos);
-	//engine.GetCamera().UpdatePos();
+	if (oldPos != m_cameraPos)
+	{
+		GLEN::Camera& cam = GLEN::Engine::GetInstance()->GetCamera();
+		cam.SetPosition(m_cameraPos);
+		cam.UpdateShaders();
 
-	//auto cameraPos = CU::Vector3f(0, 0, 3);
-
-	//engine.GetCamera().SetPosition(cameraPos);
+	}
 
 }
 

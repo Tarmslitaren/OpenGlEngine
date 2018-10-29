@@ -4,7 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
+#include "ShaderInput.h"
+#include "Engine.h"
 using namespace GLEN;
 
 GLEN::ShaderProgram::ShaderProgram()
@@ -56,6 +57,10 @@ GLEN::ShaderProgram::ShaderProgram(std::string id, std::string vertexPath, std::
 	AddVertexShader(vShaderCode);
 	AddFragmentShader(fShaderCode);
 	Finalize();
+
+	//basically  all shaders need the view and projection matrices
+	Engine::GetInstance()->GetShaderInput().AddUniformBufferBinding("Matrices", m_shaderProgramHandle);
+
 }
 
 ShaderProgram::~ShaderProgram()

@@ -44,8 +44,6 @@ m_input(m_window.GetWindow())
 	//Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("depthTestShader", "depthTest.vert", "depthTest.frag");
 
 	m_shaderContainer.CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
-
-	m_shaderContainer.CreateShaderProgram("pp_simple", "pp_simple.vert", "pp_simple.frag");
 }
 
 

@@ -17,6 +17,7 @@
 #include "SkyBox.h"
 #include "ErrorHandler.h"
 #include "Mesh.h"
+#include "ShaderInput.h"
 
 int main()
 {
@@ -26,21 +27,7 @@ int main()
 
 	GLEN::Engine::Create(info);
 	GLEN::Engine& engine = *GLEN::Engine::GetInstance();
-	//triangle test
 	GLEN::Scene& scene = engine.GetCurrentScene();
-
-	// a plane
-	float planeVerts[] = {
-		// positions          // colors           // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-	};
-	unsigned int indices[] = {
-	0, 1, 3, // first triangle
-	1, 2, 3  // second triangle
-	};
 
 	CU::Vector3f cubePositions[] = {
 	  CU::Vector3f(0.0f,  0.0f,  0.0f),
@@ -103,10 +90,9 @@ int main()
 	materialr.SetCubeMapTexture("skybox");
 	materialr.InitShaderVariables();
 
-	GLEN::Mesh* meshr = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateBox("cuber", { 1,1,1 }, materialr));
+	GLEN::Mesh* meshr = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateBox("cuber", { 2,2,1 }, materialr));
 	engine.GetModelContainer().CreateModel("cuber", meshr);
 	GLEN::ModelInstance* instancer = new GLEN::ModelInstance("cuber");
-	instancer->SetScale(2.1f);
 	scene.AddModel(instancer);
 
 
@@ -130,13 +116,7 @@ int main()
 	grassMaterial.AddDiffuseTexture("blending_transparent_window.png", 0, true);
 	grassMaterial.InitShaderVariables();
 	
-	GLEN::VertexLayout planeLayout;
-	planeLayout.hasTexCoords = true;
-	planeLayout.hasNormals = false;
-	planeLayout.texCoordOffset = 6;
-	planeLayout.texCoordAttribute = 2;
-	planeLayout.stride = 8;
-	int gmeshId = engine.GetMeshContainer().CreateMesh("grass", planeVerts, sizeof(planeVerts) / sizeof(float), planeLayout, grassMaterial, indices, sizeof(indices) / sizeof(int));
+	int gmeshId = engine.GetMeshContainer().CreateQuad("grass", { 1,1,0 }, grassMaterial);
 	GLEN::Mesh* grassMesh = engine.GetMeshContainer().GetMesh(gmeshId);
 	engine.GetModelContainer().CreateModel("grass", grassMesh);
 	for (int i = 0; i < vegetationPos.size(); i++)
@@ -161,7 +141,7 @@ int main()
 	//point lights
 	GLEN::Material lampMat("lampShader");
 	lampMat.InitShaderVariables();
-	GLEN::Mesh* meshlamp = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateBox("lampCube", { 1,1,1 }, lampMat));
+	GLEN::Mesh* meshlamp = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateBox("lampCube", { 0.2,0.2,0.2 }, lampMat));
 	engine.GetModelContainer().CreateModel("lampCube", meshlamp);
 
 
@@ -178,7 +158,6 @@ int main()
 		auto lightPos = pointLightPositions[i];//CU::Vector3f(1.2f, 1.0f, 2.0f);
 		light->SetPosition(lightPos);
 
-		lampCube->SetScale(0.2f);
 
 		// light properties
 		// we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
@@ -204,6 +183,7 @@ int main()
 
 
 	engine.GetCamera().SetProjection(45, info.m_resolution.width / info.m_resolution.height);
+	engine.GetCamera().UpdateShaders();
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame

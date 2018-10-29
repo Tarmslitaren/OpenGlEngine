@@ -10,11 +10,8 @@ GLEN::SkyBox::SkyBox(std::string id, std::vector<std::pair<std::string, GLEN::Cu
 	Material material(m_shader->GetId());
 	material.SetCubeMapTexture(m_texture->getPath());
 	material.InitShaderVariables();
-	VertexLayout layout;
-	layout.stride = 3;
-	layout.hasNormals = false;
-	layout.hasTexCoords = false;
-	int meshId = Engine::GetInstance()->GetMeshContainer().CreateMesh("skybox", m_skyboxVertices, sizeof(m_skyboxVertices) / sizeof(float), layout, material);
+
+	int meshId = Engine::GetInstance()->GetMeshContainer().CreateBox("skybox", { 1,1,1 }, material);
 	m_mesh = Engine::GetInstance()->GetMeshContainer().GetMesh(meshId);
 
 
@@ -30,12 +27,11 @@ void GLEN::SkyBox::Render()
 
 	glDepthFunc(GL_LEQUAL);
 	Camera cam = Engine::GetInstance()->GetCamera();
-	auto projection = cam.GetProjection();
 	auto view = cam.GetView();
-	view.SetPosition({ 0,0,0 });
 	m_mesh->Render();
-	m_shader->setMatrix("view", view);
-	m_shader->setMatrix("projection", projection);
+
+	view.SetPosition({ 0,0,0 });
+	m_shader->setMatrix("staticView", view);
 
 	glDepthFunc(GL_LESS); // set depth function back to default
 
