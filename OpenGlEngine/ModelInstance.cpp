@@ -6,6 +6,7 @@ using namespace GLEN;
 
 GLEN::ModelInstance::ModelInstance(std::string modelId)
 {
+	m_renderMode = RENDERMODE_TRIANGLES;
 	m_orientation.SetIdentity();
 	m_model = Engine::GetInstance()->GetModelContainer().GetModel(modelId);
 
@@ -31,8 +32,23 @@ void GLEN::ModelInstance::Render()
 			DrawOutline();
 		}
 		else {
-			m_model->Render(matrix);
+			m_model->Render(matrix, m_renderMode);
 		}
+	}
+	//else: do we need to hide somehow?
+}
+
+void GLEN::ModelInstance::RenderNormals()
+{
+	if (m_isToRender)
+	{
+
+		CU::Matrix44f matrix = CU::Matrix44f::Identity();
+		matrix = m_orientation;
+		matrix.SetPosition(m_position);
+
+		m_model->Render(matrix, "drawNormals", m_renderMode);
+		m_model->Render(matrix, m_renderMode);
 	}
 	//else: do we need to hide somehow?
 }

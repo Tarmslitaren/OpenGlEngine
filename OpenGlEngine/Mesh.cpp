@@ -22,19 +22,25 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &m_vertexBufferObjectHandle);
 }
 
-void GLEN::Mesh::Render(const CU::Matrix44f& model)
+void GLEN::Mesh::Render(const CU::Matrix44f& model, RenderMode rendermode)
 {
 
 	
 
 	m_material.Render(model); //this method should only be run from here and needs to be run from here.
-	RenderInternal();
+	RenderInternal(rendermode);
 }
 
-void GLEN::Mesh::Render()
+void GLEN::Mesh::Render(const CU::Matrix44f & model, std::string overrideShader, RenderMode rendermode)
+{
+	m_material.Render(model, overrideShader); //this method should only be run from here and needs to be run from here.
+	RenderInternal(rendermode);
+}
+
+void GLEN::Mesh::Render(RenderMode rendermode)
 {
 	m_material.Render(); //this method should only be run from here and needs to be run from here.
-	RenderInternal();
+	RenderInternal(rendermode);
 }
 
 
@@ -90,25 +96,26 @@ int GLEN::Mesh::Finalize(DrawFrequency frequency, std::string id)
 	return m_vertexArrayObjectHandle;
 }
 
-void GLEN::Mesh::RenderInternal()
+void GLEN::Mesh::RenderInternal(RenderMode rendermode)
 {
+
 	glBindVertexArray(m_vertexArrayObjectHandle);
 
 	glPolygonMode(GL_FRONT_AND_BACK, m_polygonMode);
 	if (m_vertexData.indexes.size() == 0) {
 		if (m_vertexData.interleavedVertices.size() > 0)
 		{
-			glDrawArrays(GL_TRIANGLES, 0, m_vertexData.interleavedVertices.size() / 3); //todo: generalize: other modes than GL_TRIANGLES
+			glDrawArrays(rendermode, 0, m_vertexData.interleavedVertices.size() / 3); //todo: generalize: other modes than GL_TRIANGLES
 			//todo: the divide by 3 here should be a bug if the vertice coontains more than just positions: should devide by stride*3 instead
 		}
 		else
 		{
-			glDrawArrays(GL_TRIANGLES, 0, m_vertexData.positions.size() / 3);
+			glDrawArrays(rendermode, 0, m_vertexData.positions.size() / 3);
 		}
 	}
 	else
 	{
-		glDrawElements(GL_TRIANGLES, m_vertexData.indexes.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(rendermode, m_vertexData.indexes.size(), GL_UNSIGNED_INT, 0);
 	}
 
 	glBindVertexArray(0);

@@ -25,6 +25,16 @@ namespace GLEN
 		POLYGONMODE_POINT = GL_POINT
 	};
 
+	enum RenderMode
+	{
+		RENDERMODE_POINTS = GL_POINTS,
+		RENDERMODE_LINES = GL_LINES,
+		RENDERMODE_LINE_LOOP = GL_LINE_LOOP,
+		RENDERMODE_LINE_STRIP = GL_LINE_STRIP,
+		RENDERMODE_TRIANGLES = GL_TRIANGLES,
+		RENDERMODE_TRIANGLE_STRIP = GL_TRIANGLE_STRIP,
+		RENDERMODE_TRIANGLE_FAN = GL_TRIANGLE_FAN,
+	};
 
 	struct VertexLayout
 	{
@@ -59,8 +69,9 @@ namespace GLEN
 		Mesh(const Material& material);
 		~Mesh();
 
-		void Render(const CU::Matrix44f& model); //todo: noooope not here: keep this in the instances
-		void Render();
+		void Render(const CU::Matrix44f& model, RenderMode rendermode = RENDERMODE_TRIANGLES); //todo: noooope not here: keep this in the instances
+		void Render(const CU::Matrix44f& model, std::string overrideShader, RenderMode rendermode = RENDERMODE_TRIANGLES);
+		void Render(RenderMode rendermode = RENDERMODE_TRIANGLES);
 		
 
 		void SetPolygonMode(PolygonMode mode) { m_polygonMode = mode; }
@@ -74,7 +85,7 @@ namespace GLEN
 		void SetIndexData(unsigned int data[], int size);
 		int Finalize(DrawFrequency frequency, std::string id); //todo: raii
 
-		void RenderInternal();
+		void RenderInternal(RenderMode rendermode);
 		void InitInterleaved();
 		void InitNonInterleaved();
 		std::string m_id;

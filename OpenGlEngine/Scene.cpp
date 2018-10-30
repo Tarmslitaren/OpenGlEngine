@@ -7,7 +7,7 @@ using namespace GLEN;
 Scene::Scene()
 {
 	AddLightShader("lightShader");
-	AddLightShader("lightShaderNoAlpha");
+	AddLightShader("explode");
 }
 
 
@@ -31,6 +31,11 @@ void GLEN::Scene::Render()
 	for (ModelInstance* model : m_models)
 	{
 		model->Render();
+	}
+	//if renderNormals
+	for (ModelInstance* model : m_models)
+	{
+		model->RenderNormals();
 	}
 
 	if (m_skyBox != nullptr)

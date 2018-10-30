@@ -46,21 +46,24 @@ void GLEN::Material::InitShaderVariables()
 	ErrorHandler::CheckError("InitShaderVariables end");
 }
 
-void GLEN::Material::Render(const CU::Matrix44f& model)
+void GLEN::Material::Render(const CU::Matrix44f& model, std::string overrideShader)
 {
+	ShaderProgram* original = m_shader;
+	if (overrideShader.size() > 0)
+	{
+		m_shader = Engine::GetInstance()->GetShaderContainer().GetShaderProgram(overrideShader);
+	}
 	RenderInternal();
 
 	//todo: I've made a horrible mistake! in marrying materials to meshes, made it difficult to easily create new instances with different shaders.
 	//update shader vars from model instance
 	Camera cam = Engine::GetInstance()->GetCamera();
-	auto projection = cam.GetProjection();
-	auto view = cam.GetView();
-	//m_shaderProgram.setMatrix("transform", m_model * view * projection);
-
 
 	m_shader->setMatrix("model", model);
 
 	m_shader->setVector("viewPos", cam.GetPosition());
+
+	m_shader = original;
 }
 
 void GLEN::Material::Render()

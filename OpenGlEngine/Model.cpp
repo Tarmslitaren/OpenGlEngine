@@ -17,11 +17,19 @@ GLEN::Model::Model(std::string id, Mesh* mesh)
 	m_meshes.push_back(mesh);
 }
 
-void GLEN::Model::Render(const CU::Matrix44f& model)
+void GLEN::Model::Render(const CU::Matrix44f& model, RenderMode rendermode)
 {
 	for (unsigned int i = 0; i < m_meshes.size(); i++)
 	{
-		m_meshes[i]->Render(model);
+		m_meshes[i]->Render(model, rendermode);
+	}
+}
+
+void GLEN::Model::Render(const CU::Matrix44f & model, std::string shaderId, RenderMode rendermode)
+{
+	for (unsigned int i = 0; i < m_meshes.size(); i++)
+	{
+		m_meshes[i]->Render(model, shaderId, rendermode);
 	}
 }
 

@@ -10,7 +10,7 @@ namespace GLEN
 		~ShaderContainer();
 		ShaderProgram* GetShaderProgram(int handle);
 		ShaderProgram* GetShaderProgram(std::string id);
-		ShaderProgram* CreateShaderProgram(std::string id, std::string vertexShader, std::string fragmentShader);
+		ShaderProgram* CreateShaderProgram(std::string id, std::string vertexShader, std::string fragmentShader, std::string geometryShader = "");
 	private:
 		std::vector<ShaderProgram*> m_shaders;
 	};

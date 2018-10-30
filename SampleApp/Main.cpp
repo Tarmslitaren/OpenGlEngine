@@ -54,6 +54,7 @@ int main()
 	GLEN::SkyBox* skyBox = new GLEN::SkyBox("skybox", cubemapImages);
 	scene.SetSkyBox(skyBox);
 
+	GLEN::ShaderProgram* explodeshader = engine.GetShaderContainer().CreateShaderProgram("explode", "lightingShader.vert", "lightingShaderGeom.frag", "explode.geom");
 
 	GLEN::Material material("lightShader");
 	material.AddDiffuseTexture("container2.png", 0);
@@ -93,15 +94,16 @@ int main()
 	GLEN::Mesh* meshr = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateBox("cuber", { 2,2,1 }, materialr));
 	engine.GetModelContainer().CreateModel("cuber", meshr);
 	GLEN::ModelInstance* instancer = new GLEN::ModelInstance("cuber");
-	scene.AddModel(instancer);
+	//scene.AddModel(instancer);
 
 
 	//loaded model
-	GLEN::Material material2("lightShaderNoAlpha");
+	GLEN::Material material2("lightShader");
 	material2.InitShaderVariables();
 	engine.GetModelContainer().CreateModel("nanosuit/nanosuit.obj", material2);
 	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit");
 	instance->SetScale(0.1f);
+	//instance->SetRendeMode(GLEN::RENDERMODE_LINE_LOOP);
 	scene.AddModel(instance);
 	//instance->SetOutline(0.2f);
 
@@ -125,6 +127,33 @@ int main()
 		instance->SetPosition(vegetationPos[i]);
 		scene.AddModel(instance, true);
 	}
+
+	//geometry shader test
+	GLEN::VertexContent content;
+	content.positions = {
+	-0.5f,  0.5f, 0, // top-left
+	 0.5f,  0.5f, 0, // top-right
+	 0.5f, -0.5f, 0, // bottom-right
+	-0.5f, -0.5f, 0  // bottom-left
+	};
+
+	content.colors = {
+	1.0f, 0.0f, 0.0f, // top-left
+	0.0f, 1.0f, 0.0f, // top-right
+	0.0f, 0.0f, 1.0f, // bottom-right
+	1.0f, 1.0f, 0.0f  // bottom-left
+	};
+
+	engine.GetShaderContainer().CreateShaderProgram("simpleGeom", "simple.vert", "singleColor.frag", "houses.geom");
+	GLEN::Material geomMaterial("simpleGeom");
+	geomMaterial.InitShaderVariables();
+	int geomMeshId = engine.GetMeshContainer().CreateMesh("points", content, geomMaterial);
+	GLEN::Mesh* geomMesh = engine.GetMeshContainer().GetMesh(geomMeshId);
+	engine.GetModelContainer().CreateModel("points", geomMesh);
+	//geomMesh->SetPolygonMode(GLEN::PolygonMode::POLYGONMODE_POINT);
+	GLEN::ModelInstance* pointsinstance = new GLEN::ModelInstance("points");
+	pointsinstance->SetRendeMode(GLEN::RENDERMODE_POINTS);
+	//scene.AddModel(pointsinstance);
 
 
 	//init lights:
@@ -188,7 +217,6 @@ int main()
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
 
-	
 
 	InputController inputController;
 
@@ -232,7 +260,7 @@ int main()
 
 		inputController.Update(deltaTime);
 
-
+		explodeshader->setFloat("time", glfwGetTime());
 		//move the light
 		//float radius = 5.0f;
 		//float camX = sin(glfwGetTime()) * radius;

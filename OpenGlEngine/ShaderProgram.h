@@ -17,7 +17,7 @@ namespace GLEN
 	{
 	public:
 		ShaderProgram();
-		ShaderProgram(std::string id, std::string vertexPath, std::string fragmentPath);
+		ShaderProgram(std::string id, std::string vertexPath, std::string fragmentPath, std::string geometryShader);
 		~ShaderProgram();
 		int GetHandle() { return m_shaderProgramHandle; }
 		std::string GetId() { return m_id; }
@@ -30,12 +30,15 @@ namespace GLEN
 		void setVector(const std::string &name, CU::Vector3f vector);
 		void setVector4(const std::string &name, CU::Vector4f vector);
 	private:
-		bool AddShader(const char* path, int& handle, ShaderType shaderType);
-		bool AddVertexShader(const char* source);
-		bool AddFragmentShader(const char* source);
+		bool AddShader(std::string path, int& handle, ShaderType shaderType);
+		bool AddVertexShader(std::string source);
+		bool AddFragmentShader(std::string source);
+		bool AddGeometryShader(std::string source);
 		int Finalize(); //returns the handle
+		std::string ReadFromFile(std::string path);
 		int m_vertexShaderHandle;
 		int m_fragmentShaderHandle;
+		int m_geometryShaderHandle;
 		int m_shaderProgramHandle;
 		std::string m_id;
 	};

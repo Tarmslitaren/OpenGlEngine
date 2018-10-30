@@ -157,9 +157,6 @@
     <None Include="..\Workbed\lightingShader.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\Workbed\lightingShaderNoAlpha.frag">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="..\Workbed\pp_blur.frag">
       <Filter>shaders</Filter>
     </None>
@@ -203,6 +200,21 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="..\Workbed\skybox.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\houses.geom">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\explode.geom">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\lightingShaderGeom.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\drawNormals.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\drawNormals.geom">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

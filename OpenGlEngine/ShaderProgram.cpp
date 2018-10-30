@@ -13,49 +13,25 @@ GLEN::ShaderProgram::ShaderProgram()
 	m_vertexShaderHandle = -1;
 	m_fragmentShaderHandle = -1;
 	m_shaderProgramHandle = -1;
+	m_geometryShaderHandle = -1;
 }
 
 
-GLEN::ShaderProgram::ShaderProgram(std::string id, std::string vertexPath, std::string fragmentPath)
+GLEN::ShaderProgram::ShaderProgram(std::string id, std::string vertexPath, std::string fragmentPath, std::string geometryPath)
 {
 	m_id = id;
 	ShaderProgram::ShaderProgram();
 
-	// 1. retrieve the vertex/fragment source code from filePath
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-	// ensure ifstream objects can throw exceptions:
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try
+	std::string vertexSource = ReadFromFile(vertexPath);
+	std::string fragmentSource = ReadFromFile(fragmentPath);
+	AddVertexShader(vertexSource);
+	AddFragmentShader(fragmentSource);
+	if (geometryPath.size() > 0) 
 	{
-		// open files
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
-		std::stringstream vShaderStream, fShaderStream;
-		// read file's buffer contents into streams
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-		// close file handlers
-		vShaderFile.close();
-		fShaderFile.close();
-		// convert stream into string
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
-	}
-	catch (std::ifstream::failure e)
-	{
-		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: " <<std::endl;
+		std::string geometrySource = ReadFromFile(geometryPath);
+		AddGeometryShader(geometrySource);
 	}
 
-	//todo: use FI_File instead
-
-	const char* vShaderCode = vertexCode.c_str();
-	const char* fShaderCode = fragmentCode.c_str();
-	AddVertexShader(vShaderCode);
-	AddFragmentShader(fShaderCode);
 	Finalize();
 
 	//basically  all shaders need the view and projection matrices
@@ -67,7 +43,7 @@ ShaderProgram::~ShaderProgram()
 {
 }
 
-bool GLEN::ShaderProgram::AddVertexShader(const char * source)
+bool GLEN::ShaderProgram::AddVertexShader(std::string source)
 {
 
 // source for GLSL compiler
@@ -100,9 +76,14 @@ bool GLEN::ShaderProgram::AddVertexShader(const char * source)
 	return true;
 }
 
-bool GLEN::ShaderProgram::AddFragmentShader(const char * source)
+bool GLEN::ShaderProgram::AddFragmentShader(std::string source)
 {
 	return AddShader(source, m_fragmentShaderHandle, GLEN::FRAGMENT_SHADER);
+}
+
+bool GLEN::ShaderProgram::AddGeometryShader(std::string source)
+{
+	return AddShader(source, m_geometryShaderHandle, GLEN::GEOMETRY_SHADER);
 }
 
 int GLEN::ShaderProgram::Finalize()
@@ -115,6 +96,10 @@ int GLEN::ShaderProgram::Finalize()
 	if (m_fragmentShaderHandle > 0)
 	{
 		glAttachShader(m_shaderProgramHandle, m_fragmentShaderHandle);
+	}
+	if (m_geometryShaderHandle > 0)
+	{
+		glAttachShader(m_shaderProgramHandle, m_geometryShaderHandle);
 	}
 	glLinkProgram(m_shaderProgramHandle);
 
@@ -132,6 +117,33 @@ int GLEN::ShaderProgram::Finalize()
 	glDeleteShader(m_fragmentShaderHandle);
 
 	return m_shaderProgramHandle;
+}
+
+std::string GLEN::ShaderProgram::ReadFromFile(std::string path)
+{
+	// 1. retrieve the vertex/fragment source code from filePath
+	std::string shaderCode;
+	std::ifstream shaderFile;
+	// ensure ifstream objects can throw exceptions:
+	shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try
+	{
+		// open file
+		shaderFile.open(path);
+		std::stringstream shaderStream;
+		// read file's buffer contents into streams
+		shaderStream << shaderFile.rdbuf();
+		// close file handler
+		shaderFile.close();
+		// convert stream into string
+		shaderCode = shaderStream.str();
+	}
+	catch (std::ifstream::failure e)
+	{
+		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: " << path << std::endl;
+	}
+	return shaderCode;
+	//todo: use FI_File instead
 }
 
 void GLEN::ShaderProgram::use()
@@ -212,11 +224,12 @@ void GLEN::ShaderProgram::setVector4(const std::string & name, CU::Vector4f vect
 	}
 }
 
-bool GLEN::ShaderProgram::AddShader(const char * source, int& handle, ShaderType shaderType)
+bool GLEN::ShaderProgram::AddShader(std::string source, int& handle, ShaderType shaderType)
 {
 	handle = glCreateShader(shaderType);
 
-	glShaderSource(handle, 1, &source, NULL);
+	const char * cSource = source.c_str();
+	glShaderSource(handle, 1, &cSource, NULL);
 	glCompileShader(handle);
 
 	//check for compile error

@@ -37,7 +37,7 @@ ShaderProgram * GLEN::ShaderContainer::GetShaderProgram(std::string id)
 	return nullptr;
 }
 
-ShaderProgram * GLEN::ShaderContainer::CreateShaderProgram(std::string id, std::string vertexShader, std::string fragmentShader)
+ShaderProgram * GLEN::ShaderContainer::CreateShaderProgram(std::string id, std::string vertexShader, std::string fragmentShader, std::string geometryShader)
 {
 	for (ShaderProgram* shaderProgram : m_shaders) //sanity check
 	{
@@ -46,7 +46,7 @@ ShaderProgram * GLEN::ShaderContainer::CreateShaderProgram(std::string id, std::
 			return shaderProgram;
 		}
 	}
-	GLEN::ShaderProgram* shaderProgram = new ShaderProgram(id, vertexShader, fragmentShader);
+	GLEN::ShaderProgram* shaderProgram = new ShaderProgram(id, vertexShader, fragmentShader, geometryShader);
 	m_shaders.push_back(shaderProgram);
 	return shaderProgram;
 }

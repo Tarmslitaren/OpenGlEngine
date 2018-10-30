@@ -17,7 +17,8 @@ namespace GLEN
 		Model(std::string path, const Material& material, bool loadInterleaved = true); //load from file
 		Model(std::string id, Mesh* mesh);
 		void AddMesh(Mesh* mesh) { m_meshes.push_back(mesh); }
-		void Render(const CU::Matrix44f& model);
+		void Render(const CU::Matrix44f& model, RenderMode rendermode = RENDERMODE_TRIANGLES);
+		void Render(const CU::Matrix44f& model, std::string shaderId, RenderMode rendermode = RENDERMODE_TRIANGLES);
 		std::string GetId() { return m_directory; }
 	private:
 		void loadModel(std::string path, const Material& material);

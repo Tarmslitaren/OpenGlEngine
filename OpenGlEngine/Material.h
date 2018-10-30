@@ -13,7 +13,7 @@ namespace GLEN
 		Material(std::string shader);
 		~Material();
 		void InitShaderVariables();
-		void Render(const CU::Matrix44f& model);
+		void Render(const CU::Matrix44f& model, std::string overrideShader = "");
 		void Render();
 		void AddDiffuseTexture(std::string path, int binding, bool transparant = false);
 		void AddDiffuseTexture(int textureHandle, int binding, bool transparant = false);

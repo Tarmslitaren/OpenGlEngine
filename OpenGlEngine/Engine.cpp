@@ -38,12 +38,14 @@ m_input(m_window.GetWindow())
 
 	//is this the place? or is it in shader container? or light container?
 	m_shaderContainer.CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
-	m_shaderContainer.CreateShaderProgram("lightShaderNoAlpha", "lightingShader.vert", "lightingShaderNoAlpha.frag");
 	m_shaderContainer.CreateShaderProgram("reflectShader", "reflection.vert", "reflection.frag");
 	m_shaderContainer.CreateShaderProgram("refractShader", "reflection.vert", "refraction.frag");
 	//Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("depthTestShader", "depthTest.vert", "depthTest.frag");
 
+
 	m_shaderContainer.CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
+
+	m_shaderContainer.CreateShaderProgram("drawNormals", "drawNormals.vert", "singleColor.frag", "drawNormals.geom");
 }
 
 
@@ -76,8 +78,7 @@ void GLEN::Engine::RenderScene()
 {
 	//clear color for test
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glStencilMask(0x00); //reset stencil
 	(*m_scenes[m_currentScene]).RenderWithPostProcess();
 }
