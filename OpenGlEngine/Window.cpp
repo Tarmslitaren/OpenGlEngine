@@ -54,6 +54,8 @@ void Window::Create(SetupInfo setupInfo)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //this needed for mac osX
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
+	glfwWindowHint(GLFW_SAMPLES, 4); //need 4 samples for MSAA antialiasing
 	
 
 	m_window = glfwCreateWindow(setupInfo.m_resolution.width, setupInfo.m_resolution.height, "LearnOpenGL", NULL, NULL);

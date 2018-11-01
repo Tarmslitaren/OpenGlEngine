@@ -294,6 +294,7 @@ int main()
 
 	//main loop
 	int sceneIndex = 0;
+	bool msaaOn = false;
 	while (engine.Update(deltaTime)) {
 
 		if (engine.GetInput().GetKeyPressed(GLEN::KEY_ESC)) {
@@ -333,6 +334,12 @@ int main()
 				sceneIndex = 0;
 			}
 			engine.GetSceneContainer().SetCurrentScene(sceneIndex);
+		}
+
+		if (engine.GetInput().GetKeyPressed(GLFW_KEY_M))
+		{
+			engine.GetSceneContainer().GetCurrentScene().GetPostProcess().SetUseMSAA(msaaOn);
+			msaaOn = !msaaOn;
 		}
 
 		

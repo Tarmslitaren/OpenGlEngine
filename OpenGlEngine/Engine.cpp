@@ -26,6 +26,8 @@ m_input(m_window.GetWindow())
 	//test
 	//glDepthFunc(GL_ALWAYS);
 
+	glEnable(GL_MULTISAMPLE); //this is most likely enabled by default
+
 
 
 	//this can potentially increase performace > 50% but onl yworks for models with properly winded triangles...
