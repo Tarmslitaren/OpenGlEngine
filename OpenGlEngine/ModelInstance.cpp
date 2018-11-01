@@ -60,6 +60,13 @@ void GLEN::ModelInstance::SetOutline(float thickness, CU::Vector4f color)
 }
 
 
+void GLEN::ModelInstance::GetModelMatrix(CU::Matrix44f & out)
+{
+	out = CU::Matrix44f::Identity();
+	out = m_orientation;
+	out.SetPosition(m_position);
+}
+
 void GLEN::ModelInstance::DrawOutline()
 {
 	//todo: thsi doesn't work with postprocess on

@@ -37,6 +37,26 @@ void GLEN::Mesh::Render(const CU::Matrix44f & model, std::string overrideShader,
 	RenderInternal(rendermode);
 }
 
+void GLEN::Mesh::RenderInstanced(const std::vector<CU::Matrix44f>& models, RenderMode rendermode)
+{
+
+
+
+
+	m_material.Render(models[0]);
+	//Camera cam = Engine::GetInstance()->GetCamera();
+	//m_material.->setVector("viewPos", cam.GetPosition());
+
+;	glBindVertexArray(m_vertexArrayObjectHandle);
+	//todo: only supports indexed meshes for instancing
+	glDrawElementsInstanced(rendermode, m_vertexData.indexes.size(), GL_UNSIGNED_INT, 0, models.size());
+	
+
+	//RenderInternal(rendermode);
+
+	glBindVertexArray(0);
+}
+
 void GLEN::Mesh::Render(RenderMode rendermode)
 {
 	m_material.Render(); //this method should only be run from here and needs to be run from here.
@@ -64,6 +84,7 @@ void GLEN::Mesh::SetIndexData(unsigned int data[], int size)
 
 int GLEN::Mesh::Finalize(DrawFrequency frequency, std::string id)
 {
+
 	m_frequency = frequency;
 	m_id = id;
 

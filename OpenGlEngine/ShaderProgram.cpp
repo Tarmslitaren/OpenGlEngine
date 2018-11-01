@@ -48,14 +48,15 @@ bool GLEN::ShaderProgram::AddVertexShader(std::string source)
 
 // source for GLSL compiler
 // you can prepare this array at runtime to support multiple shaders with different attributes
-	std::string one = "#version 330 core\n"
+	std::string header = "#version 330 core\n"
 		"#define VERTEX_LAYOUT_POSITION " + std::to_string((int)VERTEX_LAYOUT_POSITION) + "\n"
 		"#define VERTEX_LAYOUT_TEXCOORDS " + std::to_string((int)VERTEX_LAYOUT_TEXCOORDS) + "\n"
 		"#define VERTEX_LAYOUT_NORMALS " + std::to_string((int)VERTEX_LAYOUT_NORMALS) + "\n"
 		"#define VERTEX_LAYOUT_COLOR " + std::to_string((int)VERTEX_LAYOUT_COLOR) + "\n"
+		"#define VERTEX_LAYOUT_INSTANCE_MATRIX " + std::to_string((int)VERTEX_LAYOUT_INSTANCE_MATRIX) + "\n"
 		"//"; //to comment out the #version 330 core line in the actual shader
 	
-	std::string res = one + source;
+	std::string res = header + source;
 
 	m_vertexShaderHandle = glCreateShader(GLEN::VERTEX_SHADER);
 	const GLchar* result = res.c_str();

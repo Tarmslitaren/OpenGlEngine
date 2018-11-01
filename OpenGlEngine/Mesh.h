@@ -71,6 +71,7 @@ namespace GLEN
 
 		void Render(const CU::Matrix44f& model, RenderMode rendermode = RENDERMODE_TRIANGLES); //todo: noooope not here: keep this in the instances
 		void Render(const CU::Matrix44f& model, std::string overrideShader, RenderMode rendermode = RENDERMODE_TRIANGLES);
+		void RenderInstanced(const std::vector<CU::Matrix44f>& models, RenderMode rendermode = RENDERMODE_TRIANGLES);
 		void Render(RenderMode rendermode = RENDERMODE_TRIANGLES);
 		
 

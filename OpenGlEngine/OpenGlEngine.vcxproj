@@ -165,6 +165,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneContainer.cpp" />
     <ClCompile Include="ShaderContainer.cpp" />
     <ClCompile Include="ShaderInput.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="PostProcess.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneContainer.h" />
     <ClInclude Include="ShaderContainer.h" />
     <ClInclude Include="ShaderInput.h" />
     <ClInclude Include="ShaderProgram.h" />
@@ -214,6 +216,7 @@
     <None Include="..\Workbed\lightingShader.frag" />
     <None Include="..\Workbed\lightingShader.vert" />
     <None Include="..\Workbed\lightingShaderGeom.frag" />
+    <None Include="..\Workbed\lightingShaderInstanced.vert" />
     <None Include="..\Workbed\pp_blur.frag" />
     <None Include="..\Workbed\pp_edges.frag" />
     <None Include="..\Workbed\pp_grayscale.frag" />
@@ -230,6 +233,7 @@
     <None Include="..\Workbed\singleColor.frag" />
     <None Include="..\Workbed\skybox.frag" />
     <None Include="..\Workbed\skybox.vert" />
+    <None Include="..\Workbed\textureNoLighting.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

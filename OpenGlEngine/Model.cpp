@@ -9,6 +9,28 @@ GLEN::Model::Model(std::string path, const Material& material, bool loadInterlea
 {
 	m_loadInterleaved = loadInterleaved;
 	loadModel(path, material);
+
+	//instancing buffer init
+	glGenBuffers(1, &m_instantiationBuffer);
+
+
+	//init instantiation
+	glBindBuffer(GL_ARRAY_BUFFER, m_instantiationBuffer);
+
+	GLsizei vec4Size = sizeof(CU::Vector4f);
+	glEnableVertexAttribArray(VERTEX_LAYOUT_INSTANCE_MATRIX);
+	glVertexAttribPointer(VERTEX_LAYOUT_INSTANCE_MATRIX, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)0);
+	glEnableVertexAttribArray(VERTEX_LAYOUT_INSTANCE_MATRIX + 1);
+	glVertexAttribPointer(VERTEX_LAYOUT_INSTANCE_MATRIX + 1, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(vec4Size));
+	glEnableVertexAttribArray(VERTEX_LAYOUT_INSTANCE_MATRIX + 2);
+	glVertexAttribPointer(VERTEX_LAYOUT_INSTANCE_MATRIX + 2, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(2 * vec4Size));
+	glEnableVertexAttribArray(VERTEX_LAYOUT_INSTANCE_MATRIX + 3);
+	glVertexAttribPointer(VERTEX_LAYOUT_INSTANCE_MATRIX + 3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(3 * vec4Size));
+
+	glVertexAttribDivisor(VERTEX_LAYOUT_INSTANCE_MATRIX, 1);
+	glVertexAttribDivisor(VERTEX_LAYOUT_INSTANCE_MATRIX + 1, 1);
+	glVertexAttribDivisor(VERTEX_LAYOUT_INSTANCE_MATRIX + 2, 1);
+	glVertexAttribDivisor(VERTEX_LAYOUT_INSTANCE_MATRIX + 3, 1);
 }
 
 GLEN::Model::Model(std::string id, Mesh* mesh)
@@ -31,6 +53,28 @@ void GLEN::Model::Render(const CU::Matrix44f & model, std::string shaderId, Rend
 	{
 		m_meshes[i]->Render(model, shaderId, rendermode);
 	}
+}
+
+void GLEN::Model::RenderInstanced(const std::vector<CU::Matrix44f>& models, bool staticObjects, RenderMode rendermode)
+{
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_instantiationBuffer);
+	if (!staticObjects) {
+		int size = models.size() * sizeof(CU::Matrix44f);
+		glBufferData(GL_ARRAY_BUFFER, size, &models[0], GL_STATIC_DRAW);
+	}
+
+	for (unsigned int i = 0; i < m_meshes.size(); i++)
+	{
+		m_meshes[i]->RenderInstanced(models);
+	}
+}
+
+void GLEN::Model::SetStaticModels(const std::vector<CU::Matrix44f>& models)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, m_instantiationBuffer);
+	int size = models.size() * sizeof(CU::Matrix44f);
+	glBufferData(GL_ARRAY_BUFFER, size, &models[0], GL_STATIC_DRAW);
 }
 
 void GLEN::Model::loadModel(std::string path, const Material& material)
@@ -240,6 +284,7 @@ Mesh * GLEN::Model::processMeshInterleaved(aiMesh * aiMesh, const aiScene * scen
 	content.vertexLayout = vertexLayout;
 
 	std::string id = aiMesh->mName.C_Str(); //todo: this is unsafe, there might not be a name
+
 
 	int handle = Engine::GetInstance()->GetMeshContainer().CreateMesh(id, content, material);
 	Mesh* mesh = Engine::GetInstance()->GetMeshContainer().GetMesh(handle);

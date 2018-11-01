@@ -135,6 +135,11 @@ void ErrorHandler::InitDebugOutput()
 	}
 }
 
+void ErrorHandler::Output(std::string errorMessage)
+{
+	std::cout << errorMessage << std::endl;
+}
+
 //code to draw output in corner
 /*bool initialized = false;
 void DisplayFramebufferTexture(GLuint textureID)

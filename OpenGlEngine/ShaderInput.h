@@ -10,6 +10,7 @@ namespace GLEN
 		~ShaderInput();
 		void SetMatrixes(const CU::Matrix44<float>& projection, const CU::Matrix44<float>& view);
 		void AddUniformBufferBinding(std::string id, int shaderHandle);
+		void UpdateStandardUniforms();
 	private:
 		unsigned int m_Matrices;
 	};

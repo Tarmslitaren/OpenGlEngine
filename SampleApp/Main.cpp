@@ -18,6 +18,7 @@
 #include "ErrorHandler.h"
 #include "Mesh.h"
 #include "ShaderInput.h"
+#include "SceneContainer.h"
 
 int main()
 {
@@ -27,7 +28,7 @@ int main()
 
 	GLEN::Engine::Create(info);
 	GLEN::Engine& engine = *GLEN::Engine::GetInstance();
-	GLEN::Scene& scene = engine.GetCurrentScene();
+	GLEN::Scene& scene = engine.GetSceneContainer().AddScene();
 
 	CU::Vector3f cubePositions[] = {
 	  CU::Vector3f(0.0f,  0.0f,  0.0f),
@@ -54,7 +55,6 @@ int main()
 	GLEN::SkyBox* skyBox = new GLEN::SkyBox("skybox", cubemapImages);
 	scene.SetSkyBox(skyBox);
 
-	GLEN::ShaderProgram* explodeshader = engine.GetShaderContainer().CreateShaderProgram("explode", "lightingShader.vert", "lightingShaderGeom.frag", "explode.geom");
 
 	GLEN::Material material("lightShader");
 	material.AddDiffuseTexture("container2.png", 0);
@@ -196,7 +196,7 @@ int main()
 		light->SetSpecular({ 1.0f, 1.0f, 1.0f });
 		light->SetAttenuation(0.09f, 0.032f, 1);
 
-		scene.AddLight(light);
+		//scene.AddLight(light);
 	}
 
 
@@ -210,13 +210,74 @@ int main()
 	flashlight->SetSpotlightRadius(12.5f, 17.5f);
 	scene.AddLight(flashlight);
 
+	/////////////////////////////////// second scene ////////////////////
 
-	engine.GetCamera().SetProjection(45, info.m_resolution.width / info.m_resolution.height);
+
+	GLEN::Scene& scene2 = engine.GetSceneContainer().AddScene();
+	engine.GetSceneContainer().SetCurrentScene(scene2);
+	
+	engine.GetSceneContainer().SetCurrentScene(scene2);
+	scene2.AddLight(flashlight);
+	scene2.AddLight(light);
+
+	scene2.SetSkyBox(skyBox);
+
+	//scene2.AddModel(instance);
+
+	//loaded space models
+	GLEN::Material material3("noLightShaderInstanced");
+	material3.InitShaderVariables();
+	engine.GetModelContainer().CreateModel("planet/planet.obj", material2);
+	GLEN::ModelInstance* planet = new GLEN::ModelInstance("planet");
+	//instance->SetScale(0.1f);
+	scene2.AddModel(planet);
+
+	engine.GetModelContainer().CreateModel("rock/rock.obj", material3);
+
+	int amount = 10000;
+	srand(glfwGetTime()); // initialize random seed	
+	float radius = 150.0;
+	float offset = 25.f;
+	for (int i = 0; i < amount; i++)
+	{
+		GLEN::ModelInstance* rock = new GLEN::ModelInstance("rock");
+		//rock->SetStatic(true);
+		scene2.AddModel(rock, true);
+
+
+		//placement generation
+		// 1. translation: displace along circle with 'radius' in range [-offset, offset]
+		float angle = (float)i / (float)amount * 360.0f;
+		float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float x = sin(angle) * radius + displacement;
+		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float y = displacement * 0.4f; // keep height of field smaller compared to width of x and z
+		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float z = cos(angle) * radius + displacement;
+
+		// 2. scale: Scale between 0.05 and 0.25f
+		float scale = (rand() % 20) / 100.0f + 0.05;
+
+		// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
+		float rotAngle = (rand() % 360);
+
+		CU::Matrix33f ori = CU::Matrix33f::Identity();
+		ori.SetRotationX(rotAngle * 0.4);
+		ori.SetRotationY(rotAngle * 0.6);
+		ori.SetRotationZ(rotAngle * 0.8);
+		CU::Vector3f pos{ x, y, z };
+		rock->SetOrientation(ori);
+		rock->SetPosition(pos);
+		rock->SetScale(scale);
+	}
+
+
+	engine.GetCamera().SetProjection(45, info.m_resolution.width / info.m_resolution.height, 0.1, 1000);
 	engine.GetCamera().UpdateShaders();
 
 	float deltaTime = 0.0f;	// Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
-
+	bool renderNormals = false;
 
 	InputController inputController;
 
@@ -230,7 +291,9 @@ int main()
 		"pp_simple"
 
 	};
+
 	//main loop
+	int sceneIndex = 0;
 	while (engine.Update(deltaTime)) {
 
 		if (engine.GetInput().GetKeyPressed(GLEN::KEY_ESC)) {
@@ -254,13 +317,32 @@ int main()
 			scene.GetPostProcess().SetShader(ppEffects[index]);
 		}
 
+		if (engine.GetInput().GetKeyPressed(GLFW_KEY_R))
+		{
+			renderNormals = !renderNormals;
+			scene.RenderNormals(renderNormals);
+		}
+
+		if (engine.GetInput().GetKeyPressed(GLFW_KEY_Y))
+		{
+			if (sceneIndex == 0)
+			{
+				sceneIndex = 1;
+			}
+			else {
+				sceneIndex = 0;
+			}
+			engine.GetSceneContainer().SetCurrentScene(sceneIndex);
+		}
+
+		
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
 		inputController.Update(deltaTime);
 
-		explodeshader->setFloat("time", glfwGetTime());
+
 		//move the light
 		//float radius = 5.0f;
 		//float camX = sin(glfwGetTime()) * radius;
@@ -273,7 +355,6 @@ int main()
 		flashlight->SetPosition(engine.GetCamera().GetPosition());
 		flashlight->SetDirection(inputController.GetFront());
 
-		
 		//compared to opengl the x axis is reversed. this is fine, as now positive rotation over x axis is clockwize and not flipped.
 		//also the order of matrix multiplication is reversed, now read from left to right instead of right to left...
 		engine.RenderScene();
@@ -291,7 +372,7 @@ int main()
 		ErrorHandler::CheckError("mainloop 1");
 
 		//move the cube:
-			float radius = 5.0f;
+		float radius = 5.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
 		auto pos = CU::Vector3f(camX, 0, camZ);

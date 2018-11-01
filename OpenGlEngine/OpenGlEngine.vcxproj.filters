@@ -79,6 +79,7 @@
     </ClInclude>
     <ClInclude Include="ErrorHandler.h" />
     <ClInclude Include="ShaderInput.h" />
+    <ClInclude Include="SceneContainer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad\glad.c">
@@ -140,6 +141,7 @@
     </ClCompile>
     <ClCompile Include="ErrorHandler.cpp" />
     <ClCompile Include="ShaderInput.cpp" />
+    <ClCompile Include="SceneContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Workbed\depthTest.frag">
@@ -215,6 +217,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="..\Workbed\drawNormals.geom">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\lightingShaderInstanced.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\textureNoLighting.frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

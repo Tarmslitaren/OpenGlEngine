@@ -8,6 +8,9 @@ Scene::Scene()
 {
 	AddLightShader("lightShader");
 	AddLightShader("explode");
+	AddLightShader("lightShaderInstanced");
+	
+	SetUniforms();
 }
 
 
@@ -18,6 +21,7 @@ Scene::~Scene()
 void GLEN::Scene::Render()
 {
 
+	//todo: oct tree culling my god.
 
 	for (Light* light : m_lights)
 	{
@@ -32,10 +36,37 @@ void GLEN::Scene::Render()
 	{
 		model->Render();
 	}
-	//if renderNormals
-	for (ModelInstance* model : m_models)
+	for (auto it = m_instancedModels.rbegin(); it != m_instancedModels.rend(); ++it)
 	{
-		model->RenderNormals();
+		std::vector<CU::Matrix44f> models;
+		for (int i = 0; i < it->second.size(); i++)
+		{
+			CU::Matrix44f modelMatrix;
+			it->second.at(i)->GetModelMatrix(modelMatrix);
+			models.push_back(modelMatrix);
+		}
+		Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
+		model->RenderInstanced(models);
+	}
+
+	for (auto it = m_staticInstancedModels.rbegin(); it != m_staticInstancedModels.rend(); ++it)
+	{
+		Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
+		if (m_staticInstancedModels[it->first].dirty)
+		{
+			model->SetStaticModels(m_staticInstancedModels[it->first].modelMatrices);
+			m_staticInstancedModels[it->first].dirty = false;
+		}
+		//todo: no need to save the matrices here. huge waste of memory (64 bytes * nr models)
+		model->RenderInstanced(m_staticInstancedModels[it->first].modelMatrices, true);
+	}
+
+	//if renderNormals
+	if (m_renderNormals) {
+		for (ModelInstance* model : m_models)
+		{
+			model->RenderNormals();
+		}
 	}
 
 	if (m_skyBox != nullptr)
@@ -50,14 +81,32 @@ void GLEN::Scene::Update(float deltaTime)
 {
 }
 
-void GLEN::Scene::AddModel(ModelInstance * instance, bool transparent)
+void GLEN::Scene::AddModel(ModelInstance * instance, bool instanced, bool transparent)
 {
 	if (transparent == true) {
 		m_transparantModels.push_back(instance);
 	}
 	else
 	{
-		m_models.push_back(instance);
+		if (instanced)
+		{
+			if (instance->GetIsStaic() == true)
+			{
+				CU::Matrix44f modelMatrix;
+				instance->GetModelMatrix(modelMatrix);
+				m_staticInstancedModels[instance->GetModelId()].modelInstances.push_back(instance);
+				m_staticInstancedModels[instance->GetModelId()].modelMatrices.push_back(modelMatrix);
+				
+			}
+			else
+			{
+				m_instancedModels[instance->GetModelId()].push_back(instance);
+			}
+		}
+		else
+		{
+			m_models.push_back(instance);
+		}
 	}
 }
 
@@ -67,11 +116,21 @@ void GLEN::Scene::AddLight(Light * light)
 	if (light->GetType() == POINT_LIGHT)
 	{
 		m_nrOfPointLights++;
-		for (std::string id : m_lightShaders)
+		SetUniforms();
+	}
+}
+
+void GLEN::Scene::AddLightShader(std::string id)
+{
+	for (auto shader : m_lightShaders)
+	{
+		if (shader == id)
 		{
-			Engine::GetInstance()->GetShaderContainer().GetShaderProgram(id)->setInt("nrPointLights", m_nrOfPointLights);
+			//no duplicates
+			return;
 		}
 	}
+	m_lightShaders.push_back(id);
 }
 
 void GLEN::Scene::RenderWithPostProcess()
@@ -84,6 +143,19 @@ PostProcess & GLEN::Scene::GetPostProcess()
 	return m_postProcess;
 }
 
+void GLEN::Scene::SetActive()
+{
+	SetUniforms();
+	
+}
+
+void GLEN::Scene::SetUniforms()
+{
+	for (std::string id : m_lightShaders)
+	{
+		Engine::GetInstance()->GetShaderContainer().GetShaderProgram(id)->setInt("nrPointLights", m_nrOfPointLights);
+	}
+}
 
 void GLEN::Scene::RenderTransparantModels()
 {

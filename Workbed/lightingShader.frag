@@ -81,6 +81,7 @@ void main()
 	vec3 viewDir = normalize(inArgs.FragPos); // fragpos should be inverted here, but there is something off about my view matrix
    // vec3 viewDir = normalize(viewPos - FragPos);//if calculating the angle in the vertex shader
 
+   //todo: variable amount of dirlights and spotlights
     // phase 1: Directional lighting
     vec3 result = CalculateDirectionalLight(dirLight, norm, viewDir);
     // phase 2: Point lights

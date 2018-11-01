@@ -13,6 +13,7 @@ public:
 	static void CheckError(std::string note);
 	static void CheckErrorOnce(std::string note);
 	static void InitDebugOutput();
+	static void Output(std::string errorMessage);
 private:
 	static std::vector<std::string> m_checked;
 };

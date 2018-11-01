@@ -46,13 +46,12 @@ m_input(m_window.GetWindow())
 	m_shaderContainer.CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
 
 	m_shaderContainer.CreateShaderProgram("drawNormals", "drawNormals.vert", "singleColor.frag", "drawNormals.geom");
-}
 
+	m_shaderContainer.CreateShaderProgram("explode", "lightingShader.vert", "lightingShaderGeom.frag", "explode.geom");
 
-void GLEN::Engine::InitScene()
-{
-	Scene* scene = new Scene();
-	m_scenes.push_back(scene);
+	m_shaderContainer.CreateShaderProgram("lightShaderInstanced", "lightingShaderInstanced.vert", "lightingShader.frag");
+
+	m_shaderContainer.CreateShaderProgram("noLightShaderInstanced", "lightingShaderInstanced.vert", "textureNoLighting.frag");
 }
 
 Engine::~Engine()
@@ -64,8 +63,6 @@ Engine* Engine::Create(const SetupInfo & infoArgument)
 	if (s_instance == nullptr)
 	{
 		s_instance = new Engine(infoArgument);
-
-		s_instance->InitScene();
 	}
 	else
 	{
@@ -80,7 +77,7 @@ void GLEN::Engine::RenderScene()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glStencilMask(0x00); //reset stencil
-	(*m_scenes[m_currentScene]).RenderWithPostProcess();
+	m_sceneContainer.GetCurrentScene().RenderWithPostProcess();
 }
 
 void Engine::Destroy()
@@ -91,6 +88,7 @@ void Engine::Destroy()
 bool GLEN::Engine::Update(float deltaTime)
 {
 	m_input.Update(deltaTime);
-	m_shaderContainer.GetShaderProgram("reflectShader")->setVector("cameraPos", m_camera.GetPosition());
+
+	m_shaderInput.UpdateStandardUniforms();
 	return m_window.Update();
 }

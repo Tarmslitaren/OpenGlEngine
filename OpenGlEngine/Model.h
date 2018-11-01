@@ -19,6 +19,8 @@ namespace GLEN
 		void AddMesh(Mesh* mesh) { m_meshes.push_back(mesh); }
 		void Render(const CU::Matrix44f& model, RenderMode rendermode = RENDERMODE_TRIANGLES);
 		void Render(const CU::Matrix44f& model, std::string shaderId, RenderMode rendermode = RENDERMODE_TRIANGLES);
+		void RenderInstanced(const std::vector<CU::Matrix44f>& model , bool staticObjects = false, RenderMode rendermode = RENDERMODE_TRIANGLES);
+		void SetStaticModels(const std::vector<CU::Matrix44f>& model); //no use updating positions if they are static objects.
 		std::string GetId() { return m_directory; }
 	private:
 		void loadModel(std::string path, const Material& material);
@@ -28,6 +30,7 @@ namespace GLEN
 		std::vector<Mesh*> m_meshes; //todo: hierachy not preserved
 		std::string m_directory;
 		bool m_loadInterleaved;
+		unsigned int m_instantiationBuffer;
 	};
 }
 

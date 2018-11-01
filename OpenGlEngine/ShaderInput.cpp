@@ -44,3 +44,10 @@ void GLEN::ShaderInput::AddUniformBufferBinding(std::string id, int shaderHandle
 		glUniformBlockBinding(shaderHandle, uniformBlockIndex, 0);
 	
 }
+
+void GLEN::ShaderInput::UpdateStandardUniforms()
+{
+	//todo: general, not just these shaders.
+	Engine::GetInstance()->GetShaderContainer().GetShaderProgram("explode")->setFloat("time", glfwGetTime());
+	Engine::GetInstance()->GetShaderContainer().GetShaderProgram("reflectShader")->setVector("cameraPos", Engine::GetInstance()->GetCamera().GetPosition());
+}
