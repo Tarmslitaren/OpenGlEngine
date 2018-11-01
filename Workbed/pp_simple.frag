@@ -7,5 +7,9 @@ uniform sampler2D screenTexture;
 
 void main()
 { 
-    FragColor = texture(screenTexture, TexCoords);
+    vec4 fragColor = texture(screenTexture, TexCoords);
+
+	// apply gamma correction
+    float gamma = 2.2;
+    FragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
 }

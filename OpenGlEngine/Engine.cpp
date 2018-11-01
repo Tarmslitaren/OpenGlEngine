@@ -26,9 +26,9 @@ m_input(m_window.GetWindow())
 	//test
 	//glDepthFunc(GL_ALWAYS);
 
-	glEnable(GL_MULTISAMPLE); //this is most likely enabled by default
+	glEnable(GL_MULTISAMPLE); //this is most likely enabled by default. wont work on post process, so had to code that seperately in postprocess.
 
-
+	//glEnable(GL_FRAMEBUFFER_SRGB); //enable gama correction. only use if not using post process effects.
 
 	//this can potentially increase performace > 50% but onl yworks for models with properly winded triangles...
 	//glEnable(GL_CULL_FACE);

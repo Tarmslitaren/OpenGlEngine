@@ -100,8 +100,10 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     // diffuse shading: the closer to surface normal the brighter
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //vec3 reflectDir = reflect(-lightDir, normal); //phong
+	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	vec3 halfwayDir = normalize(lightDir + viewDir);  //this is blinn phong (generally the shininess varable needs to be 2-4 times as much for a similar result as normal phong
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     // combine results
     vec3 ambient  = light.ambient  * vec3(texture(material.diffuse[0], inArgs.TexCoords));
 	//vec3 ambient = light.ambient * material.ambient; //if not using texture
@@ -109,7 +111,8 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     vec3 specular = light.specular * spec * vec3(texture(material.specular[0], inArgs.TexCoords)); //specular: effect higher the smaller reverse angle from view.
 	//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
     return (ambient + diffuse + specular);
-}  
+}
+
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
@@ -117,11 +120,13 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     // diffuse shading: he closer to surface normal the brighter
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //vec3 reflectDir = reflect(-lightDir, normal); //phong
+	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	vec3 halfwayDir = normalize(lightDir + viewDir);  //this is blinn phong (generally the shininess varable needs to be 2-4 times as much for a similar result as normal phong
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     // attenuation
     float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / distance;//(light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
     // combine results
     vec3 ambient  = light.ambient  * vec3(texture(material.diffuse[0], inArgs.TexCoords));
 	//vec3 ambient = light.ambient * material.ambient; //if not using texture
@@ -141,11 +146,13 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
     // diffuse shading: he closer to surface normal the brighter
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //vec3 reflectDir = reflect(-lightDir, normal); //phong
+	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	vec3 halfwayDir = normalize(lightDir + viewDir);  //this is blinn phong (generally the shininess varable needs to be 2-4 times as much for a similar result as normal phong
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     // attenuation
     float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / distance;// (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
     
 
 		//spotlight

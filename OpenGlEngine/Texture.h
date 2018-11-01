@@ -19,11 +19,12 @@ namespace GLEN
 	public:
 		Texture();
 		~Texture();
-		bool LoadTexture(std::string path, bool transparant = false);
-		bool LoadCubeMap(std::string id, std::vector< std::pair <std::string, CubeMapOrientation> > paths);
+		bool LoadTexture(std::string path, bool gammaCorrect = false, bool transparant = false);
+		bool LoadCubeMap(std::string id, std::vector< std::pair <std::string, CubeMapOrientation> > paths, bool gammaCorrect = true);
 		unsigned int getHandle() { return m_handle; }
 		const std::string& getPath() { return m_path; }
 	private:
+		void GetFormats(int channels, int& format1, int& format2, bool gammaCorrect);
 		int m_width;
 		int m_height;
 		int m_channels;

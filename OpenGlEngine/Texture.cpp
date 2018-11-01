@@ -17,7 +17,7 @@ Texture::~Texture()
 }
 
 
-bool GLEN::Texture::LoadTexture(std::string path, bool transparant)
+bool GLEN::Texture::LoadTexture(std::string path, bool gammaCorrect, bool transparant)
 {
 
 	m_path = path;
@@ -35,16 +35,11 @@ bool GLEN::Texture::LoadTexture(std::string path, bool transparant)
 	if (data)
 	{
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		int format, format2;
+		GetFormats(m_channels, format, format2, gammaCorrect);
 		
-		int format = GL_RGB;
-		if (m_channels == 1)
-			format = GL_RED;
-		else if (m_channels == 3)
-			format = GL_RGB;
-		else if (m_channels == 4)//very naiive check. only works for a subset of image types.
+		if (m_channels == 4)
 		{
-			format = GL_RGBA;
-
 			if (transparant)
 			{
 				//don't wrap if has alpha: may produce blending artifacts so clamp instead.
@@ -55,7 +50,7 @@ bool GLEN::Texture::LoadTexture(std::string path, bool transparant)
 
 
 		//todo: use stb lib to figure out type of texture and use corresponding GL type (eg: GL_RGB,GL_RGBA etc)
-		glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data); //todo: check for errors obv.
+		glTexImage2D(GL_TEXTURE_2D, 0, format2, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data); //todo: check for errors obv.
 
 
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -71,7 +66,7 @@ bool GLEN::Texture::LoadTexture(std::string path, bool transparant)
 }
 
 
-bool GLEN::Texture::LoadCubeMap(std::string id, std::vector<std::pair<std::string, CubeMapOrientation>> paths)
+bool GLEN::Texture::LoadCubeMap(std::string id, std::vector<std::pair<std::string, CubeMapOrientation>> paths, bool gammaCorrect)
 {
 
 	m_path = id;
@@ -94,17 +89,11 @@ bool GLEN::Texture::LoadCubeMap(std::string id, std::vector<std::pair<std::strin
 		{
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-			int format = GL_RGB;
-			if (m_channels == 1)
-				format = GL_RED;
-			else if (m_channels == 3)
-				format = GL_RGB;
-			else if (m_channels == 4)//very naiive check. only works for a subset of image types.
-			{
-				format = GL_RGBA;
-			}
+
+			int format, format2;
+			GetFormats(m_channels, format, format2, gammaCorrect);;
 			//todo: use stb lib to figure out type of texture and use corresponding GL type (eg: GL_RGB,GL_RGBA etc)
-			glTexImage2D(image.second, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data); //todo: check for errors obv.
+			glTexImage2D(image.second, 0, format2, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data); //todo: check for errors obv.
 
 			stbi_image_free(data);
 		}
@@ -115,4 +104,33 @@ bool GLEN::Texture::LoadCubeMap(std::string id, std::vector<std::pair<std::strin
 		}
 	}
 	return true;
+}
+
+void GLEN::Texture::GetFormats(int channels, int & format, int & format2, bool gammaCorrect)
+{
+
+	format = GL_RGB;
+	format2 = GL_RGB;
+	if (m_channels == 1)
+	{
+		format = GL_RED;
+		format2 = GL_RED;
+	}
+	else if (m_channels == 3)
+	{
+		format = GL_RGB;
+		if (gammaCorrect)
+		{
+			format2 = GL_SRGB;
+		}
+	}
+	else if (m_channels == 4)//very naiive check. only works for a subset of image types.
+	{
+		format = GL_RGBA;
+		if (gammaCorrect)
+		{
+			format2 = GL_SRGB_ALPHA;
+		}
+	}
+	//format2 = format;
 }

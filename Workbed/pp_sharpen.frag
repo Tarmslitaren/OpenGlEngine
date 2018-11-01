@@ -36,5 +36,9 @@ void main()
     for(int i = 0; i < 9; i++)
         col += sampleTex[i] * kernel[i];
     
-    FragColor = vec4(col, 1.0);
+
+	// apply gamma correction
+    float gamma = 2.2;
+    FragColor.rgb = pow(col.rgb, vec3(1.0/gamma));
+	FragColor.a = 1;
 }  

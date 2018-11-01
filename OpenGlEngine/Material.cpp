@@ -73,11 +73,11 @@ void GLEN::Material::Render()
 
 void GLEN::Material::AddDiffuseTexture(std::string path, int binding, bool transparant)
 {
-	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path, transparant)->getHandle();
+	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path, true, transparant)->getHandle();
 	m_diffuseTextureHandles.push_back({ textureHandle, binding });
 }
 
-void GLEN::Material::AddDiffuseTexture(int textureHandle, int binding, bool transparant)
+void GLEN::Material::AddDiffuseTexture(int textureHandle, int binding)
 {
 	m_diffuseTextureHandles.push_back({ textureHandle, binding });
 }
@@ -89,7 +89,7 @@ void GLEN::Material::SetCubeMapTexture(std::string id)
 
 void GLEN::Material::AddSpecularTexture(std::string path, int binding)
 {
-	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path)->getHandle();
+	int textureHandle = Engine::GetInstance()->GetTextureContainer().GetTexture(path, false)->getHandle(); //remeber: gamma correctoin only for diffuse maps.
 	m_specularTextureHandles.push_back({ textureHandle, binding });
 }
 

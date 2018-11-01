@@ -16,7 +16,7 @@ namespace GLEN
 		void Render(const CU::Matrix44f& model, std::string overrideShader = "");
 		void Render();
 		void AddDiffuseTexture(std::string path, int binding, bool transparant = false);
-		void AddDiffuseTexture(int textureHandle, int binding, bool transparant = false);
+		void AddDiffuseTexture(int textureHandle, int binding);
 		void SetCubeMapTexture(std::string id);
 		void AddSpecularTexture(std::string path, int binding);
 		void SetAmbient(const CU::Vector3f ambient) { m_ambient = ambient; }

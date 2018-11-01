@@ -78,6 +78,6 @@ void Window::Create(SetupInfo setupInfo)
 
 	//register callback for window rezise event
 	glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
-	//ErrorHandler::InitDebugOutput();
+	ErrorHandler::InitDebugOutput();
 	ErrorHandler::CheckError();
 }

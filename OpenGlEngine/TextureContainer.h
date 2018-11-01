@@ -8,7 +8,7 @@ namespace GLEN
 	public:
 		TextureContainer();
 		~TextureContainer();
-		Texture* GetTexture(std::string path, bool transparant = false);
+		Texture* GetTexture(std::string path, bool gammaCorrect = true, bool transparant = false);
 		Texture* LoadCubeMap(std::string id, std::vector< std::pair < std::string, CubeMapOrientation > > paths);
 
 	private:

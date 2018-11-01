@@ -125,7 +125,7 @@ int main()
 	{
 		GLEN::ModelInstance* instance = new GLEN::ModelInstance("grass");
 		instance->SetPosition(vegetationPos[i]);
-		scene.AddModel(instance, true);
+		scene.AddModel(instance, false, true);
 	}
 
 	//geometry shader test
@@ -196,7 +196,7 @@ int main()
 		light->SetSpecular({ 1.0f, 1.0f, 1.0f });
 		light->SetAttenuation(0.09f, 0.032f, 1);
 
-		//scene.AddLight(light);
+		scene.AddLight(light);
 	}
 
 
