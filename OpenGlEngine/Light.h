@@ -59,8 +59,8 @@ namespace GLEN
 
 		//attenuation
 		float m_constant = 1;
-		float m_linear = 0.09f;
-		float m_quadratic = 0.032f;
+		float m_linear = 0.7f;
+		float m_quadratic = 0.18f;
 		float m_spotlightRadius = 0;
 		float m_spotlightRadiusOuter = 0;
 

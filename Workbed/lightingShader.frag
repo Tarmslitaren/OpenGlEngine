@@ -126,7 +126,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     // attenuation
     float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / distance;//(light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
     // combine results
     vec3 ambient  = light.ambient  * vec3(texture(material.diffuse[0], inArgs.TexCoords));
 	//vec3 ambient = light.ambient * material.ambient; //if not using texture
@@ -152,7 +152,7 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     // attenuation
     float distance    = length(light.position - fragPos);
-    float attenuation = 1.0 / distance;// (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
     
 
 		//spotlight
