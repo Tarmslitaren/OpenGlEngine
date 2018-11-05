@@ -56,7 +56,7 @@ int main()
 	scene.SetSkyBox(skyBox);
 
 
-	GLEN::Material material("lightShader");
+	GLEN::Material material("lightShaderShadows");
 	material.AddDiffuseTexture("container2.png", 0);
 	material.AddSpecularTexture("container2_specular.png", 1);
 	material.SetCubeMapTexture("skybox");
@@ -86,6 +86,13 @@ int main()
 		
 	}
 
+	//floor plane
+	GLEN::Mesh* floormesh = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateQuad("floor", { 25,25,0 }, material));
+	engine.GetModelContainer().CreateModel("floor", floormesh);
+	GLEN::ModelInstance* floor = new GLEN::ModelInstance("floor");
+	floor->SetOrientation(CU::Matrix33f::RotateX(90));
+	scene.AddModel(floor);
+
 	//new reflection cube
 	GLEN::Material materialr("reflectShader");
 	materialr.SetCubeMapTexture("skybox");
@@ -98,7 +105,7 @@ int main()
 
 
 	//loaded model
-	GLEN::Material material2("lightShader");
+	GLEN::Material material2("lightShaderShadows");
 	material2.InitShaderVariables();
 	engine.GetModelContainer().CreateModel("nanosuit/nanosuit.obj", material2);
 	GLEN::ModelInstance* instance = new GLEN::ModelInstance("nanosuit");
@@ -125,7 +132,7 @@ int main()
 	{
 		GLEN::ModelInstance* instance = new GLEN::ModelInstance("grass");
 		instance->SetPosition(vegetationPos[i]);
-		scene.AddModel(instance, false, true);
+		//scene.AddModel(instance, false, true);
 	}
 
 	//geometry shader test
@@ -160,10 +167,11 @@ int main()
 
 	//dir light
 	GLEN::Light* light = new GLEN::Light(GLEN::DIRECTIONAL_LIGHT);
-	light->SetDirection({ -0.2f, -1.0f, -0.3f });
+	light->SetDirection({ -0.0f, -0.0f, -1.0f });
+	light->SetPosition({ 0,5,10 }); //need to set position for shadow generation
 	// light properties
-	light->SetAmbient({ 0.1,0.1,0.1 });
-	light->SetDiffuse({ 0.8f, 0.8f, 0.8f });
+	light->SetAmbient({ 0.03,0.03,0.03 });
+	light->SetDiffuse({ 0.3f, 0.3f, 0.3f });
 	light->SetSpecular({ 1.0f, 1.0f, 1.0f });
 	scene.AddLight(light);
 
@@ -180,7 +188,7 @@ int main()
 	CU::Vector3f(-4.0f,  2.0f, -12.0f),
 	CU::Vector3f(0.0f,  0.0f, -3.0f)
 	};
-	int nrPointLights = 2;
+	int nrPointLights = 0;
 	for (int i = 0; i < nrPointLights; i++) {
 		GLEN::ModelInstance* lampCube = new GLEN::ModelInstance("lampCube");
 		GLEN::Light* light = new GLEN::Light(GLEN::POINT_LIGHT, lampCube, i);
@@ -216,7 +224,6 @@ int main()
 	GLEN::Scene& scene2 = engine.GetSceneContainer().AddScene();
 	engine.GetSceneContainer().SetCurrentScene(scene2);
 	
-	engine.GetSceneContainer().SetCurrentScene(scene2);
 	scene2.AddLight(flashlight);
 	scene2.AddLight(light);
 
@@ -270,6 +277,8 @@ int main()
 		rock->SetPosition(pos);
 		rock->SetScale(scale);
 	}
+
+	engine.GetSceneContainer().SetCurrentScene(scene);
 
 
 	engine.GetCamera().SetProjection(45, info.m_resolution.width / info.m_resolution.height, 0.1, 1000);

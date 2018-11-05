@@ -6,6 +6,7 @@
 #include "ModelInstance.h"
 #include "SkyBox.h"
 #include "PostProcess.h"
+#include "ShadowMap.h"
 namespace GLEN
 {
 	struct StaticInstanceModelData
@@ -20,6 +21,7 @@ namespace GLEN
 		Scene();
 		~Scene();
 		void Render();
+		void RenderShadows();
 		void Update(float deltaTime);
 		void AddModel(ModelInstance* instance, bool instanced = false, bool transparent = false);
 		void AddLight(Light* light);
@@ -27,8 +29,10 @@ namespace GLEN
 		void SetSkyBox(SkyBox* skyBox) { m_skyBox = skyBox; }
 		void RenderNormals(bool renderNormals) { m_renderNormals = renderNormals; }
 		void RenderWithPostProcess();
+		void RenderWithShadows();
 		PostProcess& GetPostProcess();
 		void SetActive();
+		Light* GetLight(int index); //todo: nicer interface. let lights have identifiers nad a container
 	private:
 		void SetUniforms();
 		void RenderTransparantModels();
@@ -42,7 +46,9 @@ namespace GLEN
 		int m_nrOfPointLights = 0;
 		std::vector<std::string> m_lightShaders;
 		PostProcess m_postProcess;
+		ShadowMap m_shadowMap;
 		bool m_renderNormals = false;
+		bool m_renderShadows = true;
 	};
 }
 

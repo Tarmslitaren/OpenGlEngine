@@ -17,6 +17,7 @@ GLEN::Camera::~Camera()
 {
 }
 
+//todo: the lookat function does not work when looking at 0,0,0
 //the view matrix is somehow wrong
 CU::Matrix44f GLEN::Camera::LookAt(const CU::Vector3f & target)
 {

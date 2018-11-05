@@ -38,7 +38,7 @@ void GLEN::ModelInstance::Render()
 	//else: do we need to hide somehow?
 }
 
-void GLEN::ModelInstance::RenderNormals()
+void GLEN::ModelInstance::Render(std::string shaderOverride)
 {
 	if (m_isToRender)
 	{
@@ -46,11 +46,14 @@ void GLEN::ModelInstance::RenderNormals()
 		CU::Matrix44f matrix = CU::Matrix44f::Identity();
 		matrix = m_orientation;
 		matrix.SetPosition(m_position);
-
-		m_model->Render(matrix, "drawNormals", m_renderMode);
-		m_model->Render(matrix, m_renderMode);
+		m_model->Render(matrix, shaderOverride, m_renderMode);
 	}
-	//else: do we need to hide somehow?
+}
+
+void GLEN::ModelInstance::RenderNormals()
+{
+	Render("drawNormals");
+	Render();
 }
 
 void GLEN::ModelInstance::SetOutline(float thickness, CU::Vector4f color)

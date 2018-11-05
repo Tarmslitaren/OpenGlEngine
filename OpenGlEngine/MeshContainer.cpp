@@ -163,14 +163,6 @@ int GLEN::MeshContainer::CreateBox(std::string id, CU::Vector3f dimensions, cons
 		 0.0f, 1.0f
 	};
 
-	/*GLEN::VertexLayout layout;
-	layout.hasTexCoords = true;
-	layout.hasNormals = true;
-	layout.normalOffset = 3;
-	layout.texCoordOffset = 6;
-	layout.texCoordAttribute = 2;
-	layout.stride = 8;*/
-
 	int meshId = CreateMesh(id, content, material, drawFrequency);
 	return meshId;
 }
@@ -185,6 +177,13 @@ int GLEN::MeshContainer::CreateQuad(std::string id, CU::Vector3f dimensions, con
 		 dim.x, -dim.y, dim.z,
 		-dim.x, -dim.y, dim.z,
 		-dim.x,  dim.y, dim.z, 
+	};
+
+	content.normals = {
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
 	};
 
 	content.texCoords = {

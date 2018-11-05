@@ -13,6 +13,7 @@ namespace GLEN
 		ModelInstance(std::string primitiveId);
 		~ModelInstance();
 		void Render();
+		void Render(std::string shaderOverride);
 		void RenderNormals();
 		void SetOrientation(const CU::Matrix33f& orientation) { m_orientation = orientation; }
 		void SetPosition(const CU::Vector3f& position) { m_position = position; }

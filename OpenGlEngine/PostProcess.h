@@ -15,7 +15,7 @@ namespace GLEN
 	private:
 		void Init();
 		void InitMsaa();
-		bool m_msaa = true;
+		bool m_msaa = false;
 		unsigned int m_frameBufferObject;
 		unsigned int m_texture;
 		unsigned int m_renderBufferObject;

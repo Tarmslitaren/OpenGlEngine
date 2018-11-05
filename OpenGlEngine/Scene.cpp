@@ -6,9 +6,11 @@
 using namespace GLEN;
 Scene::Scene()
 {
+	//todo: not hardcode this here
 	AddLightShader("lightShader");
 	AddLightShader("explode");
 	AddLightShader("lightShaderInstanced");
+	AddLightShader("lightShaderShadows");
 	
 	SetUniforms();
 }
@@ -49,6 +51,7 @@ void GLEN::Scene::Render()
 		model->RenderInstanced(models);
 	}
 
+	//todo: these are not working
 	for (auto it = m_staticInstancedModels.rbegin(); it != m_staticInstancedModels.rend(); ++it)
 	{
 		Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
@@ -75,6 +78,45 @@ void GLEN::Scene::Render()
 	}
 
 	RenderTransparantModels();
+}
+
+void GLEN::Scene::RenderShadows()
+{
+	if (m_renderShadows == true)
+	{
+		for (ModelInstance* model : m_models)
+		{
+			model->Render("shadow");
+		}
+		/*for (auto it = m_instancedModels.rbegin(); it != m_instancedModels.rend(); ++it)
+		{
+			std::vector<CU::Matrix44f> models;
+			for (int i = 0; i < it->second.size(); i++)
+			{
+				CU::Matrix44f modelMatrix;
+				it->second.at(i)->GetModelMatrix(modelMatrix);
+				models.push_back(modelMatrix);
+			}
+			Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
+			model->RenderInstanced(models);
+		}
+
+		//todo: these are not working
+		for (auto it = m_staticInstancedModels.rbegin(); it != m_staticInstancedModels.rend(); ++it)
+		{
+			Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
+			if (m_staticInstancedModels[it->first].dirty)
+			{
+				model->SetStaticModels(m_staticInstancedModels[it->first].modelMatrices);
+				m_staticInstancedModels[it->first].dirty = false;
+			}
+			//todo: no need to save the matrices here. huge waste of memory (64 bytes * nr models)
+			model->RenderInstanced(m_staticInstancedModels[it->first].modelMatrices, true);
+		}
+
+		RenderTransparantModels();*/
+
+	}
 }
 
 void GLEN::Scene::Update(float deltaTime)
@@ -138,6 +180,11 @@ void GLEN::Scene::RenderWithPostProcess()
 	m_postProcess.Render(this);
 }
 
+void GLEN::Scene::RenderWithShadows()
+{
+	m_shadowMap.Render(this);
+}
+
 PostProcess & GLEN::Scene::GetPostProcess()
 {
 	return m_postProcess;
@@ -147,6 +194,11 @@ void GLEN::Scene::SetActive()
 {
 	SetUniforms();
 	
+}
+
+Light * GLEN::Scene::GetLight(int index)
+{
+	return m_lights[index];
 }
 
 void GLEN::Scene::SetUniforms()

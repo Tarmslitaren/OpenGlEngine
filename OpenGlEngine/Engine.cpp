@@ -36,13 +36,14 @@ m_input(m_window.GetWindow())
 	stbi_set_flip_vertically_on_load(true); //flips the coords, because opengl wants it so.
 
 
-	m_shaderContainer.CreateShaderProgram("singleColorScale", "scale.vert", "singleColor.frag");
+	//m_shaderContainer.CreateShaderProgram("singleColorScale", "scale.vert", "singleColor.frag");
 
 	//is this the place? or is it in shader container? or light container?
 	m_shaderContainer.CreateShaderProgram("lightShader", "lightingShader.vert", "lightingShader.frag");
 	m_shaderContainer.CreateShaderProgram("reflectShader", "reflection.vert", "reflection.frag");
 	m_shaderContainer.CreateShaderProgram("refractShader", "reflection.vert", "refraction.frag");
-	//Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("depthTestShader", "depthTest.vert", "depthTest.frag");
+
+	m_shaderContainer.CreateShaderProgram("depthTest", "depthTest.vert", "depthTest.frag");
 
 
 	m_shaderContainer.CreateShaderProgram("lampShader", "lampShader.vert", "lampShader.frag");
@@ -54,6 +55,8 @@ m_input(m_window.GetWindow())
 	m_shaderContainer.CreateShaderProgram("lightShaderInstanced", "lightingShaderInstanced.vert", "lightingShader.frag");
 
 	m_shaderContainer.CreateShaderProgram("noLightShaderInstanced", "lightingShaderInstanced.vert", "textureNoLighting.frag");
+
+	m_shaderContainer.CreateShaderProgram("lightShaderShadows", "lightingShaderShadows.vert", "lightingShaderShadows.frag");
 }
 
 Engine::~Engine()
@@ -79,7 +82,7 @@ void GLEN::Engine::RenderScene()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glStencilMask(0x00); //reset stencil
-	m_sceneContainer.GetCurrentScene().RenderWithPostProcess();
+	m_sceneContainer.GetCurrentScene().RenderWithShadows();
 }
 
 void Engine::Destroy()

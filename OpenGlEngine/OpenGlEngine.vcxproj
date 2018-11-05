@@ -169,6 +169,7 @@
     <ClCompile Include="ShaderContainer.cpp" />
     <ClCompile Include="ShaderInput.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="ShaderContainer.h" />
     <ClInclude Include="ShaderInput.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
@@ -208,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Workbed\depthTest.frag" />
+    <None Include="..\Workbed\depthTest.vert" />
     <None Include="..\Workbed\drawNormals.geom" />
     <None Include="..\Workbed\drawNormals.vert" />
     <None Include="..\Workbed\explode.geom" />
@@ -217,6 +220,8 @@
     <None Include="..\Workbed\lightingShader.vert" />
     <None Include="..\Workbed\lightingShaderGeom.frag" />
     <None Include="..\Workbed\lightingShaderInstanced.vert" />
+    <None Include="..\Workbed\lightingShaderShadows.vert" />
+    <None Include="..\Workbed\lightingShaderShadows.frag" />
     <None Include="..\Workbed\pp_blur.frag" />
     <None Include="..\Workbed\pp_edges.frag" />
     <None Include="..\Workbed\pp_grayscale.frag" />
@@ -229,6 +234,8 @@
     <None Include="..\Workbed\refraction.frag" />
     <None Include="..\Workbed\scale.vert" />
     <None Include="..\Workbed\houses.geom" />
+    <None Include="..\Workbed\shadow.frag" />
+    <None Include="..\Workbed\shadow.vert" />
     <None Include="..\Workbed\simple.vert" />
     <None Include="..\Workbed\singleColor.frag" />
     <None Include="..\Workbed\skybox.frag" />

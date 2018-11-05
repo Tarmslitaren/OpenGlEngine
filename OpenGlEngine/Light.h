@@ -41,7 +41,7 @@ namespace GLEN
 		void SetAttenuation(float linear, float quadratic, float constant = 1);
 		void SetSpotlightRadius(float radius, float outerRadius);
 		const CU::Vector3f& GetPosition() const { return m_position; }
-		//const CU::Vector3f& GetDirection() const { return m_direction; }
+		const CU::Vector3f& GetDirection() const { return m_direction; }
 		//const CU::Vector3f& GetDiffuse() const { return m_diffuse; }
 		//const CU::Vector3f& GetSpecular() const { return m_specular; }
 		//const CU::Vector3f& GetAmbient() const { return m_ambient;}

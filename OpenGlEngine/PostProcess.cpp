@@ -63,7 +63,7 @@ void GLEN::PostProcess::Render(Scene* scene)
 	{
 		SetupInfo info = Engine::GetInstance()->GetSetupInfo();
 		// 2. now blit multisampled buffer(s) to normal colorbuffer of intermediate FBO. Image is stored in screenTexture
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_msaaFrameBufferObject);
+		//glBindFramebuffer(GL_READ_FRAMEBUFFER, m_msaaFrameBufferObject); //causes redundant binding warning
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_msaaIntermediateFrameBufferObject);
 		glBlitFramebuffer(0, 0, info.m_resolution.width, info.m_resolution.height, 0, 0, info.m_resolution.width, info.m_resolution.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		
