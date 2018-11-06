@@ -82,7 +82,7 @@ ShadowMap::~ShadowMap()
 void GLEN::ShadowMap::Render(Scene * scene)
 {
 	//fetch light pos:
-	Light* light = scene->GetLight(0);
+	Light* light = scene->GetLight(0); //get directional light
 	m_LightPerspective.SetPosition(light->GetPosition());
 	m_LightPerspective.SetOrientation(light->GetDirection());
 	CU::Matrix44f lightView = m_LightPerspective.GetView();

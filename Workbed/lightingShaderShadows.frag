@@ -134,10 +134,10 @@ void main()
     // phase 1: Directional lighting
     vec3 result = CalculateDirectionalLight(dirLight, norm, viewDir);
     // phase 2: Point lights
-    //for(int i = 0; i < nrPointLights; i++)
-    //    result += CalculatePointLight(pointLights[i], norm, inArgs.FragPos, viewDir);    
+    for(int i = 0; i < nrPointLights; i++)
+        result += CalculatePointLight(pointLights[i], norm, inArgs.FragPos, viewDir);    
     // phase 3: Spot light
-    //result += CalculateSpotLight(spotLight, norm, inArgs.FragPos, viewDir);
+    result += CalculateSpotLight(spotLight, norm, inArgs.FragPos, viewDir);
 
 
 	float alpha = texture(material.diffuse[0], inArgs.TexCoords).w; //should the alpha be affected by lighting model?
@@ -237,8 +237,8 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
     specular *= attenuation * intensity;
 
 	   	    // calculate shadow
-    float shadow = ShadowCalculation(inArgs.FragPosLightSpace, lightDir);       
-    vec3 lighting = ambient + (1.0 - shadow) * (diffuse + specular);  
+    //float shadow = ShadowCalculation(inArgs.FragPosLightSpace, lightDir);       
+    //vec3 lighting = ambient + (1.0 - shadow) * (diffuse + specular);  
 
-    return lighting;// (ambient + diffuse + specular);
+    return (ambient + diffuse + specular);
 }
