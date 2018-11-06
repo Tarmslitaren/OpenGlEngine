@@ -52,6 +52,7 @@ void GLEN::Material::Render(const CU::Matrix44f& model, std::string overrideShad
 	if (overrideShader.size() > 0)
 	{
 		m_shader = Engine::GetInstance()->GetShaderContainer().GetShaderProgram(overrideShader);
+		InitShaderVariables();
 	}
 	RenderInternal();
 

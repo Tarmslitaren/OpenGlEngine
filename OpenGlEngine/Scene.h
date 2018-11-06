@@ -36,6 +36,7 @@ namespace GLEN
 	private:
 		void SetUniforms();
 		void RenderTransparantModels();
+		void RenderInstancedModels();
 		std::vector<ModelInstance*> m_models;
 		std::vector<ModelInstance*> m_transparantModels;
 		std::vector<Light*> m_lights;

@@ -38,31 +38,8 @@ void GLEN::Scene::Render()
 	{
 		model->Render();
 	}
-	for (auto it = m_instancedModels.rbegin(); it != m_instancedModels.rend(); ++it)
-	{
-		std::vector<CU::Matrix44f> models;
-		for (int i = 0; i < it->second.size(); i++)
-		{
-			CU::Matrix44f modelMatrix;
-			it->second.at(i)->GetModelMatrix(modelMatrix);
-			models.push_back(modelMatrix);
-		}
-		Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
-		model->RenderInstanced(models);
-	}
 
-	//todo: these are not working
-	for (auto it = m_staticInstancedModels.rbegin(); it != m_staticInstancedModels.rend(); ++it)
-	{
-		Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
-		if (m_staticInstancedModels[it->first].dirty)
-		{
-			model->SetStaticModels(m_staticInstancedModels[it->first].modelMatrices);
-			m_staticInstancedModels[it->first].dirty = false;
-		}
-		//todo: no need to save the matrices here. huge waste of memory (64 bytes * nr models)
-		model->RenderInstanced(m_staticInstancedModels[it->first].modelMatrices, true);
-	}
+	RenderInstancedModels();
 
 	//if renderNormals
 	if (m_renderNormals) {
@@ -88,33 +65,13 @@ void GLEN::Scene::RenderShadows()
 		{
 			model->Render("shadow");
 		}
-		/*for (auto it = m_instancedModels.rbegin(); it != m_instancedModels.rend(); ++it)
-		{
-			std::vector<CU::Matrix44f> models;
-			for (int i = 0; i < it->second.size(); i++)
-			{
-				CU::Matrix44f modelMatrix;
-				it->second.at(i)->GetModelMatrix(modelMatrix);
-				models.push_back(modelMatrix);
-			}
-			Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
-			model->RenderInstanced(models);
-		}
 
-		//todo: these are not working
-		for (auto it = m_staticInstancedModels.rbegin(); it != m_staticInstancedModels.rend(); ++it)
+		//RenderTransparantModels();
+		for (unsigned int i = 0; i < m_transparantModels.size(); i++)
 		{
-			Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
-			if (m_staticInstancedModels[it->first].dirty)
-			{
-				model->SetStaticModels(m_staticInstancedModels[it->first].modelMatrices);
-				m_staticInstancedModels[it->first].dirty = false;
-			}
-			//todo: no need to save the matrices here. huge waste of memory (64 bytes * nr models)
-			model->RenderInstanced(m_staticInstancedModels[it->first].modelMatrices, true);
+			//todo: transpaant models would meed a "shadowmap" texture to specify which parts are seethrough (or not, as that is in the w component...)
+			m_transparantModels.at(i)->Render("shadowAlpha");
 		}
-
-		RenderTransparantModels();*/
 
 	}
 }
@@ -249,4 +206,33 @@ void GLEN::Scene::RenderTransparantModels()
 
 	or this: https://blog.icare3d.org/2010/06/fast-and-accurate-single-pass-buffer.html
 */
+}
+
+void GLEN::Scene::RenderInstancedModels()
+{
+	for (auto it = m_instancedModels.rbegin(); it != m_instancedModels.rend(); ++it)
+	{
+		std::vector<CU::Matrix44f> models;
+		for (int i = 0; i < it->second.size(); i++)
+		{
+			CU::Matrix44f modelMatrix;
+			it->second.at(i)->GetModelMatrix(modelMatrix);
+			models.push_back(modelMatrix);
+		}
+		Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
+		model->RenderInstanced(models);
+	}
+
+	//todo: these are not working
+	for (auto it = m_staticInstancedModels.rbegin(); it != m_staticInstancedModels.rend(); ++it)
+	{
+		Model* model = Engine::GetInstance()->GetModelContainer().GetModel(it->first);
+		if (m_staticInstancedModels[it->first].dirty)
+		{
+			model->SetStaticModels(m_staticInstancedModels[it->first].modelMatrices);
+			m_staticInstancedModels[it->first].dirty = false;
+		}
+		//todo: no need to save the matrices here. huge waste of memory (64 bytes * nr models)
+		model->RenderInstanced(m_staticInstancedModels[it->first].modelMatrices, true);
+	}
 }

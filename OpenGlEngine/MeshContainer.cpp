@@ -211,7 +211,7 @@ int GLEN::MeshContainer::CreateQuad(std::string id, CU::Vector2f dimensions, con
 	normal.x, normal.y, normal.z,
 	};
 
-	CU::Vector2f uv = dimensions;
+	CU::Vector2f uv = dim;
 	if (strech)
 	{
 		uv = { 1,1 };

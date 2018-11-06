@@ -24,6 +24,7 @@ namespace GLEN
 		CU::Vector3f GetPosition() { return m_position; }
 		CU::Vector3f GetLookAtDirection();
 		CU::Matrix44f GetView();
+		void SetOrthographicProjection(float left, float right, float top, float bottom, float nearPlane, float farPlane);
 		void SetProjection(float fov, float aspectRatio, float near = 0.1f, float far = 100.f);
 		void SetProjection(ProjectionValues projectionValues);
 		float GetFov();

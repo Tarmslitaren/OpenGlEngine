@@ -11,10 +11,7 @@ in VS_OUT {
 	vec4 FragPosLightSpace; //shad
 } inArgs; 
 
-//uniform sampler2D diffuseTexture;//shad?
 uniform sampler2D shadowMap;//shad
-//uniform vec3 lightPos;//shad?
-//uniform vec3 viewPos;//shad?
 
 #define MAX_NR_TEXTURE 4  
 struct Material {
@@ -77,10 +74,15 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);  
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir); 
 
-float ShadowCalculation(vec4 fragPosLightSpace)
+float ShadowCalculation(vec4 fragPosLightSpace , vec3 lightDir)
 {
 	// perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w; //this step is meaningless if using ortho projection
+
+	if(projCoords.z > 1.0) //if outside the frustums length then no shadows
+	{
+        return 0;
+	}
 
 	//Because the depth from the depth map is in the range [0,1] and we also want to use projCoords to sample from the depth map so we transform the NDC coordinates to the range [0,1]:
 	projCoords = projCoords * 0.5 + 0.5; 
@@ -89,7 +91,31 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 	// get depth of current fragment from light's perspective
 	float currentDepth = projCoords.z;  
 	 // check whether current frag pos is in shadow
-	float shadow = currentDepth > closestDepth  ? 1.0 : 0.0; 
+	 //float bias = 0.00005; //to solve shadow acne. bias values need to be tweaked per scene :(
+	 vec3 norm = normalize(inArgs.Normal);
+	 float bias = max(0.003 * (1.0 - dot(norm, lightDir)), 0.00005); 
+
+	//float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0; 
+
+
+	//percentage close filtering (PCF) smapling surrounding texels in the shadowmap to smooth the edges
+	//By using more samples and/or varying the texelSize variable you can increase the quality of the soft shadows.
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	int sampleSize = 1;
+	for(int x = -sampleSize; x <= sampleSize; ++x)
+	{
+		for(int y = -sampleSize; y <= sampleSize; ++y)
+		{
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+		}    
+	}
+	int nrSamples =(1 + (sampleSize*2)) * (1 + (sampleSize*2));
+	shadow /= nrSamples;
+
+
+	//shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0; //override smoothness
 	return shadow;
 }
 
@@ -114,12 +140,15 @@ void main()
     //result += CalculateSpotLight(spotLight, norm, inArgs.FragPos, viewDir);
 
 
-    vec4 fragColor = vec4(result, 1.0);
+	float alpha = texture(material.diffuse[0], inArgs.TexCoords).w; //should the alpha be affected by lighting model?
+    vec4 fragColor = vec4(result, alpha);
+
+    //vec4 fragColor = vec4(result, 1.0);
 
 	// apply gamma correction todo: remove this when we have post process working again
     float gamma = 2.2;
     FragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
-   //FragColor = fragColor;
+    //FragColor = fragColor;
 }
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
@@ -129,43 +158,23 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal); //phong
-	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 halfwayDir = normalize(lightDir + viewDir);  //this is blinn phong (generally the shininess varable needs to be 2-4 times as much for a similar result as normal phong
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     // combine results
 	vec3 color = texture(material.diffuse[0], inArgs.TexCoords).rgb;
-    vec3 ambient  = light.ambient * color; //change this for shadows?!!?!?!?
+    vec3 ambient  = light.ambient * color;
 	//vec3 ambient = light.ambient * material.ambient; //if not using texture
-    vec3 diffuse  = light.diffuse  * diff;// * color;
-    vec3 specular = light.specular * spec;// * vec3(texture(material.specular[0], inArgs.TexCoords)); //specular: effect higher the smaller reverse angle from view.
+    vec3 diffuse  = light.diffuse  * diff;
+    vec3 specular = light.specular * spec; //specular: effect higher the smaller reverse angle from view.
 	//vec3 specular = light.specular * (spec * material.specular);  //if not using specular map
-   
+	vec3 specMapColor = vec3(texture(material.specular[0], inArgs.TexCoords));
    	    // calculate shadow
-    float shadow = ShadowCalculation(inArgs.FragPosLightSpace);       
+    float shadow = ShadowCalculation(inArgs.FragPosLightSpace, lightDir);       
     //vec3 lighting = ambient + (1.0 - shadow) * (diffuse + specular);      //multiply the diffuse and specular contributions by the inverse of the shadow component e.g. how much the fragment is not in shadow
-	 vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
+	 vec3 lighting = (  ambient * color  + (1.0 - shadow) * (diffuse * color + specular * specMapColor)  );
+
    
    return lighting;// (ambient + diffuse + specular);
-
-
-    //vec3 color = texture(material.diffuse[0], inArgs.TexCoords).rgb;
-   // vec3 lightColor = vec3(1.0);
-    // ambient
-   // vec3 ambient = 0.15 * color;
-    // diffuse
-   // vec3 lightDir =  normalize(light.position - inArgs.FragPos); //this?
-    //float diff = max(dot(lightDir, normal), 0.0);
-    //vec3 diffuse = diff * lightColor;
-    // specular
-    //vec3 viewDir = normalize(viewPos - inArgs.FragPos); //this?
-    //vec3 halfwayDir = normalize(lightDir + viewDir);  
-    //float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
-    //vec3 specular = spec * lightColor;    
-    // calculate shadow
-   // float shadow = ShadowCalculation(inArgs.FragPosLightSpace);       
-   // vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
-    
-	//return lighting;
 }
 
 
@@ -228,7 +237,7 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
     specular *= attenuation * intensity;
 
 	   	    // calculate shadow
-    float shadow = ShadowCalculation(inArgs.FragPosLightSpace);       
+    float shadow = ShadowCalculation(inArgs.FragPosLightSpace, lightDir);       
     vec3 lighting = ambient + (1.0 - shadow) * (diffuse + specular);  
 
     return lighting;// (ambient + diffuse + specular);

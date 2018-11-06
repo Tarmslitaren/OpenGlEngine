@@ -236,6 +236,8 @@
     <None Include="..\Workbed\houses.geom" />
     <None Include="..\Workbed\shadow.frag" />
     <None Include="..\Workbed\shadow.vert" />
+    <None Include="..\Workbed\shadowMapAlpha.frag" />
+    <None Include="..\Workbed\shadowMapAlpha.vert" />
     <None Include="..\Workbed\simple.vert" />
     <None Include="..\Workbed\singleColor.frag" />
     <None Include="..\Workbed\skybox.frag" />

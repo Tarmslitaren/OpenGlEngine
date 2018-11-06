@@ -87,7 +87,7 @@ int main()
 	}
 
 	//floor plane
-	GLEN::Mesh* floormesh = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateQuad("floor", { 25,25 }, material));
+	GLEN::Mesh* floormesh = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateQuad("floor", { 25,25 }, material, false));
 	engine.GetModelContainer().CreateModel("floor", floormesh);
 	GLEN::ModelInstance* floor = new GLEN::ModelInstance("floor");
 	floor->SetOrientation(CU::Matrix33f::RotateX(-90));
@@ -132,7 +132,7 @@ int main()
 	{
 		GLEN::ModelInstance* instance = new GLEN::ModelInstance("grass");
 		instance->SetPosition(vegetationPos[i]);
-		//scene.AddModel(instance, false, true);
+		scene.AddModel(instance, false, true);
 	}
 
 	//geometry shader test
@@ -167,7 +167,7 @@ int main()
 
 	//dir light
 	GLEN::Light* light = new GLEN::Light(GLEN::DIRECTIONAL_LIGHT);
-	light->SetDirection({ -0.0f, -0.0f, -1.0f });
+	light->SetDirection({ -0.0f, -0.5f, -1.0f });
 	light->SetPosition({ 0,5,10 }); //need to set position for shadow generation
 	// light properties
 	light->SetAmbient({ 0.03,0.03,0.03 });

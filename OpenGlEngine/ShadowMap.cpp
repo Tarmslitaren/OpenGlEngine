@@ -15,6 +15,7 @@ ShadowMap::ShadowMap()
 
 
 	m_shader = Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("shadow", "shadow.vert", "shadow.frag");
+	m_shaderAlpha = Engine::GetInstance()->GetShaderContainer().CreateShaderProgram("shadowAlpha", "shadowMapAlpha.vert", "shadowMapAlpha.frag");
 
 	glGenFramebuffers(1, &m_depthMapFrameBufferObject);
 
@@ -26,8 +27,12 @@ ShadowMap::ShadowMap()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_depthTextureResolution, m_depthTextureResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	//this to not show any shadow outside the lights view frustum
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	//attach it as the framebuffer's depth buffer:
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthMapTexture, 0);
@@ -43,8 +48,9 @@ ShadowMap::ShadowMap()
 
 
 	//setup light projection matrix
-	float nearPlane = 1.0f, farPlane = 7.5f;
-	m_LightPerspective.SetProjection(45, Engine::GetInstance()->GetSetupInfo().m_resolution.width / Engine::GetInstance()->GetSetupInfo().m_resolution.height, 0.1, 1000);
+	float nearPlane = 0.1f, farPlane = 70.5f;
+	//m_LightPerspective.SetProjection(45, Engine::GetInstance()->GetSetupInfo().m_resolution.width / Engine::GetInstance()->GetSetupInfo().m_resolution.height, 0.1, 100);
+	m_LightPerspective.SetOrthographicProjection(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
 	m_lightProjection = m_LightPerspective.GetProjection(); //glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 	//todo: need orthographic projection for this...? yeah but onl y for directional light though...
 
@@ -57,7 +63,7 @@ ShadowMap::ShadowMap()
 	Material material("depthTest");
 	material.AddDiffuseTexture(m_depthMapTexture, 0);
 
-	int meshId = Engine::GetInstance()->GetMeshContainer().CreateQuad("shadow_quad", { 1,1 }, material);
+	int meshId = Engine::GetInstance()->GetMeshContainer().CreateQuad("shadow_quad", { 0.5,0.5 }, material);
 	m_debugQuad = Engine::GetInstance()->GetMeshContainer().GetMesh(meshId);
 	//m_debugQuad->SetPolygonMode(POLYGONMODE_LINE); //show the quad
 
@@ -87,6 +93,7 @@ void GLEN::ShadowMap::Render(Scene * scene)
 
 	CU::Matrix44f lightSpaceMatrix = lightView * m_lightProjection;
 	m_shader->setMatrix("lightSpaceMatrix", lightSpaceMatrix);
+	m_shaderAlpha->setMatrix("lightSpaceMatrix", lightSpaceMatrix);
 	Engine::GetInstance()->GetShaderContainer().GetShaderProgram("depthTest")->setMatrix("lightSpaceMatrix", lightSpaceMatrix);
 	Engine::GetInstance()->GetShaderContainer().GetShaderProgram("lightShaderShadows")->setMatrix("lightSpaceMatrix", lightSpaceMatrix);
 
@@ -95,8 +102,12 @@ void GLEN::ShadowMap::Render(Scene * scene)
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFrameBufferObject);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
+	glCullFace(GL_FRONT); //this will fix peter panning, but only works for solid objects (not planes for example)
 	//render from lights point of view
 	scene->RenderShadows(); //render with post process?
+
+	glCullFace(GL_BACK); // don't forget to reset original culling face
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// 2. then render scene as normal with shadow mapping (using depth map)
@@ -114,7 +125,7 @@ void GLEN::ShadowMap::Render(Scene * scene)
 	{
 		// render Depth map to quad for visual debugging
 		CU::Matrix44f model = CU::Matrix44f::Identity();
-		model.SetPosition({ 300, 300, 0 });
+		model.SetPosition({ 0.75, 0.75, 0 });
 		m_debugQuad->Render(model);
 	}
 }

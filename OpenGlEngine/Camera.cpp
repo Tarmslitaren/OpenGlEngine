@@ -185,6 +185,34 @@ CU::Matrix44f GLEN::Camera::GetView()
 	return LookAt(GetLookAtDirection());
 }
 
+
+void GLEN::Camera::SetOrthographicProjection(float left, float right, float top, float bottom, float nearPlane, float farPlane)
+{
+	CU::Matrix44f m;
+
+	m.myMatrix[0][0] = 2.0f / (right - left);
+	m.myMatrix[0][1] = 0.0f;
+	m.myMatrix[0][2] = 0.0f;
+	m.myMatrix[0][3] = 0.0f;
+
+	m.myMatrix[1][0] = 0.0f;
+	m.myMatrix[1][1] = 2.0f / (top - bottom);
+	m.myMatrix[1][2] = 0.0f;
+	m.myMatrix[1][3] = 0.0f;
+
+	m.myMatrix[2][0] = 0.0f;
+	m.myMatrix[2][1] = 0.0f;
+	m.myMatrix[2][2] = -2.0f / (farPlane - nearPlane);
+	m.myMatrix[2][3] = 0.0f;
+
+	m.myMatrix[3][0] = -(right + left) / (right - left);
+	m.myMatrix[3][1] = -(top + bottom) / (top - bottom);
+	m.myMatrix[3][2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
+	m.myMatrix[3][3] = 1.0f;
+
+	m_projection = m;
+}
+
 void GLEN::Camera::SetProjection(float fov, float aspectRatio, float nearPlane, float farPlane)
 {
 	m_projectionValues.fov = fov;

@@ -242,5 +242,11 @@
     <None Include="..\Workbed\lightingShaderShadows.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="..\Workbed\shadowMapAlpha.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\Workbed\shadowMapAlpha.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
