@@ -57,7 +57,7 @@ ShadowMap::ShadowMap()
 	Material material("depthTest");
 	material.AddDiffuseTexture(m_depthMapTexture, 0);
 
-	int meshId = Engine::GetInstance()->GetMeshContainer().CreateQuad("shadow_quad", { 1,1,0 }, material);
+	int meshId = Engine::GetInstance()->GetMeshContainer().CreateQuad("shadow_quad", { 1,1 }, material);
 	m_debugQuad = Engine::GetInstance()->GetMeshContainer().GetMesh(meshId);
 	//m_debugQuad->SetPolygonMode(POLYGONMODE_LINE); //show the quad
 

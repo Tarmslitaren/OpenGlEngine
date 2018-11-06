@@ -30,7 +30,7 @@ uniform Material material;
 
 struct DirectionalLight {
     vec3 direction;
-	vec3 position; //for shadows
+  
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -108,10 +108,10 @@ void main()
     // phase 1: Directional lighting
     vec3 result = CalculateDirectionalLight(dirLight, norm, viewDir);
     // phase 2: Point lights
-    //for(int i = 0; i < nrPointLights; i++)
-    //    result += CalculatePointLight(pointLights[i], norm, inArgs.FragPos, viewDir);    
+    for(int i = 0; i < nrPointLights; i++)
+        result += CalculatePointLight(pointLights[i], norm, inArgs.FragPos, viewDir);    
     // phase 3: Spot light
-    //result += CalculateSpotLight(spotLight, norm, inArgs.FragPos, viewDir);
+    result += CalculateSpotLight(spotLight, norm, inArgs.FragPos, viewDir);
 
 
     vec4 fragColor = vec4(result, 1.0);
@@ -119,16 +119,15 @@ void main()
 	// apply gamma correction todo: remove this when we have post process working again
     float gamma = 2.2;
     FragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
-   //FragColor = fragColor;
 }
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - inArgs.FragPos); //this?  normalize(-light.direction);
+    vec3 lightDir = normalize(-light.direction);
     // diffuse shading: the closer to surface normal the brighter
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal); //phong
+    //vec3 reflectDir = reflect(-lightDir, normal); //phong
 	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 halfwayDir = normalize(lightDir + viewDir);  //this is blinn phong (generally the shininess varable needs to be 2-4 times as much for a similar result as normal phong
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
@@ -142,30 +141,10 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
    
    	    // calculate shadow
     float shadow = ShadowCalculation(inArgs.FragPosLightSpace);       
-    //vec3 lighting = ambient + (1.0 - shadow) * (diffuse + specular);      //multiply the diffuse and specular contributions by the inverse of the shadow component e.g. how much the fragment is not in shadow
-	 vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
+   // vec3 lighting = ambient + (1.0 - shadow) * (diffuse + specular);      //multiply the diffuse and specular contributions by the inverse of the shadow component e.g. how much the fragment is not in shadow
+  vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
    
    return lighting;// (ambient + diffuse + specular);
-
-
-    //vec3 color = texture(material.diffuse[0], inArgs.TexCoords).rgb;
-   // vec3 lightColor = vec3(1.0);
-    // ambient
-   // vec3 ambient = 0.15 * color;
-    // diffuse
-   // vec3 lightDir =  normalize(light.position - inArgs.FragPos); //this?
-    //float diff = max(dot(lightDir, normal), 0.0);
-    //vec3 diffuse = diff * lightColor;
-    // specular
-    //vec3 viewDir = normalize(viewPos - inArgs.FragPos); //this?
-    //vec3 halfwayDir = normalize(lightDir + viewDir);  
-    //float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
-    //vec3 specular = spec * lightColor;    
-    // calculate shadow
-   // float shadow = ShadowCalculation(inArgs.FragPosLightSpace);       
-   // vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
-    
-	//return lighting;
 }
 
 

@@ -87,10 +87,10 @@ int main()
 	}
 
 	//floor plane
-	GLEN::Mesh* floormesh = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateQuad("floor", { 25,25,0 }, material));
+	GLEN::Mesh* floormesh = engine.GetMeshContainer().GetMesh(engine.GetMeshContainer().CreateQuad("floor", { 25,25 }, material));
 	engine.GetModelContainer().CreateModel("floor", floormesh);
 	GLEN::ModelInstance* floor = new GLEN::ModelInstance("floor");
-	floor->SetOrientation(CU::Matrix33f::RotateX(90));
+	floor->SetOrientation(CU::Matrix33f::RotateX(-90));
 	scene.AddModel(floor);
 
 	//new reflection cube
@@ -125,7 +125,7 @@ int main()
 	grassMaterial.AddDiffuseTexture("blending_transparent_window.png", 0, true);
 	grassMaterial.InitShaderVariables();
 	
-	int gmeshId = engine.GetMeshContainer().CreateQuad("grass", { 1,1,0 }, grassMaterial);
+	int gmeshId = engine.GetMeshContainer().CreateQuad("grass", { 1,1 }, grassMaterial);
 	GLEN::Mesh* grassMesh = engine.GetMeshContainer().GetMesh(gmeshId);
 	engine.GetModelContainer().CreateModel("grass", grassMesh);
 	for (int i = 0; i < vegetationPos.size(); i++)

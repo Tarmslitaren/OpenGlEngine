@@ -167,30 +167,61 @@ int GLEN::MeshContainer::CreateBox(std::string id, CU::Vector3f dimensions, cons
 	return meshId;
 }
 
-int GLEN::MeshContainer::CreateQuad(std::string id, CU::Vector3f dimensions, const Material & material, DrawFrequency drawFrequency)
+int GLEN::MeshContainer::CreateQuad(std::string id, CU::Vector2f dimensions, const Material & material, bool strech, DrawFrequency drawFrequency)
 {
-	const CU::Vector3f dim = dimensions * 0.5f;
+	float planeVertices[] = {
+		// positions            // normals         // texcoords
+		 25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,//0
+		-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,//1
+		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,//3
+
+		 25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,//1
+		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,//2
+		 25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f//3
+	};
+	const CU::Vector2f dim = dimensions * 0.5f;
 	VertexContent content;
 	// a plane
 	content.positions = {
-		 dim.x,  dim.y, dim.z,
-		 dim.x, -dim.y, dim.z,
-		-dim.x, -dim.y, dim.z,
-		-dim.x,  dim.y, dim.z, 
+		 dim.x,  dim.y, 0,
+		 dim.x, -dim.y, 0,
+		-dim.x, -dim.y, 0,
+		-dim.x,  dim.y, 0, 
 	};
+
+
+	/*
+	v1        v2
+	+---------+
+	|         |  normal is CrossProduct((v2-v1), (v3-v1))
+	|         |
+	+---------+
+	v3        v4
+	*/
+
+	CU::Vector3f v1v2 = CU::Vector3f{ dim.x, -dim.y, 0 } - CU::Vector3f{ dim.x, dim.y, 0 };
+	CU::Vector3f v3v1 = CU::Vector3f{ -dim.x, -dim.y, 0 } - CU::Vector3f{ dim.x, -dim.y, 0 };
+	CU::Vector3f normal = v1v2.Cross(v3v1).GetNormalized();
+
 
 	content.normals = {
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
+	normal.x, normal.y, normal.z,
+	normal.x, normal.y, normal.z,
+	normal.x, normal.y, normal.z,
+	normal.x, normal.y, normal.z,
 	};
 
+	CU::Vector2f uv = dimensions;
+	if (strech)
+	{
+		uv = { 1,1 };
+	}
+
 	content.texCoords = {
-		 1.0f, 1.0f,   // top right
-		 1.0f, 0.0f,   // bottom right
+		 uv.x, uv.y,   // top right
+		 uv.x, 0.0f,   // bottom right
 		 0.0f, 0.0f,   // bottom left
-		 0.0f, 1.0f    // top left 
+		 0.0f, uv.y    // top left 
 	};
 	content.indexes = {
 	0, 1, 3, // first triangle

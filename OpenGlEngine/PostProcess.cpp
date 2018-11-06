@@ -133,7 +133,7 @@ void GLEN::PostProcess::Init()
 	Material material("pp_simple");
 	material.AddDiffuseTexture(m_texture, 0);
 
-	int meshId = Engine::GetInstance()->GetMeshContainer().CreateQuad("pp_quad", { 2,2,0 }, material);
+	int meshId = Engine::GetInstance()->GetMeshContainer().CreateQuad("pp_quad", { 2,2 }, material);
 	m_quad = Engine::GetInstance()->GetMeshContainer().GetMesh(meshId);
 }
 
@@ -185,6 +185,6 @@ void GLEN::PostProcess::InitMsaa()
 	Material materialMsaa("pp_simple");
 	materialMsaa.AddDiffuseTexture(screenTexture, 0);
 
-	int meshId2 = Engine::GetInstance()->GetMeshContainer().CreateQuad("pp_quadMsaa", { 2,2,0 }, materialMsaa);
+	int meshId2 = Engine::GetInstance()->GetMeshContainer().CreateQuad("pp_quadMsaa", { 2,2 }, materialMsaa);
 	m_msaaQuad = Engine::GetInstance()->GetMeshContainer().GetMesh(meshId2);
 }
